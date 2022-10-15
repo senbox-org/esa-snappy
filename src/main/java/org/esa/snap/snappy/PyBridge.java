@@ -20,6 +20,7 @@ import org.esa.snap.core.util.Debug;
 import org.esa.snap.core.util.ResourceInstaller;
 import org.esa.snap.core.util.SystemUtils;
 import org.esa.snap.core.util.io.TreeCopier;
+import org.esa.snap.core.util.io.TreeDeleter;
 import org.esa.snap.runtime.Config;
 import org.jpy.PyLib;
 
@@ -75,11 +76,13 @@ public class PyBridge {
     public static final String PYTHON_EXTRA_PATHS_PROPERTY = "snap.pythonExtraPaths";
     public static final Path PYTHON_CONFIG_DIR;
 
-    private static final String SNAP_PYTHON_DIRNAME = "snap-python";
+    public static final String SNAP_PYTHON_DIRNAME = "snap-python";
+//    public static final String SNAP_PYTHON_DIRNAME = "snap-python_TEST";
     private static final String JPY_DEBUG_PROPERTY = "jpy.debug";
     private static final String JPY_CONFIG_PROPERTY = "jpy.config";
-    private static final String SNAPPY_NAME = "snappy_esa";
-    private static final String SNAPPY_PROPERTIES_NAME = "snappy.properties";
+    public static final String SNAPPY_NAME = "esa_snappy";
+    private static final String SNAPPY_NAME_OLD = "snappy";
+    public static final String SNAPPY_PROPERTIES_NAME = "snappy.properties";
     private static final String SNAPPYUTIL_PY_FILENAME = "snappyutil.py";
     private static final String SNAPPYUTIL_LOG_FILENAME = "snappyutil.log";
     private static final String JPY_JAVA_API_CONFIG_FILENAME = "jpyconfig.properties";
@@ -143,6 +146,17 @@ public class PyBridge {
             storePythonConfig(pythonExecutable, snappyParentDir);
         }
 
+        // remove old snappy dir:
+        // todo: Python operators which use the new 'esa_snappy' still jump into the old 'snappy'
+        //  module if folder <snappyParentDir>/snappy (e.g. default .snap/snap-python/snappy) is still present.
+        //  Find out why. (The other way round is ok: operators which use the old 'snappy' work fine even if
+        //  both folders 'snappy' and 'esa_snappy' are present.)
+        //  (This issue might disappear in future SNAP releases if snap-python module is completely removed.)
+        Path oldSnappyPath = snappyParentDir.resolve(SNAPPY_NAME_OLD);
+        if (Files.isDirectory(oldSnappyPath)) {
+            TreeDeleter.deleteDir(oldSnappyPath);
+        }
+
         Path jpyConfigFile = snappyPath.resolve(JPY_JAVA_API_CONFIG_FILENAME);
         if (forcePythonConfig || !Files.exists(jpyConfigFile)) {
             // Configure jpy Python-side
@@ -150,10 +164,10 @@ public class PyBridge {
         }
         if (!Files.exists(jpyConfigFile)) {
             throw new IOException(String.format("SNAP-Python configuration incomplete.\n" +
-                                                        "Missing file '%s'.\n" +
-                                                        "Please check the log file '%s'.",
-                                                jpyConfigFile,
-                                                snappyPath.resolve(SNAPPYUTIL_LOG_FILENAME)));
+                            "Missing file '%s'.\n" +
+                            "Please check the log file '%s'.",
+                    jpyConfigFile,
+                    snappyPath.resolve(SNAPPYUTIL_LOG_FILENAME)));
         }
 
         // Configure jpy Java-side
@@ -173,10 +187,10 @@ public class PyBridge {
     public static void extendSysPath(String path) {
         if (path != null) {
             String code = String.format("" +
-                                                "import sys;\n" +
-                                                "p = '%s';\n" +
-                                                "if not p in sys.path: sys.path.append(p)",
-                                        path.replace("\\", "\\\\"));
+                            "import sys;\n" +
+                            "p = '%s';\n" +
+                            "if not p in sys.path: sys.path.append(p)",
+                    path.replace("\\", "\\\\"));
             PyLib.execScript(code);
         }
     }
@@ -230,16 +244,16 @@ public class PyBridge {
             if (exitCode != 0) {
                 throw new IOException(
                         String.format("Python configuration failed.\n" +
-                                              "Command [%s]\nfailed with return code %s.\n" +
-                                              "Please check the log file '%s'.",
-                                      commandLine, exitCode, snappyDir.resolve(SNAPPYUTIL_LOG_FILENAME)));
+                                        "Command [%s]\nfailed with return code %s.\n" +
+                                        "Please check the log file '%s'.",
+                                commandLine, exitCode, snappyDir.resolve(SNAPPYUTIL_LOG_FILENAME)));
             }
         } catch (InterruptedException e) {
             throw new IOException(
                     String.format("Python configuration failed.\n" +
-                                          "Command [%s]\nfailed with exception %s.\n" +
-                                          "Please check the log file '%s'.",
-                                  commandLine, e.getMessage(), snappyDir.resolve(SNAPPYUTIL_LOG_FILENAME)), e);
+                                    "Command [%s]\nfailed with exception %s.\n" +
+                                    "Please check the log file '%s'.",
+                            commandLine, e.getMessage(), snappyDir.resolve(SNAPPYUTIL_LOG_FILENAME)), e);
         }
     }
 
@@ -248,7 +262,7 @@ public class PyBridge {
         if (totalMemory > 0) {
             long memory = (long) (totalMemory * 0.7);
             long heapSpace = memory / (1024 * 1024 * 1024);
-            return heapSpace+"G";
+            return heapSpace + "G";
         } else {
             return null;
         }

@@ -1,4 +1,4 @@
-SNAPPY_NAME = 'snappy_esa'
+SNAPPY_NAME = 'esa_snappy'
 SNAPPY_VERSION = '${snappy.version}'
 SNAPPY_SUMMARY = 'snappy - The SNAP Python API'
 SNAPPY_AUTHOR = 'SNAP Development Team, Brockmann Consult GmbH'

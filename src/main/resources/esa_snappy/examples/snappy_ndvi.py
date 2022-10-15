@@ -1,11 +1,11 @@
 import sys
 
 import numpy
-from snappy_esa import Product
-from snappy_esa import ProductData
-from snappy_esa import ProductIO
-from snappy_esa import ProductUtils
-from snappy_esa import FlagCoding
+from esa_snappy import Product
+from esa_snappy import ProductData
+from esa_snappy import ProductIO
+from esa_snappy import ProductUtils
+from esa_snappy import FlagCoding
 
 if len(sys.argv) != 2:
     print("usage: %s <file>" % sys.argv[0])

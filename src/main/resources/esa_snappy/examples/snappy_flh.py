@@ -1,11 +1,11 @@
 import numpy
 import sys
 
-from snappy_esa import Product
-from snappy_esa import ProductData
-from snappy_esa import ProductIO
-from snappy_esa import ProductUtils
-from snappy_esa import String
+from esa_snappy import Product
+from esa_snappy import ProductData
+from esa_snappy import ProductIO
+from esa_snappy import ProductUtils
+from esa_snappy import String
 
 
 if len(sys.argv) != 2:

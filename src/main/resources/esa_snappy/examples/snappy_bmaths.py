@@ -1,9 +1,9 @@
 import sys
 
-from snappy_esa import GPF
-from snappy_esa import HashMap
-from snappy_esa import ProductIO
-from snappy_esa import jpy
+from esa_snappy import GPF
+from esa_snappy import HashMap
+from esa_snappy import ProductIO
+from esa_snappy import jpy
 
 if len(sys.argv) != 2:
     print("usage: %s <file>" % sys.argv[0])

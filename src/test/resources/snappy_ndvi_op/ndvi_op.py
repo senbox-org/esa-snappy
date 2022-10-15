@@ -1,6 +1,6 @@
 import numpy
 
-import snappy_esa
+import esa_snappy
 
 
 class NdviOp:
@@ -37,10 +37,10 @@ class NdviOp:
         print('initialize: lower_band =', self.lower_band, ', upper_band =', self.upper_band)
         print('initialize: lower_factor =', self.lower_factor, ', upper_factor =', self.upper_factor)
 
-        ndvi_product = snappy_esa.Product('py_NDVI', 'py_NDVI', width, height)
-        snappy_esa.ProductUtils.copyGeoCoding(source_product, ndvi_product)
-        self.ndvi_band = ndvi_product.addBand('ndvi', snappy_esa.ProductData.TYPE_FLOAT32)
-        self.ndvi_flags_band = ndvi_product.addBand('ndvi_flags', snappy_esa.ProductData.TYPE_UINT8)
+        ndvi_product = esa_snappy.Product('py_NDVI', 'py_NDVI', width, height)
+        esa_snappy.ProductUtils.copyGeoCoding(source_product, ndvi_product)
+        self.ndvi_band = ndvi_product.addBand('ndvi', esa_snappy.ProductData.TYPE_FLOAT32)
+        self.ndvi_flags_band = ndvi_product.addBand('ndvi_flags', esa_snappy.ProductData.TYPE_UINT8)
 
         context.setTargetProduct(ndvi_product)
 

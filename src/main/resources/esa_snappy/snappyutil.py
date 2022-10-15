@@ -218,10 +218,10 @@ def _configure_snappy(snap_home=None,
     # Finally, we test the snappy installation/configuration by importing it.
     # If this won't succeed, _main() will catch the error and report it.
     #
-    logging.info("Importing snappy for final test...")
+    logging.info("Importing esa_snappy for final test...")
     sys.path = [os.path.join(snappy_dir, '..')] + sys.path
     try:
-        __import__('snappy')
+        __import__('esa_snappy')
     except:
         return _ERR_CODE_IMPORTING_SNAPPY_FAILED
 

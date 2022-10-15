@@ -1,9 +1,9 @@
 import sys
 
-import snappy_esa
-from snappy_esa import ProductIO, WKTReader
+import esa_snappy
+from esa_snappy import ProductIO, WKTReader
 
-SubsetOp = snappy_esa.jpy.get_type('org.esa.snap.core.gpf.common.SubsetOp')
+SubsetOp = esa_snappy.jpy.get_type('org.esa.snap.core.gpf.common.SubsetOp')
 
 if len(sys.argv) != 3:
     print("usage: %s <file> <geometry-wkt>" % sys.argv[0])

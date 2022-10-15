@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Norman Fomferra
  * @since SNAP 2.0
  */
-@OperatorMetadata(alias = "PyOp",
+@OperatorMetadata(alias = "EsaSnappyPyOp",
         description = "Uses Python code to process data products",
         version = "1.0",
         authors = "Norman Fomferra",

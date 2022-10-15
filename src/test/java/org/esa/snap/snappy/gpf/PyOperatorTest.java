@@ -62,7 +62,7 @@ public class PyOperatorTest {
                      "-t", targetDim.toString(),
                      "-PlowerName=radiance_13",
                      "-PupperName=radiance_7",
-                     "-Ssource=" + getResourceFile("/snappy_esa/testdata/MER_FRS_L1B_SUBSET.dim"));
+                     "-Ssource=" + getResourceFile("/esa_snappy/testdata/MER_FRS_L1B_SUBSET.dim"));
 
             assertTrue(Files.isRegularFile(targetDim));
             assertTrue(Files.isDirectory(targetData));
@@ -131,7 +131,7 @@ public class PyOperatorTest {
             GPT.main(graphFile.getAbsolutePath(),
                      "-e",
                      "-t", targetFile.getAbsolutePath(),
-                     "-Sinput=" + getResourceFile("/snappy_esa/testdata/MER_FRS_L1B_SUBSET.dim"));
+                     "-Sinput=" + getResourceFile("/esa_snappy/testdata/MER_FRS_L1B_SUBSET.dim"));
 
             assertTrue(targetFile.exists());
 

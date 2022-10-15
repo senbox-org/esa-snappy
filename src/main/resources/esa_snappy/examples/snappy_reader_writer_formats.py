@@ -1,4 +1,4 @@
-from snappy_esa import jpy
+from esa_snappy import jpy
 
 ProductIOPlugInManager = jpy.get_type('org.esa.snap.core.dataio.ProductIOPlugInManager')
 ProductReaderPlugIn = jpy.get_type('org.esa.snap.core.dataio.ProductReaderPlugIn')

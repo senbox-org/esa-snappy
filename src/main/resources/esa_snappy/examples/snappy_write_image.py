@@ -1,7 +1,7 @@
 import sys
 
-import snappy_esa
-from snappy_esa import (ProductIO, ProductUtils, ProgressMonitor)
+import esa_snappy
+from esa_snappy import (ProductIO, ProductUtils, ProgressMonitor)
 
 if len(sys.argv) != 2:
     print("usage: %s <file>" % sys.argv[0])
@@ -9,7 +9,7 @@ if len(sys.argv) != 2:
 
 file = sys.argv[1]
 
-jpy = snappy_esa.jpy
+jpy = esa_snappy.jpy
 
 # More Java type definitions required for image generation
 Color = jpy.get_type('java.awt.Color')
@@ -39,8 +39,8 @@ def write_rgb_image(bands, filename, format):
 
 
 def resize(product, targetWidth, targetHeight):
-    from snappy_esa import GPF
-    from snappy_esa import HashMap
+    from esa_snappy import GPF
+    from esa_snappy import HashMap
 
     parameters = HashMap()
     parameters.put('targetWidth', targetWidth)

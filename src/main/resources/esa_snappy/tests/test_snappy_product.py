@@ -4,9 +4,9 @@ import sys
 
 import numpy as np
 
-import snappy_esa
+import esa_snappy
 
-JAI = snappy_esa.jpy.get_type('javax.media.jai.JAI')
+JAI = esa_snappy.jpy.get_type('javax.media.jai.JAI')
 JAI.getDefaultInstance().getTileCache().setMemoryCapacity(128 * 1000 * 1000)
 
 test_product_file = './MER_RR__1P.N1'
@@ -14,7 +14,7 @@ test_product_file = './MER_RR__1P.N1'
 class TestBeamIO(unittest.TestCase):
 
     def setUp(self):
-        self.product = snappy_esa.ProductIO.readProduct(test_product_file)
+        self.product = esa_snappy.ProductIO.readProduct(test_product_file)
         self.assertIsNotNone(self.product)
 
 
@@ -52,7 +52,7 @@ class TestBeamIO(unittest.TestCase):
         w = self.product.getSceneRasterWidth()
         h = self.product.getSceneRasterHeight()
         b = self.product.getBand('radiance_13')
-        a = snappy_esa.jpy.array('float', w)
+        a = esa_snappy.jpy.array('float', w)
         b.readPixels(0, 0, w, 1, a)
         self.assertTrue(a[0] == 0.0)
         self.assertTrue(0 < a[100] < 200)

@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-import snappy_esa
+import esa_snappy
 
 
 #JAI = snappy.jpy.get_type('javax.media.jai.JAI')
@@ -17,7 +17,7 @@ class TestBeamIO(unittest.TestCase):
         print('test_readProduct_and_readPixels_mem')
         for i in range(N):
             print('i = ', i)
-            product = snappy_esa.ProductIO.readProduct(test_product_file)
+            product = esa_snappy.ProductIO.readProduct(test_product_file)
             band = product.getBand('radiance_9')
             w = band.getRasterWidth()
             h = band.getRasterHeight()

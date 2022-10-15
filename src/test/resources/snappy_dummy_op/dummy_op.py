@@ -1,4 +1,4 @@
-import snappy_esa
+import esa_snappy
 import numpy
 
 
@@ -19,12 +19,12 @@ class DummyTestOp:
         self.first_band = source_product.getBandAt(0)
         self.second_band = source_product.getBandAt(1)
 
-        dummyProduct = snappy_esa.Product('py_dummy', 'forTesting', width, height)
-        snappy_esa.ProductUtils.copyGeoCoding(source_product, dummyProduct)
-        self.mul_band = dummyProduct.addBand('mul', snappy_esa.ProductData.TYPE_FLOAT32)
-        self.div_band = dummyProduct.addBand('div', snappy_esa.ProductData.TYPE_FLOAT32)
-        self.sub_band = dummyProduct.addBand('sub', snappy_esa.ProductData.TYPE_FLOAT32)
-        self.add_band = dummyProduct.addBand('add', snappy_esa.ProductData.TYPE_FLOAT32)
+        dummyProduct = esa_snappy.Product('py_dummy', 'forTesting', width, height)
+        esa_snappy.ProductUtils.copyGeoCoding(source_product, dummyProduct)
+        self.mul_band = dummyProduct.addBand('mul', esa_snappy.ProductData.TYPE_FLOAT32)
+        self.div_band = dummyProduct.addBand('div', esa_snappy.ProductData.TYPE_FLOAT32)
+        self.sub_band = dummyProduct.addBand('sub', esa_snappy.ProductData.TYPE_FLOAT32)
+        self.add_band = dummyProduct.addBand('add', esa_snappy.ProductData.TYPE_FLOAT32)
 
         context.setTargetProduct(dummyProduct)
 

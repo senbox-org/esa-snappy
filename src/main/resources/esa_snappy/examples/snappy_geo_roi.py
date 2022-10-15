@@ -2,7 +2,7 @@
 
 import sys
 
-from snappy_esa import (ProgressMonitor, VectorDataNode,
+from esa_snappy import (ProgressMonitor, VectorDataNode,
                         WKTReader, ProductIO, PlainFeatureFactory,
                         SimpleFeatureBuilder, DefaultGeographicCRS,
                         ListFeatureCollection, FeatureUtils)

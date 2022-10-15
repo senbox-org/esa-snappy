@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-import snappy_esa
+import esa_snappy
 
 
 #JAI = snappy.jpy.get_type('javax.media.jai.JAI')
@@ -14,7 +14,7 @@ test_product_file = './MER_RR__1P.N1'
 class TestBeamIO(unittest.TestCase):
 
     def setUp(self):
-        self.product = snappy_esa.ProductIO.readProduct(test_product_file)
+        self.product = esa_snappy.ProductIO.readProduct(test_product_file)
         self.assertIsNotNone(self.product)
 
 
