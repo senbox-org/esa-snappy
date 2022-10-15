@@ -1,4 +1,4 @@
-snap-python
+esa_snappy
 ===========
 
 The `snap-python` module enables Python developers to
