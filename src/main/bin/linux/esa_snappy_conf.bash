@@ -4,7 +4,7 @@
 # Requires proper setup of the environment, i.e.
 # - SNAP and Python need to be installed
 # - SNAP_HOME and PYTHONHOME need to be set
-#
+# 
 # e.g.
 # SNAP_HOME=/home/olafd/snap_9.0.0
 # PYTHONHOME=PYTHONHOME=/home/olafd/miniconda3
