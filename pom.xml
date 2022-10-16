@@ -13,7 +13,7 @@
     </description>
 
     <properties>
-        <snap.version>9.0.1</snap.version>
+        <snap.version>9.0.0</snap.version>
         <javahelp.version>2.0.05</javahelp.version>
     </properties>
 
