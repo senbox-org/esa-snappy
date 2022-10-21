@@ -44,7 +44,7 @@ import static org.esa.snap.core.util.SystemUtils.*;
 
 /**
  * This class is used to establish the bridge between Java and Python.
- * It unpacks the Python module 'snappy' to a user configurable location
+ * It unpacks the Python module 'esa_' to a user configurable location
  * and executes the script 'snappy/snappyutil.py' with appropriate parameters.
  * <p>
  * 'snappyutil.py' again configures 'jpy' by selecting and unpacking appropriate
@@ -117,7 +117,7 @@ public class PyBridge {
      * Installs the SNAP-Python interface.
      *
      * @param pythonExecutable  The Python executable.
-     * @param snappyParentDir   The directory into which the 'snappy' Python module will be installed and configured.
+     * @param snappyParentDir   The directory into which the 'esa_snappy' Python module will be installed and configured.
      * @param forcePythonConfig If {@code true}, any existing installation / configuration will be overwritten.
      * @return The path to the configured 'snappy' Python module.
      * @throws IOException if something went wrong during file access

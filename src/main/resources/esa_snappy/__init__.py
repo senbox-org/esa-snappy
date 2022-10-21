@@ -1,10 +1,10 @@
 """
-The snappy module provides access to the Java SE APIs and SNAP Java APIs.
+The esa_snappy module provides access to the Java SE APIs and SNAP Java APIs.
 
-You can configure snappy by using a file named snappy.ini as follows:
+You can configure esa_snappy by using a file named snappy.ini as follows:
 
     [DEFAULT]
-    snap_home: C:/Program Files/snap-2.0
+    snap_home: C:/Program Files/snap
     java_class_path: target/classes
     java_library_path: target/lib/amd64
     java_options: -Djava.awt.headless=true
@@ -16,7 +16,7 @@ The 'snap_home' options and all options starting with 'java_' are only used if y
 and a new Java Virtual Machine is created. They are ignored if the SNAP API is called from SNAP itself
 (e.g. SNAP command-line or GUI).
 
-'snappy' uses a bundled 'jpy' module, see documentation at http://jpy.readthedocs.org/en/latest
+'esa_snappy' uses a bundled 'jpy' module, see documentation at http://jpy.readthedocs.org/en/latest
 and source code at https://github.com/bcdev/jpy
 """
 
@@ -83,7 +83,7 @@ if debug:
 # Note: Sub-directories named 'locale' or 'docs' are not searched and
 #       JAR files ending with '-ui.jar' or '-examples.jar' are excluded.
 #
-# Note: This function is called only if the 'snappy' module is not imported from Java.
+# Note: This function is called only if the 'esa_snappy' module is not imported from Java.
 #
 def _collect_snap_jvm_env(dir_path, env):
     for name in os.listdir(dir_path):
@@ -133,7 +133,7 @@ def _get_nb_user_modules_dir():
 #
 # Searches for *.jar files in directory given by global 'snap_home' variable and returns them as a list.
 #
-# Note: This function is called only if the 'snappy' module is not imported from Java.
+# Note: This function is called only if the 'esa_snappy' module is not imported from Java.
 #
 def _get_snap_jvm_env():
     dir_names = []
@@ -186,7 +186,7 @@ def _get_snap_jvm_env():
 #
 # Creates a list of Java JVM options, including the Java classpath derived from the global 'snap_home' variable.
 #
-# Note: This function is called only if the 'snappy' module is not imported from Java.
+# Note: This function is called only if the 'esa_snappy' module is not imported from Java.
 #
 def _get_snap_jvm_options():
     global snap_home

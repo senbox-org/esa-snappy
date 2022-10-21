@@ -9,7 +9,7 @@
 
     <name>ESA SNAPPY</name>
     <description>
-        This module provides the SNAP Python bridge 'snappy' (formerly internal part of snap-engine).
+        This module provides the SNAP Python bridge 'esa_snappy' (formerly internal part of snap-engine).
     </description>
 
     <properties>

@@ -10,23 +10,23 @@ It is worth mentioning that the `snap-python` module works with the standard *CP
 Python extension modules such as `numpy` and `scipy` can be used. Before you read further you may have a look at the
 example code in
 
-1. `snappy-examples/*.py` for using the SNAP Java API from Python, and
-2. `snappy-examples/snappy-ndvi-operator` for extending SNAP by an (NDVI) operator plugin.
+1. `esa_snappy-examples/*.py` for using the SNAP Java API from Python, and
+2. `esa_snappy-examples/snappy-ndvi-operator` for extending SNAP by an (NDVI) operator plugin.
 
-The link from Python to the SNAP Java API is established via a Python module named *snappy*. The snappy module
+The link from Python to the SNAP Java API is established via a Python module named *esa_snappy*. The esa_snappy module
 depends on a *bi-directional* Java-Python bridge *jpy* that enables calls from Python into a Java virtual machine
 and, at the same time, the other way round. This bridge is implemented by the [jpy Project](https://github.com/bcdev/jpy)
-and is independent from the snappy module.
+and is independent from the esa_snappy module.
 
-snappy has been tested with Python 2.7, 3.3 and 3.4 with Java 7 and 8 JDKs. 
-
-Since `snap-python` version 5.0.5, SNAP configures itself for a given Python executable. If not already done
-by the installer, set the configuration property `snap.pythonExecutable` in file `${snap.home}/etc/snap.properties`
-to your desired Python executable.
+esa_snappy has been tested with Python 2.7, 3.3 and 3.4 with Java 8 JDKs. 
 
 
 ////////////////////////////// To following text is outdated - MUST UPDATE SOON ////////////////////////////// 
 
+
+`esa_snappy` version 5.0.5, SNAP configures itself for a given Python executable. If not already done
+by the installer, set the configuration property `snap.pythonExecutable` in file `${snap.home}/etc/snap.properties`
+to your desired Python executable.
 
 Before you can start using the SNAP API or developing SNAP operator plugins with Python you need configure 
 SNAP for the desired Python version. 
@@ -41,7 +41,7 @@ Installation
 ------------
 
 The first step is to properly install `jpy` as described in the [jpy documentation](http://jpy.readthedocs.org/en/latest/install.html).
-(Be sure use `jpy` version 0.7.3 or higher.) After successful installation of `jpy`, make sure that you have run VISAT at least once so that all modules are unpacked. Afterwards, you will be able to install `snappy` as follows:
+(Be sure use `jpy` version 0.7.3 or higher.) After successful installation of `jpy`, make sure that you have run VISAT at least once so that all modules are unpacked. Afterwards, you will be able to install `esa_snappy` as follows:
 
 On Darwin / Linux type:
 
@@ -55,13 +55,13 @@ On Windows type:
     cd %SNAP_HOME%\modules\snap-python-5.0\snappy
     python setup.py install
 
-If you encounter any problems during the `jpy` or `snappy` setup please do not hesitate to contact the
+If you encounter any problems during the `jpy` or `esa_snappy` setup please do not hesitate to contact the
 [SNAP user forum](http://www.brockmann-consult.de/cms/web/snap/forum).
 
 Testing
 -------
 
-When snappy is imported into your Python script or module, it will scan a SNAP installation for the available
+When esa_snappy is imported into your Python script or module, it will scan a SNAP installation for the available
 SNAP API components. For this purpose, snappy needs to know where the SNAP installation is located. It can either be
 configured via the environment variables `SNAP_HOME` or `SNAP2_HOME` or by using a dedicated *INI file* as described
 below.
@@ -70,13 +70,13 @@ On Darwin / Linux type:
 
     set SNAP_HOME=<path to your SNAP 2.0 installation>
     python3
-    >>> import snappy
+    >>> import esa_snappy
 
 On Windows type:
 
     export SNAP_HOME=<path to your SNAP 5 installation>
     python
-    >>> import snappy
+    >>> import esa_snappy
 
 If the import is successful (no errors are raised) you can exit the Python interpreter and perform the test cases in the `snappy` directory.
 They all require an EO data product file as input named `MER_RR__1P.N1`, which is an Envisat MERIS L1b product.
@@ -94,22 +94,22 @@ is only used as an example and for testing.
 Configuration
 -------------
 
-`snappy` can be configured by an *INI file* `snappy.ini`. This file is read from the current working directory
-or from the system-dependent location from which the installed Python `snappy` module is loaded from.
+`esa_snappy` can be configured by an *INI file* `snappy.ini`. This file is read from the current working directory
+or from the system-dependent location from which the installed Python `esa_snappy` module is loaded from.
 
 Given here is an example of its content (Windows):
 
     [DEFAULT]
-    snap_home: C:\Program Files\snap-5.0
+    snap_home: C:\Program Files\snap
     extra_classpath: target/classes
     max_mem: 8G
     debug: True
 
 
-Running snappy in an Apache webserver
+Running esa_snappy in an Apache webserver
 -------------------------------------
 
-Using the [mod_wsgi](https://code.google.com/p/modwsgi/)-module within an [Apache HTTP Server](http://httpd.apache.org/) environment allows to use `snappy` within web applications. However, there are a number of common pitfalls, which are listed in the sections below.
+Using the [mod_wsgi](https://code.google.com/p/modwsgi/)-module within an [Apache HTTP Server](http://httpd.apache.org/) environment allows to use `esa_snappy` within web applications. However, there are a number of common pitfalls, which are listed in the sections below.
 
 ### Cannot open shared object
 
@@ -125,7 +125,7 @@ When doing `import jpy`, you might get an error similar to `ImportError: libjvm.
 
 ### Environment variables not set
 
-No matter if you have set all required environment variables in your shell, you might nonetheless receive the following error when doing `import snappy`: `RuntimeError: environment variable "SNAP_HOME" must be set to a valid SNAP installation directory`.
+No matter if you have set all required environment variables in your shell, you might nonetheless receive the following error when doing `import esa_snappy`: `RuntimeError: environment variable "SNAP_HOME" must be set to a valid SNAP installation directory`.
 The reason for this is that the environment needs to be preserved for the Apache. A possible solution is to set the environment within the startup routine of the web application, such as
 
     os.environ['JAVA_HOME'] = settings.JAVA_HOME
@@ -181,7 +181,7 @@ Please check:
 
 * [SNAP API Documentation](http://www.brockmann-consult.de/snap/doc/apidocs/index.html)
 
-snappy imports the most frequently used Java API classes by default
+esa_snappy imports the most frequently used Java API classes by default
  
 * `org.esa.snap.core.dataio.ProductIO`
 * `org.esa.snap.core.datamodel.Product`
