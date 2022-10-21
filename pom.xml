@@ -100,13 +100,8 @@
                 <configuration>
                     <licenseName>GPL 3</licenseName>
                     <licenseFile>LICENSE.txt</licenseFile>
+                    <homePageUrl>https://step.esa.int/main/</homePageUrl>
                     <requiresRestart>true</requiresRestart>
-                    <cluster>snap</cluster>
-                    <brandingToken>snap</brandingToken>
-                    <requiresRestart>true</requiresRestart>
-                    <keystore>${project.basedir}/keystore/snap.ks</keystore>
-                    <keystorealias>snap</keystorealias>
-                    <keystorepassword>snap-123</keystorepassword>
                     <publicPackages>
                         <publicPackage>org.esa.snap.jython</publicPackage>
                         <publicPackage>org.python.core</publicPackage>
