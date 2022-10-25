@@ -15,8 +15,7 @@
  */
 
 /**
- * The SNAP Python bridge which exposes the SNAP Java API to (C)Python.
+ * The ESA SNAP Python 'snappy' bridge which exposes the SNAP Java API to (C)Python.
  *
- * @author Norman Fomferra
  */
 package org.esa.snap.snappy;

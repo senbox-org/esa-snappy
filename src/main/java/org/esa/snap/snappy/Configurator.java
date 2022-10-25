@@ -20,10 +20,12 @@ public class Configurator {
         ConfigurationReport report = new ConfigurationReport();
         if (pythonExecutable == null) {
             report.setException(new IllegalArgumentException("Python interpreter executable must be given"));
+            return report;
         }
 
         if (!Files.exists(pythonExecutable)) {
             report.setException(new IllegalArgumentException("Python interpreter executable not found: " + pythonExecutable));
+            return report;
         }
 
         try {
@@ -34,7 +36,6 @@ public class Configurator {
         } catch (Throwable t) {
             report.setException(new Exception("Python configuration error", t));
         }
-
         return report;
     }
 }
