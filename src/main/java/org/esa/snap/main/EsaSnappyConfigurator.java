@@ -16,11 +16,9 @@
 
 package org.esa.snap.main;
 
-import org.esa.snap.core.util.StopWatch;
-import org.esa.snap.snappy.PyBridge;
+import org.esa.snap.snappy.ConfigurationReport;
+import org.esa.snap.snappy.Configurator;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,10 +30,7 @@ public class EsaSnappyConfigurator {
 
     public static void main(String... args) {
         try {
-            final StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            run(args);
-            stopWatch.stopAndTrace("ESA SNAPPY Configuration");
+            applyConfiguration(args);
         } catch (Throwable e) {
             String message;
             if (e.getMessage() != null) {
@@ -48,47 +43,39 @@ public class EsaSnappyConfigurator {
         }
     }
 
-    public static void run(String[] args) throws Exception {
-        processPython(args);
-    }
+    public static void applyConfiguration(String[] args) {
+        System.out.flush();
+        System.out.println("Configuring ESA SNAP-Python interface...");
+        System.out.flush();
 
-    private static void processPython(String[] args) throws IOException {
-
-        Path pythonExecutable = null;
-        Path pythonModuleInstallDir = null;
-
+        Configurator configurator = new Configurator();
         if (args.length >= 1) {
-            pythonExecutable = Paths.get(args[0]);
+            configurator.setPythonExecutable(Paths.get(args[0]));
         }
         if (args.length >= 2) {
-            pythonModuleInstallDir = Paths.get(args[1]);
+            configurator.setPythonModuleInstallDir(Paths.get(args[1]));
         }
 
-        if (pythonExecutable == null) {
-            throw new IOException("Python interpreter executable must be given");
-        }
+        ConfigurationReport report = configurator.doConfig();
 
-        if (!Files.exists(pythonExecutable)) {
-            throw new IOException("Python interpreter executable not found: " + pythonExecutable);
-        }
-
-        try {
-            System.out.flush();
-            System.out.println("Configuring SNAP-Python interface...");
-            Path snappyDir = PyBridge.installPythonModule(pythonExecutable, pythonModuleInstallDir, true);
-            System.out.flush();
+        if(report.isSuccessful()) {
+            System.out.println("Configuration finished successful!");
+            Path snappyDir = report.getSnappyDir();
             System.out.printf("Done. The SNAP-Python interface is located in '%s'%n", snappyDir);
             System.out.printf("When using SNAP from Python, either do: sys.path.append('%s')%n", snappyDir.getParent().toString().replace("\\", "\\\\"));
             System.out.printf("or copy the '%s' module into your Python's 'site-packages' directory.%n", snappyDir.getFileName());
-            System.out.flush();
-        } catch (IOException e) {
-            e.printStackTrace(System.out);
-            System.out.flush();
-            throw new IOException("Python configuration error: " + e.getMessage());
-        } catch (Throwable t) {
-            t.printStackTrace(System.out);
-            System.out.flush();
-            throw new IOException("Python configuration internal error: " + t.getMessage());
+            System.out.printf("The executable of the Python environment is located at '%s'%n", report.getPythonExe());
+        }else {
+            System.out.println("Configuration failed!");
+            System.out.printf("Error: %s%n", report.getErrorMessage());
+            Exception exception = report.getException();
+            if (exception != null) {
+                System.out.println("Full stack trace:");
+                exception.printStackTrace();
+            }
         }
+        System.out.flush();
+
     }
+
 }
