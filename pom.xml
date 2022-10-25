@@ -33,6 +33,7 @@
             <artifactId>snap-gpf</artifactId>
             <version>${snap.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.jpy</groupId>
             <artifactId>jpy</artifactId>
@@ -103,9 +104,7 @@
                     <homePageUrl>https://step.esa.int/main/</homePageUrl>
                     <requiresRestart>true</requiresRestart>
                     <publicPackages>
-                        <publicPackage>org.esa.snap.jython</publicPackage>
-                        <publicPackage>org.python.core</publicPackage>
-                        <publicPackage>org.python.util</publicPackage>
+                        <publicPackage>org.esa.snap.snappy</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
