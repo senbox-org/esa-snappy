@@ -6,30 +6,29 @@
 :: - external plugin 'esa_snappy' must be installed in SNAP
 :: - SNAP_HOME needs to be set
 
-:: e.g. 
+:: e.g.
 :: SNAP_HOME=D:\\snap\9.0\snap
 
 if [%1] == [] goto Usage
 if [%1] == [/?] goto Usage
-if not [%2] == [] goto Usage
+if not [%3] == [] goto Usage
 
 IF "%SNAP_HOME%"=="" ECHO ERROR: Variable SNAP_HOME is NOT defined. & exit /b 1
 
-set JPY_JAR=%SNAP_HOME%\snap\modules\ext\org.esa.snap.esa_snappy\org-jpy\jpy.jar
-set SNAP_RUNTIME_JAR=%SNAP_HOME%\snap\modules\ext\org.esa.snap.snap-rcp\org-esa-snap\snap-runtime.jar
+:: The following only works if this batch file is located in %SNAP_HOME%\bin (as the previous snappy-conf.bat)
+:: (see e.g. https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/call).
+:: "%~dp0\snap64.exe" --nogui --nosplash --snappy %1 %2
 
-set JARS=%SNAP_HOME%\snap\modules\*;%JPY_JAR%;%SNAP_RUNTIME_JAR%
-
-%SNAP_HOME%\jre\bin\java.exe -cp "%JARS%" org.esa.snap.main.EsaSnappyConfigurator %1
-
+:: To run from anywhere for the moment, use this instead:
+"%SNAP_HOME%\bin\snap64.exe" --nogui --nosplash --snappy %1 %2
 goto End
 
 :Usage
-@echo Configures the ESA SNAP-Python interface 'esa_snappy'.
-@echo Usage:
+@echo Configures the SNAP-Python interface 'esa_snappy'.
 @echo.
-@echo %~n0 Python
+@echo %~n0 Python [Dir] ^| [/?]
 @echo.
-@echo     Python: Full path to Python executable to be used with SNAP, e.g. C:\Miniconda\python.exe
+@echo     Python: Full path to Python executable to be used with SNAP, e.g. C:\Python34\python.exe
+@echo     Dir:    Directory where the 'esa_snappy' module should be installed. Defaults to %USERPROFILE%\.snap\snap-python
 @echo.
 :End
