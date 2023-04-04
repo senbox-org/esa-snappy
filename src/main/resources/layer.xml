@@ -6,36 +6,20 @@
         <file name="org-esa-snap-snappy-ShowSnappySettingsAction.instance">
             <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
             <attr name="delegate" methodvalue="org.esa.snap.snappy.desktop.ShowSnappySettingsAction.create"/>
-            <attr name="displayName" stringvalue="Show Settings"/>
-            <attr name="description" stringvalue="Shows the current settings of ESA Snappy"/>
-
-        </file>
-        <file name="org-esa-snap-snappy-ConfigEsaSnappyAction.instance">
-            <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-            <attr name="delegate" methodvalue="org.esa.snap.snappy.desktop.ConfigWizardSnappyAction.create"/>
-            <attr name="displayName" stringvalue="Configuration Wizard"/>
-            <attr name="description" stringvalue="Opens the Configuration Wizard for ESA Snappy"/>
-
+            <attr name="displayName" stringvalue="ESA Snappy Settings"/>
+            <attr name="description" stringvalue="Configure ESA Snappy"/>
         </file>
     </folder>
 
-    <!--     not yet added to the menu-->
-<!--    <folder name="Menu">-->
-<!--        <folder name="Tools">-->
-<!--            <folder name="ESA Snappy">-->
-<!--                <file name="org-esa-snap-snappy-ShowSnappySettingsAction.shadow">-->
-<!--                    <attr name="originalFile"-->
-<!--                          stringvalue="Actions/org-esa-snap-snappy-ShowSnappySettingsAction.instance"/>-->
-<!--                    <attr name="position" intvalue="100"/>-->
-<!--                </file>-->
-<!--                <file name="org-esa-snap-snappy-ConfigEsaSnappyAction.shadow">-->
-<!--                    <attr name="originalFile"-->
-<!--                          stringvalue="Actions/org-esa-snap-snappy-ConfigEsaSnappyAction.instance"/>-->
-<!--                    <attr name="position" intvalue="150"/>-->
-<!--                </file>-->
-<!--            </folder>-->
-<!--        </folder>-->
-<!--    </folder>-->
+    <folder name="Menu">
+        <folder name="Tools">
+            <file name="org-esa-snap-snappy-ShowSnappySettingsAction.shadow">
+                <attr name="originalFile"
+                      stringvalue="Actions/org-esa-snap-snappy-ShowSnappySettingsAction.instance"/>
+                <attr name="position" intvalue="100"/>
+            </file>
+        </folder>
+    </folder>
 
     <!--    use this later-->
     <!--    <folder name="Services">-->

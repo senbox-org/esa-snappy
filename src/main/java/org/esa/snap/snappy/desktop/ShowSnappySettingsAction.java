@@ -1,7 +1,8 @@
 package org.esa.snap.snappy.desktop;
 
-import javax.swing.*;
-import java.awt.*;
+import org.netbeans.api.options.OptionsDisplayer;
+
+import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 
@@ -30,14 +31,7 @@ public class ShowSnappySettingsAction extends AbstractAction {
      */
     @Override
     public void actionPerformed(ActionEvent event) {
-        Window window = SwingUtilities.windowForComponent((Component) event.getSource());
-        JDialog dialog = new JDialog(window, "ESA Snappy Settings", Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setLocationRelativeTo(window);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        dialog.setContentPane(new JLabel("This shows the ESA Snappy settings!"));
-        dialog.pack();
-        dialog.setVisible(true);
-
+        OptionsDisplayer displayer = OptionsDisplayer.getDefault();
+        displayer.open("ESASNAPPY");
     }
 }
