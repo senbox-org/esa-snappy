@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.esa.snap</groupId>
     <artifactId>esa_snappy</artifactId>
-    <version>9.0.2</version>
+    <version>10.0.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
     <name>ESA SNAPPY</name>
@@ -13,7 +13,7 @@
     </description>
 
     <properties>
-        <snap.version>9.0.0</snap.version>
+        <snap.version>10.0.0-SNAPSHOT</snap.version>
         <javahelp.version>2.0.05</javahelp.version>
         <netbeans.version>RELEASE82</netbeans.version>
     </properties>
@@ -41,11 +41,6 @@
             <version>${netbeans.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.jpy</groupId>-->
-<!--            <artifactId>jpy</artifactId>-->
-<!--            <version>0.9.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.jpyconsortium</groupId>
             <artifactId>jpy</artifactId>
@@ -59,7 +54,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
