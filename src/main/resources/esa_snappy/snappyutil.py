@@ -60,9 +60,7 @@ def _configure_snappy(snap_home=None,
                             "Python is 64 bit but JVM requires " + req_arch)
 
     snappy_dir = os.path.dirname(os.path.abspath(__file__))
-    # snappy_ini_file = os.path.join(snappy_dir, 'snappy.ini')
-    snappy_ini_file = os.path.join(snappy_dir, os.path.basename(snappy_dir) + '.ini')
-
+    snappy_ini_file = os.path.join(snappy_dir, 'esa_snappy.ini')
 
     jpyutil_file = os.path.join(snappy_dir, 'jpyutil.py')
     jpyconfig_java_file = os.path.join(snappy_dir, 'jpyconfig.properties')
@@ -222,6 +220,7 @@ def _configure_snappy(snap_home=None,
     #
     logging.info("Importing esa_snappy for final test...")
     sys.path = [os.path.join(snappy_dir, '..')] + sys.path
+
     try:
         __import__('esa_snappy')
     except:

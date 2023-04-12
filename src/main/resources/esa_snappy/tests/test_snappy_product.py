@@ -4,12 +4,15 @@ import sys
 
 import numpy as np
 
+import sys
+sys.path.append('../../')
 import esa_snappy
 
 JAI = esa_snappy.jpy.get_type('javax.media.jai.JAI')
 JAI.getDefaultInstance().getTileCache().setMemoryCapacity(128 * 1000 * 1000)
 
-test_product_file = './MER_RR__1P.N1'
+#test_product_file = './MER_RR__1P.N1'
+test_product_file = '../testdata/MER_FRS_L1B_SUBSET.dim'
 
 class TestBeamIO(unittest.TestCase):
 
@@ -44,7 +47,7 @@ class TestBeamIO(unittest.TestCase):
     def test_getSceneRasterWidthAndHeight(self):
         w = self.product.getSceneRasterWidth()
         h = self.product.getSceneRasterHeight()
-        self.assertEqual(w, 1121)
+        self.assertEqual(w, 221)
         self.assertTrue(h > 0)
 
 
@@ -54,8 +57,9 @@ class TestBeamIO(unittest.TestCase):
         b = self.product.getBand('radiance_13')
         a = esa_snappy.jpy.array('float', w)
         b.readPixels(0, 0, w, 1, a)
-        self.assertTrue(a[0] == 0.0)
-        self.assertTrue(0 < a[100] < 200)
+        self.assertAlmostEqual(53.841, a[0], 3)
+        self.assertTrue(50 < a[100] < 60)
+        self.assertAlmostEqual(54.384979, a[100], 6)
 
 
     def test_readPixels_with_python_array(self):
@@ -68,8 +72,9 @@ class TestBeamIO(unittest.TestCase):
         b = self.product.getBand('radiance_13')
         a = array.array('f', w * [0])
         b.readPixels(0, 0, w, 1, a)
-        self.assertTrue(a[0] == 0.0)
-        self.assertTrue(0 < a[100] < 200)
+        self.assertAlmostEqual(53.841, a[0], 3)
+        self.assertTrue(50 < a[100] < 60)
+        self.assertAlmostEqual(54.384979, a[100], 6)
 
 
     def test_readPixels_with_numpy_array(self):
@@ -78,8 +83,9 @@ class TestBeamIO(unittest.TestCase):
         b = self.product.getBand('radiance_13')
         a = np.zeros(w, dtype=np.float32)
         b.readPixels(0, 0, w, 1, a)
-        self.assertTrue(a[0] == 0.0)
-        self.assertTrue(0 < a[100] < 200)
+        self.assertAlmostEqual(53.841, a[0], 3)
+        self.assertTrue(50 < a[100] < 60)
+        self.assertAlmostEqual(54.384979, a[100], 6)
 
 
     def test_readValidMask_with_numpy_array(self):
@@ -90,7 +96,7 @@ class TestBeamIO(unittest.TestCase):
         #snappy.jpy.diag.flags = snappy.jpy.diag.F_ALL
         b.readValidMask(0, 0, w, 1, a)
         #snappy.jpy.diag.flags = snappy.jpy.diag.F_OFF
-        self.assertEqual(a[0], 0)
+        self.assertEqual(a[0], 1)
         self.assertEqual(a[100], 1)
 
 

@@ -1,6 +1,13 @@
 import sys
 
 import numpy
+
+# This example requires a MERIS L1b product as input
+
+# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
+# Adapt this path if script shall be run from a different location!
+sys.path.append('../../')
+
 from esa_snappy import Product
 from esa_snappy import ProductData
 from esa_snappy import ProductIO
@@ -30,6 +37,9 @@ print("Bands:       %s" % (list(band_names)))
 
 b7 = product.getBand('radiance_7')
 b10 = product.getBand('radiance_10')
+if b10 is None:
+    b7 = product.getBand('M07_radiance')
+    b10 = product.getBand('M10_radiance')
 ndviProduct = Product('NDVI', 'NDVI', width, height)
 ndviBand = ndviProduct.addBand('ndvi', ProductData.TYPE_FLOAT32)
 ndviFlagsBand = ndviProduct.addBand('ndvi_flags', ProductData.TYPE_UINT8)
@@ -61,10 +71,10 @@ for y in range(height):
 
     ndvi = (r10 - r7) / (r10 + r7)
     ndviBand.writePixels(0, y, width, 1, ndvi)
-    ndviLow = ndvi < 0.0
-    ndviHigh = ndvi > 1.0
-    ndviFlags = numpy.array(ndviLow + 2 * ndviHigh, dtype=numpy.int32)
-    ndviFlagsBand.writePixels(0, y, width, 1, ndviFlags)
+    #ndviLow = ndvi < 0.0
+    #ndviHigh = ndvi > 1.0
+    #ndviFlags = numpy.array(ndviLow + 2 * ndviHigh, dtype=numpy.int32)
+    #ndviFlagsBand.writePixels(0, y, width, 1, ndviFlags)
 
 ndviProduct.closeIO()
 

@@ -2,13 +2,16 @@ import unittest
 
 import numpy as np
 
+import sys
+sys.path.append('../../')
 import esa_snappy
 
 
 #JAI = snappy.jpy.get_type('javax.media.jai.JAI')
 #JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256 * 1000 * 1000)
 
-test_product_file = './MER_RR__1P.N1'
+#test_product_file = './MER_RR__1P.N1'
+test_product_file = '../testdata/MER_FRS_L1B_SUBSET.dim'
 
 class TestBeamIO(unittest.TestCase):
 

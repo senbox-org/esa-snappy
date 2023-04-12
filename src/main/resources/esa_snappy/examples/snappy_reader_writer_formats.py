@@ -1,3 +1,8 @@
+import sys
+
+# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
+# Adapt this path if script shall be run from a different location!
+sys.path.append('../../')
 from esa_snappy import jpy
 
 ProductIOPlugInManager = jpy.get_type('org.esa.snap.core.dataio.ProductIOPlugInManager')

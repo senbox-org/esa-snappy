@@ -1,6 +1,13 @@
 import sys
 
 import numpy
+
+# This example requires a MERIS L1b product as input
+
+# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
+# Adapt this path if script shall be run from a different location!
+sys.path.append('../../')
+
 from esa_snappy import String
 from esa_snappy import Product
 from esa_snappy import ProductData
@@ -25,6 +32,9 @@ print("Bands:   %s" % (band_names))
 
 b7 = product.getBand('radiance_7')
 b10 = product.getBand('radiance_10')
+if b10 is None:
+    b7 = product.getBand('M07_radiance')
+    b10 = product.getBand('M10_radiance')
 ndviProduct = Product('NDVI', 'NDVI', width, height)
 ndviBand = ndviProduct.addBand('ndvi', ProductData.TYPE_FLOAT32)
 ndviBand.setNoDataValue(numpy.nan)

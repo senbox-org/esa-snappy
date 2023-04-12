@@ -2,13 +2,16 @@ import unittest
 
 import numpy as np
 
+import sys
+sys.path.append('../../')
 import esa_snappy
 
 
 #JAI = snappy.jpy.get_type('javax.media.jai.JAI')
 #JAI.getDefaultInstance().getTileCache().setMemoryCapacity(128 * 1000 * 1000)
 
-test_product_file = './MER_RR__1P.N1'
+#test_product_file = './MER_RR__1P.N1'
+test_product_file = '../testdata/MER_FRS_L1B_SUBSET.dim'
 
 
 class TestBeamIO(unittest.TestCase):
@@ -43,7 +46,7 @@ class TestBeamIO(unittest.TestCase):
         w = self.product.getSceneRasterWidth()
         h = self.product.getSceneRasterHeight()
         b = self.product.getBand('radiance_13')
-        a = np.zeros(w, dtype=np.bool)
+        a = np.zeros(w, dtype=bool)
 
         import time
 
@@ -53,7 +56,7 @@ class TestBeamIO(unittest.TestCase):
         t1 = time.time()
 
         dt = t1 - t0
-        print('Band.readValidMask(): w =', w, ', dtype=np.bool:', h, 'calls in', dt*1000, 'ms, that is ', dt*1000/y, 'ms per call')
+        print('Band.readValidMask(): w =', w, ', dtype=bool:', h, 'calls in', dt*1000, 'ms, that is ', dt*1000/y, 'ms per call')
 
 
 if __name__ == '__main__':

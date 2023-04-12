@@ -1,5 +1,9 @@
 import sys
 
+# This example requires a MERIS L1b product as input
+# Adapt this path if script shall be run from a different location!
+sys.path.append('../../')
+
 import esa_snappy
 from esa_snappy import (ProductIO, ProductUtils, ProgressMonitor)
 
@@ -20,6 +24,7 @@ ImageLegend = jpy.get_type('org.esa.snap.core.datamodel.ImageLegend')
 ImageManager = jpy.get_type('org.esa.snap.core.image.ImageManager')
 JAI = jpy.get_type('javax.media.jai.JAI')
 RenderedImage = jpy.get_type('java.awt.image.RenderedImage')
+Integer = jpy.get_type('java.lang.Integer')
 
 
 # Disable JAI native MediaLib extensions 
@@ -43,8 +48,8 @@ def resize(product, targetWidth, targetHeight):
     from esa_snappy import HashMap
 
     parameters = HashMap()
-    parameters.put('targetWidth', targetWidth)
-    parameters.put('targetHeight', targetHeight)
+    parameters.put('targetWidth', Integer(targetWidth))
+    parameters.put('targetHeight', Integer(targetHeight))
     return GPF.createProduct('Resample', parameters, product)
 
 product = ProductIO.readProduct(file)

@@ -1,5 +1,11 @@
 import sys
 
+# This example requires a MERIS L1b product as input
+
+# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
+# Adapt this path if script shall be run from a different location!
+sys.path.append('../../')
+
 from esa_snappy import GPF
 from esa_snappy import HashMap
 from esa_snappy import ProductIO
@@ -36,6 +42,11 @@ targetBand2.name = 'band_2'
 targetBand2.type = 'float32'
 targetBand2.expression = '(radiance_9 - radiance_6) / (radiance_9 + radiance_6)'
 
+if product.getBand('radiance_10') is None:
+    # probably 4RP
+    targetBand1.expression = '(M10_radiance - M07_radiance) / (M10_radiance + M07_radiance)'
+    targetBand2.expression = '(M09_radiance - M06_radiance) / (M09_radiance + M06_radiance)'
+
 targetBands = jpy.array('org.esa.snap.core.gpf.common.BandMathsOp$BandDescriptor', 2)
 targetBands[0] = targetBand1
 targetBands[1] = targetBand2
@@ -50,24 +61,3 @@ print("Writing...")
 ProductIO.writeProduct(result, 'snappy_bmaths_output.dim', 'BEAM-DIMAP')
 
 print("Done.")
-
-
-"""
-   Please note: the next major version of snappy/jpy will be more pythonic in the sense that implicit data type
-   conversions are performed. The 'parameters' from above variable could then be given as a Python dict object:
-
-    parameters = {
-        'targetBands': [
-            {
-                'name': 'band_1',
-                'type': 'float32',
-                'expression': '(radiance_10 - radiance_7) / (radiance_10 + radiance_7)'
-            },
-            {
-                'name': 'band_2',
-                'type': 'float32',
-                'expression': '(radiance_9 - radiance_6) / (radiance_9 + radiance_6)'
-            }
-        ]
-    }
-"""

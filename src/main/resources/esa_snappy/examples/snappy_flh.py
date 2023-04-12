@@ -1,6 +1,12 @@
 import numpy
 import sys
 
+# This example requires a MERIS L2 water product as input
+
+# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
+# Adapt this path if script shall be run from a different location!
+sys.path.append('../../')
+
 from esa_snappy import Product
 from esa_snappy import ProductData
 from esa_snappy import ProductIO
