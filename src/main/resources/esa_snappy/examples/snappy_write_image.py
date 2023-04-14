@@ -1,6 +1,8 @@
 import sys
 
 # This example requires a MERIS L1b product as input
+
+# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
 # Adapt this path if script shall be run from a different location!
 sys.path.append('../../')
 
@@ -59,6 +61,8 @@ product = ProductIO.readProduct(file)
 product = resize(product, 1000, 1000)
 
 band = product.getBand('radiance_13')
+if band is None:
+    band = product.getBand('M13_radiance')
 
 # The colour palette assigned to pixel values 0, 50, 100 in the band's geophysical units
 points = [ColorPoint(0.0, Color.YELLOW), 
@@ -92,6 +96,10 @@ JAI.create("filestore", rendered_legend_image, 'snappy_write_image_legend.png', 
 red = product.getBand('radiance_13')
 green = product.getBand('radiance_5')
 blue = product.getBand('radiance_1')
+if red is None:
+    red = product.getBand('M13_radiance')
+    green = product.getBand('M05_radiance')
+    blue = product.getBand('M01_radiance')
 write_rgb_image([red, green, blue], 'snappy_write_image_rgb.png', image_format)
 
 
