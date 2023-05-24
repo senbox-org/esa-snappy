@@ -1,237 +1,294 @@
-esa_snappy
-===========
+esa-snappy
+==========
 
-The `snap-python` module enables Python developers to
+The plugin `esa-snappy` enables Python developers to
 
 1. use the SNAP Java API from Python, and to
 2. extend SNAP by *operator plug-ins* for EO data processing written in the Python programming language.
 
-It is worth mentioning that the `snap-python` module works with the standard *CPython*, so that any native
-Python extension modules such as `numpy` and `scipy` can be used. Before you read further you may have a look at the
-example code in
+It is worth mentioning that the `esa-snappy` plugin works with the standard *CPython*, so
+that any native Python extension modules such as `numpy` and `scipy` can be used. Before you
+read further you may have a look at the example code in `examples/*.py` for using the SNAP
+Java API from Python.
 
-1. `esa_snappy-examples/*.py` for using the SNAP Java API from Python, and
-2. `esa_snappy-examples/snappy-ndvi-operator` for extending SNAP by an (NDVI) operator plugin.
-
-The link from Python to the SNAP Java API is established via a Python module named *esa_snappy*. The esa_snappy module
+The esa_snappy plugin
 depends on a *bi-directional* Java-Python bridge *jpy* that enables calls from Python into a Java virtual machine
-and, at the same time, the other way round. This bridge is implemented by the [jpy Project](https://github.com/bcdev/jpy)
-and is independent from the esa_snappy module.
+and, at the same time, the other way round. This bridge is implemented by the
+[jpy Project](https://github.com/jpy-consortium/jpy) and is independent of the snappy module.
 
-esa_snappy has been tested with Python 2.7, 3.3 and 3.4 with Java 8 JDKs. 
+Until SNAP version 9, the functionality was realized by an internal module 'snap-python' in snap-engine,
+finally providing a Python package named *snappy*, but this lead to conflicts as other common Python
+packages exist with this name. E.g., various state-of-the-art Python packages (such as xarray, dask) could not be used.
+Moreover, the *snappy* package could only be used with Python versions <= 3.6. The new *esa_snappy* plugin now
+provides a Python package with the same name *esa_snappy* which also supports the more recent Python versions up to 3.10.
 
-
-////////////////////////////// To following text is outdated - MUST UPDATE SOON ////////////////////////////// 
-
-
-`esa_snappy` version 5.0.5, SNAP configures itself for a given Python executable. If not already done
-by the installer, set the configuration property `snap.pythonExecutable` in file `${snap.home}/etc/snap.properties`
-to your desired Python executable.
-
-Before you can start using the SNAP API or developing SNAP operator plugins with Python you need configure 
-SNAP for the desired Python version. 
-
-If there is no matching binary distribution, you will have to build `jpy` on your own and then copy your binary 
-distribution to the `${snap.home}/modules/${snap-python}/lib` directory.
-
-Unfortunately this has to be done manually, so be 
-prepared to invest at least half an hour for setting up things correctly.
+Before you can start using the SNAP API or developing SNAP operator plugins with Python you
+need to install *esa_snappy* as plugin in SNAP and configure SNAP for the desired Python version. This procedure
+is described in the following.
 
 Installation
 ------------
 
-The first step is to properly install `jpy` as described in the [jpy documentation](http://jpy.readthedocs.org/en/latest/install.html).
-(Be sure use `jpy` version 0.7.3 or higher.) After successful installation of `jpy`, make sure that you have run VISAT at least once so that all modules are unpacked. Afterwards, you will be able to install `esa_snappy` as follows:
+With the new *esa_snappy* plugin, a manual installation of jpy is no longer necessary,
+as jpy wheels with the required shared libraries for all supported
+Python versions and platforms are now included in the plugin. The jpy installation is done
+automatically as part of the *esa_snappy* installation and Python configuration, which
+in return can be done either
+
+* from the command line using a configuration script which is provided within the SNAP installation
+* from a GUI as an optional step of the SNAP installation itself (not yet available)
+* from a GUI which can be invoked from SNAP Desktop if SNAP is already installed (not yet available)
+
+### Installation from the command line
 
 On Darwin / Linux type:
 
-    export SNAP_HOME=<path to your SNAP 5 installation>
-    cd $SNAP_HOME/modules/snap-python-5.0/snappy
-    python3 setup.py install --user
+    cd <path to your SNAP installation>/bin
+    ./snappy-conf <path/to/your/Python/installation>/bin/python [esa_snappy installation dir]
 
 On Windows type:
 
-    SET SNAP_HOME=<path to your SNAP 5 installation>
-    cd %SNAP_HOME%\modules\snap-python-5.0\snappy
-    python setup.py install
+    cd <path to your SNAP installation>\bin
+    .\snappy-conf.bat <path\to\your\Python\installation>\python.exe [esa_snappy installation dir]
 
-If you encounter any problems during the `jpy` or `esa_snappy` setup please do not hesitate to contact the
-[SNAP user forum](http://www.brockmann-consult.de/cms/web/snap/forum).
+If no *esa_snappy* installation directory is specified, the installation will be done into
+<'user home directory'>/.snap/snap-python. This is likely the most common case.
+
+If you encounter any problems during the *esa_snappy* installation, please do not hesitate to contact the
+[SNAP user forum](https://forum.step.esa.int/).
+
+### Installation from GUI during the SNAP installation
+
+#### not yet available
+
+### Installation from GUI within SNAP Desktop
+
+#### not yet available
 
 Testing
 -------
 
-When esa_snappy is imported into your Python script or module, it will scan a SNAP installation for the available
-SNAP API components. For this purpose, snappy needs to know where the SNAP installation is located. It can either be
-configured via the environment variables `SNAP_HOME` or `SNAP2_HOME` or by using a dedicated *INI file* as described
-below.
+When *esa_snappy* is imported into your Python script or module, it will scan a SNAP installation
+for the available SNAP API components. To test if the import works, make sure that your Python
+executable is on your path, and then type
 
-On Darwin / Linux type:
+On Darwin / Linux:
 
-    set SNAP_HOME=<path to your SNAP 2.0 installation>
-    python3
-    >>> import esa_snappy
-
-On Windows type:
-
-    export SNAP_HOME=<path to your SNAP 5 installation>
     python
+    >>> import sys
+    >>> sys.path.append('<esa_snappy installation dir>')
     >>> import esa_snappy
 
-If the import is successful (no errors are raised) you can exit the Python interpreter and perform the test cases in the `snappy` directory.
-They all require an EO data product file as input named `MER_RR__1P.N1`, which is an Envisat MERIS L1b product.
-You can download an Envisat MERIS L1b test file from the
-[SNAP home page](http://www.brockmann-consult.de/cms/web/snap/meris-products)
-and rename it to `MER_RR__1P.N1` in order to run the tests. The tests expect [numpy](http://www.numpy.org/) to be installed. 
+On Windows:
+
+    python.exe
+    >>> import sys
+    >>> sys.path.append('<esa_snappy installation dir>')
+    >>> import esa_snappy
+
+If the import is successful (no errors are raised) you can exit the Python interpreter and
+perform the test cases in the '<esa_snappy installation dir>/esa_snappy/tests' directory:
+
 
     python test_snappy_mem.py
     python test_snappy_perf.py
     python test_snappy_product.py
 
+These tests expect [numpy](http://www.numpy.org/) to be installed in your Python.
+They all require an EO data test product file as input named `MER_FRS_L1B_SUBSET.dim`,
+which is an Envisat MERIS L1b product. This product is located in the
+'<esa_snappy installation dir>/esa_snappy/testdata' directory.
+
 Please note that the SNAP API is actually independent of specific data formats, the MERIS file in this case
 is only used as an example and for testing.
+
+Known issues
+------------
+
+#### Configuration failed with exit code 30
+
+This error has been occasionally observed during the *esa_snappy* installation and Python
+configuration on Linux. Here, the environment variable LD_LIBRARY_PATH is likely not set
+correctly, and thus the shared library for the JVM cannot be found. This can be solved by
+performing the following steps:
+
+* `locate libjvm.so`
+* Output is, say, `/path/to/libjvm.so`
+* `export LD_LIBRARY_PATH=/path/to/:${LD_LIBRARY_PATH}`
+* Re-try the installation
+
+#### Cannot open shared object
+
+After a successful *esa_snappy* installation and Python configuration, you might get an error
+similar to
+`ImportError: libjvm.so: cannot open shared object file: No such file or directory`
+when doing `import jpy` within your Python script.
+Again, the shared library for the JVM cannot be found. This might happen if the
+LD_LIBRARY_PATH has previously been set correctly, but was changed or not set
+permanently. In this case, set the LD_LIBRARY_PATH as described above and restart your Python script.
+
 
 Configuration
 -------------
 
-`esa_snappy` can be configured by an *INI file* `snappy.ini`. This file is read from the current working directory
-or from the system-dependent location from which the installed Python `esa_snappy` module is loaded from.
+*esa_snappy* can be configured by an *INI file* `snappy.ini`. This file is read from the current working directory
+or from the system-dependent location from which the installed Python *esa_snappy* module is loaded from.
 
 Given here is an example of its content (Windows):
 
     [DEFAULT]
-    snap_home: C:\Program Files\snap
-    extra_classpath: target/classes
-    max_mem: 8G
+    snap_home: C:\Program Files\snap-10.0
+    java_class_path: ./target/classes
+    java_max_mem: 8G
     debug: True
 
-
-Running esa_snappy in an Apache webserver
--------------------------------------
-
-Using the [mod_wsgi](https://code.google.com/p/modwsgi/)-module within an [Apache HTTP Server](http://httpd.apache.org/) environment allows to use `esa_snappy` within web applications. However, there are a number of common pitfalls, which are listed in the sections below.
-
-### Cannot open shared object
-
-When doing `import jpy`, you might get an error similar to `ImportError: libjvm.so: cannot open shared object file: No such file or directory`. However, the file exists, and you don't get this error when you use the console. The problem is solved by performing the following steps:
-
-* `locate libjvm.so`
-* Output is, say, `/path/to/libjvm.so`
-* Add `/path/to` to the `/etc/ld.so.conf` file
-* Run `sudo ldconfig`
-* Restart Apache
-* 
-(copied from [stackoverflow](http://stackoverflow.com/a/4527546/2043113))
-
-### Environment variables not set
-
-No matter if you have set all required environment variables in your shell, you might nonetheless receive the following error when doing `import esa_snappy`: `RuntimeError: environment variable "SNAP_HOME" must be set to a valid SNAP installation directory`.
-The reason for this is that the environment needs to be preserved for the Apache. A possible solution is to set the environment within the startup routine of the web application, such as
-
-    os.environ['JAVA_HOME'] = settings.JAVA_HOME
-    os.environ['JDK_HOME'] = settings.JDK_HOME
-    os.environ['PATH'] = settings.PATH_extension + ':' + os.getenv('PATH', '')
-    os.environ['LD_LIBRARY_PATH'] = settings.LD_LIBRARY_PATH_extension + ':' + os.getenv('LD_LIBRARY_PATH', '')
-    os.environ['SNAP_HOME'] = settings.SNAP_HOME
-
-, where `settings` contains the respective values.
-
-### JAI 
-
-When using JAI classes, you might get the following error: `RuntimeError: java.lang.NoClassDefFoundError: Could not initialize class javax.media.jai.JAI`. This can be resolved by calling
-
-    SystemUtils = jpy.get_type('org.esa.snap.util.SystemUtils')
-    SystemUtils.init3rdPartyLibs(None)
-
-in the startup routine of the web application.
 
 Examples
 --------
 
-
 ### SNAP Java API Usage
 
 The examples for the API usage are simple tools that compute an output product from an input product.
-You can download an Envisat MERIS test files used as input from the
-[SNAP home page](http://www.brockmann-consult.de/cms/web/snap/meris-products)
-and rename it to `MER_RR__1P.N1` and `MER_RR__2P.N1` in order to run the example code.
-All examples expect [numpy](http://www.numpy.org/) to be installed. 
+These examples expect MERIS L1 or L2 products as stated in each of the example scripts.
+You can download Envisat MERIS L1 or L2 files used as input from various archives, such as
+[ESA Envisat MERIS Online Dissemination Service](https://meris-ds.eo.esa.int/oads/access/)
+at ESA, or
+[OceanColor Web](https://oceancolor.gsfc.nasa.gov/data/meris/) at NASA.
+
+Again, all examples expect [numpy](http://www.numpy.org/) to be installed. Also note that all
+the scripts append the relative path
+
+    sys.path.append('../../')
+
+as in this example setup the *esa_snappy* module is located two folder levels above the 'examples' subfolder.
+Adapt this path (or replace by the absolute path of your *esa_snappy* module) if the scripts shall
+be run from a different location.
+
+Let's assume you have in the 'examples' subfolder a MERIS L1 and a MERIS L2 test product saved in Dimap format
+named `MER_RR__1P.dim` and `MER_RR__2P.dim` in order to run the example code.
 
 Computing a Fluorescence Line Height (FLH) product from water-leaving reflectances:
 
-    python snappy_flh.py MER_RR__2P.N1
+    python snappy_flh.py MER_RR__2P.dim
 
 Computing a Normalized Difference Vegetation Index (NDVI) product from top-of-atmosphere radiances:
 
-    python snappy_ndvi.py MER_RR__1P.N1
-    python snappy_ndvi_with_masks.py MER_RR__1P.N1
+    python snappy_ndvi.py MER_RR__1P.dim
+    python snappy_ndvi_with_masks.py MER_RR__1P.dim
 
 Performing arbitrary band maths:
 
-    python snappy_bmaths.py MER_RR__1P.N1
+    python snappy_bmaths.py MER_RR__1P.dim
 
 Tailoring any input product to a spatial subset:
 
-    python snappy_subset.py MER_RR__2P.N1 "POLYGON((15.786082 45.30223, 11.798364 46.118263, 10.878688 43.61961, 14.722727 42.85818, 15.786082 45.30223))"
+    python snappy_subset.py MER_RR__2P.dim "POLYGON((15.786082 45.30223, 11.798364 46.118263, 10.878688 43.61961, 14.722727 42.85818, 15.786082 45.30223))"
 
 
-There are many more possibilities using the SNAP API. Actually all Java classes of the SNAP API can be used.
+There are many more possibilities to use the SNAP API. In principle, all Java classes of the SNAP API can be used.
 As the SNAP API can be used from Python in a similar way as from Java, all of the Java API documentation applies as well.
 Please check:
 
-* [SNAP API Documentation](http://www.brockmann-consult.de/snap/doc/apidocs/index.html)
+* [SNAP Engine API Documentation](http://step.esa.int/docs/v9.0/apidoc/engine/)
+* [SNAP Desktop API Documentation](http://step.esa.int/docs/v9.0/apidoc/desktop/)
 
-esa_snappy imports the most frequently used Java API classes by default
- 
-* `org.esa.snap.core.dataio.ProductIO`
-* `org.esa.snap.core.datamodel.Product`
-* `org.esa.snap.core.datamodel.RasterDataNode`
-* `org.esa.snap.core.datamodel.AbstractBand`
-* `org.esa.snap.core.datamodel.Band`
-* `org.esa.snap.core.datamodel.VirtualBand`
-* `org.esa.snap.core.datamodel.GeoCoding`
-* `org.esa.snap.core.datamodel.PixelPos`
-* `org.esa.snap.core.datamodel.PixelPos`
-* `org.esa.snap.util.ProductUtils`
-* `org.esa.snap.core.gpf.GPF`
-* `org.esa.snap.core.gpf.Operator`
-* `org.esa.snap.core.gpf.Tile`
+### Import of Java API classes
 
-To import other Java API classes, get the fully qualified type name from the API reference and import it using jpy. 
+The *esa_snappy* module imports the most frequently used Java API classes by default:
+
+##### Frequently used classes & interfaces from JRE
+*    `String = jpy.get_type('java.lang.String')`
+*    `File = jpy.get_type('java.io.File')`
+*    `Point = jpy.get_type('java.awt.Point')`
+*    `Rectangle = jpy.get_type('java.awt.Rectangle')`
+*    `Arrays = jpy.get_type('java.util.Arrays')`
+*    `Collections = jpy.get_type('java.util.Collections')`
+*    `List = jpy.get_type('java.util.List')`
+*    `Map = jpy.get_type('java.util.Map')`
+*    `Set = jpy.get_type('java.util.Set')`
+*    `ArrayList = jpy.get_type('java.util.ArrayList')`
+*    `HashMap = jpy.get_type('java.util.HashMap')`
+*    `HashSet = jpy.get_type('java.util.HashSet')`
+
+##### Frequently used classes & interfaces from SNAP Engine
+
+*Product tree & associates:*
+
+*    `Product = jpy.get_type('org.esa.snap.core.datamodel.Product')`
+*    `VectorDataNode = jpy.get_type('org.esa.snap.core.datamodel.VectorDataNode')`
+*    `RasterDataNode = jpy.get_type('org.esa.snap.core.datamodel.RasterDataNode')`
+*    `TiePointGrid = jpy.get_type('org.esa.snap.core.datamodel.TiePointGrid')`
+*    `AbstractBand = jpy.get_type('org.esa.snap.core.datamodel.AbstractBand')`
+*    `Band = jpy.get_type('org.esa.snap.core.datamodel.Band')`
+*    `VirtualBand = jpy.get_type('org.esa.snap.core.datamodel.VirtualBand')`
+*    `Mask = jpy.get_type('org.esa.snap.core.datamodel.Mask')`
+*    `GeneralFilterBand = jpy.get_type('org.esa.snap.core.datamodel.GeneralFilterBand')`
+*    `ConvolutionFilterBand = jpy.get_type('org.esa.snap.core.datamodel.ConvolutionFilterBand')`
+
+*Product tree associates:*
+
+*    `ProductData = jpy.get_type('org.esa.snap.core.datamodel.ProductData')`
+*    `GeoCoding = jpy.get_type('org.esa.snap.core.datamodel.GeoCoding')`
+*    `TiePointGeoCoding = jpy.get_type('org.esa.snap.core.datamodel.TiePointGeoCoding')`
+*    `PixelGeoCoding = jpy.get_type('org.esa.snap.core.datamodel.PixelGeoCoding')`
+*    `PixelGeoCoding2 = jpy.get_type('org.esa.snap.core.datamodel.PixelGeoCoding2')`
+*    `CrsGeoCoding = jpy.get_type('org.esa.snap.core.datamodel.CrsGeoCoding')`
+*    `GeoPos = jpy.get_type('org.esa.snap.core.datamodel.GeoPos')`
+*    `PixelPos = jpy.get_type('org.esa.snap.core.datamodel.PixelPos')`
+*    `FlagCoding = jpy.get_type('org.esa.snap.core.datamodel.FlagCoding')`
+*    `ProductNodeGroup = jpy.get_type('org.esa.snap.core.datamodel.ProductNodeGroup')`
+
+*Graph Processing Framework:*
+
+*    `GPF = jpy.get_type('org.esa.snap.core.gpf.GPF')`
+*    `Operator = jpy.get_type('org.esa.snap.core.gpf.Operator')`
+*    `Tile = jpy.get_type('org.esa.snap.core.gpf.Tile')`
+
+*Utilities:*
+
+*    `EngineConfig = jpy.get_type('org.esa.snap.runtime.EngineConfig')`
+*    `Engine = jpy.get_type('org.esa.snap.runtime.Engine')`
+*    `SystemUtils = jpy.get_type('org.esa.snap.core.util.SystemUtils')`
+*    `ProductIO = jpy.get_type('org.esa.snap.core.dataio.ProductIO')`
+*    `ProductUtils = jpy.get_type('org.esa.snap.core.util.ProductUtils')`
+*    `GeoUtils = jpy.get_type('org.esa.snap.core.util.GeoUtils')`
+*    `ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')`
+*    `PlainFeatureFactory = jpy.get_type('org.esa.snap.core.datamodel.PlainFeatureFactory')`
+*    `FeatureUtils = jpy.get_type('org.esa.snap.core.util.FeatureUtils')`
+
+*GeoTools:*
+
+*    `DefaultGeographicCRS = jpy.get_type('org.geotools.referencing.crs.DefaultGeographicCRS')`
+*    `ListFeatureCollection = jpy.get_type('org.geotools.data.collection.ListFeatureCollection')`
+*    `SimpleFeatureBuilder = jpy.get_type('org.geotools.feature.simple.SimpleFeatureBuilder')`
+
+*JTS:*
+
+*    `Geometry = jpy.get_type('org.locationtech.jts.geom.Geometry')`
+*    `WKTReader = jpy.get_type('org.locationtech.jts.io.WKTReader')`
+
+
+To import other Java API classes, get the fully qualified type name from the API reference and import it using jpy.
 For example:
 
-    jpy = snappy.jpy
+    jpy = esa_snappy.jpy
     Color = jpy.get_type('java.awt.Color')
     ColorPoint = jpy.get_type('org.esa.snap.core.datamodel.ColorPaletteDef$Point')
     ColorPaletteDef = jpy.get_type('org.esa.snap.core.datamodel.ColorPaletteDef')
     ImageInfo = jpy.get_type('org.esa.snap.core.datamodel.ImageInfo')
     ImageManager = jpy.get_type('org.esa.snap.core.image.ImageManager')
     JAI = jpy.get_type('javax.media.jai.JAI')
-    
-Due to the 1:1 translation of Java to Python, a lot of code in the Java programming tutorial applies to 
-Python as well:
 
-* [SNAP Programming Tutorial](http://www.brockmann-consult.de/snap-wiki/display/SNAP/SNAP+4+Programming+Tutorial)
 
 ### SNAP Operator Plugin
 
-The directory `snappy-operator-example` represents an NDVI operator plugin for SNAP. In order to activate it in SNAP
-copy it to the SNAP `modules` directory and start VISAT. You will find a new entry *Python NDVI Operator...*
-in VISAT's Processing menu. It will also be available from SNAP's `gpt` command-line tool.
+The *esa-snappy* module also enables Python developers to write operators for SNAP.
+See the comprehensive documentation:
 
-Note that running Python operator plugins requires the environment variable `SNAP_HOME` to be accessible by VISAT
-and the `gpt` command-line tool.
+* [How to integrate an operator](https://senbox.atlassian.net/wiki/spaces/SNAP/pages/24051787/How+to+integrate+an+operator)
+* [What to consider when writing an Operator in Python](https://senbox.atlassian.net/wiki/spaces/SNAP/pages/42041346/What+to+consider+when+writing+an+Operator+in+Python)
 
-You can use the directory `snappy-operator-example` as a template for new Python data processors. You can also
-add new Python code directly to it. In this case
 
-* create a new `snappy-operator-example/<your_operator>.py` (e.g. by copying the existing `ndvi_op.py`),
-* create a new `snappy-operator-example/<your_operator>-info.xml` (e.g. by copying the existing `ndvi_op-info.py`) and
-* register *<your_operator>* in `snappy-operator-example/META-INF/services/snappy-operators`.
-
-Of course you will need to adapt the contents of the files accordingly.
-
-Again, please don't hesitate to contact the
-[SNAP user forum](http://forum.step.esa.int).
+#### Finally, please don't hesitate to contact the [SNAP user forum](http://forum.step.esa.int).
 
 *Have fun!*
