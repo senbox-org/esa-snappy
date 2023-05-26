@@ -4,10 +4,10 @@
 -->
 <operator>
     <!-- The name uniquely identifies the operator within SNAP -->
-    <name>org.esa.snap.snappy.DummyTestOp</name>
+    <name>eu.esa.snap.snappy.DummyTestOp</name>
     <!-- The alias is a more user-friendly name, e.g. to be used on the command line -->
     <alias>py_Dummy_op</alias>
-    <operatorClass>org.esa.snap.snappy.gpf.PyOperator</operatorClass>
+    <operatorClass>eu.esa.snap.snappy.gpf.PyOperator</operatorClass>
 
     <version>1.0</version>
     <authors>Brockmann Consult GmbH</authors>

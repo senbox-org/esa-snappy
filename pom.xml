@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.esa.snap</groupId>
+    <groupId>eu.esa.snap</groupId>
     <artifactId>esa_snappy</artifactId>
     <version>10.0.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
@@ -136,7 +136,7 @@
                     <homePageUrl>https://step.esa.int/main/</homePageUrl>
                     <requiresRestart>true</requiresRestart>
 <!--                    <publicPackages>-->
-<!--                        <publicPackage>org.esa.snap.snappy</publicPackage>-->
+<!--                        <publicPackage>eu.esa.snap.snappy</publicPackage>-->
 <!--                    </publicPackages>-->
                 </configuration>
             </plugin>

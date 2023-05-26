@@ -23,7 +23,7 @@ fi
 
 PYTHON_EXEC=$1
 
-JPY_JAR=${SNAP_HOME}/snap/modules/ext/org.esa.snap.esa_snappy/org-jpy/jpy.jar
+JPY_JAR=${SNAP_HOME}/snap/modules/ext/eu.esa.snap.esa_snappy/org-jpy/jpy.jar
 SNAP_RUNTIME_JAR=${SNAP_HOME}/snap/modules/ext/org.esa.snap.snap-rcp/org-esa-snap/snap-runtime.jar
 
 JARS=${SNAP_HOME}/snap/modules/*:${JPY_JAR}:${SNAP_RUNTIME_JAR}
