@@ -3,9 +3,9 @@
 <filesystem>
 
     <folder name="Actions">
-        <file name="org-esa-snap-snappy-ShowSnappySettingsAction.instance">
+        <file name="eu-esa-snap-snappy-ShowSnappySettingsAction.instance">
             <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-            <attr name="delegate" methodvalue="org.esa.snap.snappy.desktop.ShowSnappySettingsAction.create"/>
+            <attr name="delegate" methodvalue="eu.esa.snap.snappy.desktop.ShowSnappySettingsAction.create"/>
             <attr name="displayName" stringvalue="ESA Snappy Settings"/>
             <attr name="description" stringvalue="Configure ESA Snappy"/>
         </file>
@@ -13,9 +13,9 @@
 
     <folder name="Menu">
         <folder name="Tools">
-            <file name="org-esa-snap-snappy-ShowSnappySettingsAction.shadow">
+            <file name="eu-esa-snap-snappy-ShowSnappySettingsAction.shadow">
                 <attr name="originalFile"
-                      stringvalue="Actions/org-esa-snap-snappy-ShowSnappySettingsAction.instance"/>
+                      stringvalue="Actions/eu-esa-snap-snappy-ShowSnappySettingsAction.instance"/>
                 <attr name="position" intvalue="100"/>
             </file>
         </folder>
@@ -24,7 +24,7 @@
     <!--    use this later-->
     <!--    <folder name="Services">-->
     <!--        <folder name="JavaHelp">-->
-    <!--            <file name="org-esa-snap-snappy-helpset.xml" url="helpset.xml">-->
+    <!--            <file name="eu-esa-snap-snappy-helpset.xml" url="helpset.xml">-->
     <!--                <attr name="position" intvalue="8600"/>-->
     <!--            </file>-->
     <!--        </folder>-->
