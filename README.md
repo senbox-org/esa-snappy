@@ -20,10 +20,11 @@ Until SNAP version 9, the functionality was realized by an internal module 'snap
 finally providing a Python package named *snappy*, but this lead to conflicts as other common Python
 packages exist with this name. E.g., various state-of-the-art Python packages (such as xarray, dask) could not be used.
 Moreover, the *snappy* package could only be used with Python versions <= 3.6. The new *esa_snappy* plugin now
-provides a Python package with the same name *esa_snappy* which also supports the more recent Python versions up to 3.10.
+provides a Python package with the same name *esa_snappy* which, along with the current jpy version, 
+supports the more recent Python versions 3.6 to 3.10.
 
 Before you can start using the SNAP API or developing SNAP operator plugins with Python you
-need to install *esa_snappy* as plugin in SNAP and configure SNAP for the desired Python version. This procedure
+need to install *esa_snappy* in SNAP and configure SNAP for the desired Python version. This procedure
 is described in the following.
 
 Installation
@@ -35,9 +36,10 @@ Python versions and platforms are now included in the plugin. The jpy installati
 automatically as part of the *esa_snappy* installation and Python configuration, which
 in return can be done either
 
-* from the command line using a configuration script which is provided within the SNAP installation
-* from a GUI as an optional step of the SNAP installation itself (not yet available)
-* from a GUI which can be invoked from SNAP Desktop if SNAP is already installed (not yet available)
+* from the command line using a configuration script which is provided within the SNAP installation 
+(as for *snappy* in earlier SNAP versions)
+* from a GUI as an optional step of the SNAP installation itself (as for *snappy* in earlier SNAP versions)
+* from a GUI which can be invoked from SNAP Desktop if SNAP is already installed (in preparation, not yet functional)
 
 ### Installation from the command line
 
@@ -59,11 +61,12 @@ If you encounter any problems during the *esa_snappy* installation, please do no
 
 ### Installation from GUI during the SNAP installation
 
-#### not yet available
+During the SNAP installation, a dedicated screen for the Python configuration will appear. 
+Follow the instructions given there.
 
 ### Installation from GUI within SNAP Desktop
 
-#### not yet available
+#### in preparation, not yet functional
 
 Testing
 -------
