@@ -1,6 +1,9 @@
 esa-snappy
 ==========
 
+[![pipeline status](https://gitlab.com/senbox-org/esa-snappy/badges/master/pipeline.svg)](https://gitlab.com/senbox-org/esa-snappy/-/commits/master)
+[![coverage report](https://gitlab.com/senbox-org/esa-snappy/badges/master/coverage.svg)](https://gitlab.com/senbox-org/esa-snappy/-/commits/master)
+
 The plugin `esa-snappy` enables Python developers to
 
 1. use the SNAP Java API from Python, and to
