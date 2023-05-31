@@ -1,6 +1,7 @@
 /.idea/
 /.run/
 target/
+*.iml
 
 # Compiled class file
 *.class
