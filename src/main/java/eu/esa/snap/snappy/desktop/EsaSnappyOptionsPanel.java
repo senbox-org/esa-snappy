@@ -22,6 +22,8 @@ import org.esa.snap.runtime.Config;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.io.File;
 import java.util.prefs.Preferences;
 
 final class EsaSnappyOptionsPanel extends javax.swing.JPanel {
@@ -29,8 +31,12 @@ final class EsaSnappyOptionsPanel extends javax.swing.JPanel {
 
     private final EsaSnappyOptionsPanelController controller;
 
-    private javax.swing.JTextField pythonPathTextField;
+    private javax.swing.JPanel snappyParametersPanel;
+
     private JComponent pythonPathLabel;
+    private javax.swing.JTextField pythonPathTextField;
+    private javax.swing.JButton browseUserDirButton;
+
 
     EsaSnappyOptionsPanel(EsaSnappyOptionsPanelController controller) {
         this.controller = controller;
@@ -56,51 +62,68 @@ final class EsaSnappyOptionsPanel extends javax.swing.JPanel {
     }
 
     private void initComponents() {
+
+        GridBagConstraints gridBagConstraints;
+
+        snappyParametersPanel = new javax.swing.JPanel();
+
+        snappyParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("ESA Snappy Options"));
+        snappyParametersPanel.setMinimumSize(new java.awt.Dimension(283, 115));
+        snappyParametersPanel.setLayout(new java.awt.GridBagLayout());
+
         pythonPathLabel = new JLabel("Path to Python executable:");
-        pythonPathTextField = new JTextField("");
+        org.openide.awt.Mnemonics.setLocalizedText((JLabel) pythonPathLabel, "Path to Python executable");
+        pythonPathLabel.setMaximumSize(new java.awt.Dimension(100, 14));
+        pythonPathLabel.setPreferredSize(new java.awt.Dimension(80, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 0, 0);
+        snappyParametersPanel.add(pythonPathLabel, gridBagConstraints);
 
-        setBorder(new TitledBorder("ESA Snappy Options"));
-        GroupLayout layout = new GroupLayout(this);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-        setLayout(layout);
-//        layout.setVerticalGroup(
-//                layout.createSequentialGroup()
-//                        .addGroup(
-//                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                                        .addComponent(createZipArchiveLabel)
-//                                        .addComponent(createZipArchiveCheck))
-//                        .addGroup(
-//                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                                        .addComponent(binaryFormatLabel)
-//                                        .addComponent(binaryFormatCombo))
-//                        .addGroup(
-//                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                                        .addComponent(compressorLabel)
-//                                        .addComponent(compressorCombo))
-//                        .addGroup(
-//                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                                        .addComponent(compressionLevelLabel)
-//                                        .addComponent(compressionLevelCombo))
-//                        .addGap(0, 2000, Short.MAX_VALUE)
-//        );
-//        layout.setHorizontalGroup(
-//                layout.createSequentialGroup()
-//                        .addGroup(
-//                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//                                        .addComponent(binaryFormatLabel)
-//                                        .addComponent(compressorLabel)
-//                                        .addComponent(compressionLevelLabel)
-//                                        .addComponent(createZipArchiveLabel))
-//                        .addGroup(
-//                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//                                        .addComponent(binaryFormatCombo)
-//                                        .addComponent(compressorCombo)
-//                                        .addComponent(compressionLevelCombo)
-//                                        .addComponent(createZipArchiveCheck))
-//                        .addGap(0, 2000, Short.MAX_VALUE)
-//        );
+        pythonPathTextField = new JTextField("todo");
 
+        pythonPathTextField.setText("todo");
+        pythonPathTextField.setToolTipText("todo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.RELATIVE;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 2.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        snappyParametersPanel.add(pythonPathTextField, gridBagConstraints);
+
+        browseUserDirButton = new javax.swing.JButton();
+        org.openide.awt.Mnemonics.setLocalizedText(browseUserDirButton, "...");
+        browseUserDirButton.addActionListener(evt -> browsePythonPathButtonActionPerformed());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 2, 0, 10);
+        snappyParametersPanel.add(browseUserDirButton, gridBagConstraints);
+
+//        setBorder(new TitledBorder("ESA Snappy Options"));
+//        GroupLayout layout = new GroupLayout(this);
+//        layout.setAutoCreateGaps(true);
+//        layout.setAutoCreateContainerGaps(true);
+//        setLayout(layout);
+
+        add(snappyParametersPanel);
+    }
+
+    private void browsePythonPathButtonActionPerformed() {
+        JFileChooser fileChooser = new JFileChooser(pythonPathTextField.getText());
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedDir = fileChooser.getSelectedFile();
+            pythonPathTextField.setText(selectedDir.getAbsolutePath());
+            pythonPathTextField.setForeground(Color.BLACK);
+            controller.changed();
+        }
     }
 
     private void addListenerToComponents(EsaSnappyOptionsPanelController controller) {

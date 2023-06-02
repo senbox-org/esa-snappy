@@ -2,24 +2,24 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
 
-    <folder name="Actions">
-        <file name="eu-esa-snap-snappy-ShowSnappySettingsAction.instance">
-            <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-            <attr name="delegate" methodvalue="eu.esa.snap.snappy.desktop.ShowSnappySettingsAction.create"/>
-            <attr name="displayName" stringvalue="ESA Snappy Settings"/>
-            <attr name="description" stringvalue="Configure ESA Snappy"/>
-        </file>
-    </folder>
+<!--    <folder name="Actions">-->
+<!--        <file name="eu-esa-snap-snappy-ShowSnappySettingsAction.instance">-->
+<!--            <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>-->
+<!--            <attr name="delegate" methodvalue="eu.esa.snap.snappy.desktop.ShowSnappySettingsAction.create"/>-->
+<!--            <attr name="displayName" stringvalue="ESA Snappy Settings"/>-->
+<!--            <attr name="description" stringvalue="Configure ESA Snappy"/>-->
+<!--        </file>-->
+<!--    </folder>-->
 
-    <folder name="Menu">
-        <folder name="Tools">
-            <file name="eu-esa-snap-snappy-ShowSnappySettingsAction.shadow">
-                <attr name="originalFile"
-                      stringvalue="Actions/eu-esa-snap-snappy-ShowSnappySettingsAction.instance"/>
-                <attr name="position" intvalue="100"/>
-            </file>
-        </folder>
-    </folder>
+<!--    <folder name="Menu">-->
+<!--        <folder name="Tools">-->
+<!--            <file name="eu-esa-snap-snappy-ShowSnappySettingsAction.shadow">-->
+<!--                <attr name="originalFile"-->
+<!--                      stringvalue="Actions/eu-esa-snap-snappy-ShowSnappySettingsAction.instance"/>-->
+<!--                <attr name="position" intvalue="100"/>-->
+<!--            </file>-->
+<!--        </folder>-->
+<!--    </folder>-->
 
     <!--    use this later-->
     <!--    <folder name="Services">-->
