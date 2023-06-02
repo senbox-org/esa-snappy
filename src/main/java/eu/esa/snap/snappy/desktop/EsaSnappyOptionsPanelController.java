@@ -40,7 +40,7 @@ public class EsaSnappyOptionsPanelController extends OptionsPanelController {
 
     @Override
     public void cancel() {
-        // need not do anything special, if no changes have been persisted yet
+        // todo ?
     }
 
     @Override
@@ -55,8 +55,6 @@ public class EsaSnappyOptionsPanelController extends OptionsPanelController {
 
     @Override
     public JComponent getComponent(Lookup lookup) {
-
-//        return new JPanel();
         return getPanel();
     }
 
@@ -77,16 +75,17 @@ public class EsaSnappyOptionsPanelController extends OptionsPanelController {
 
     @Override
     public HelpCtx getHelpCtx() {
-        return null;
+        // todo
+        return new HelpCtx("esaSnappyConfig");
     }
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
-
+        // todo ?
     }
 
     @Override
     public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
-
+        // todo ?
     }
 }
