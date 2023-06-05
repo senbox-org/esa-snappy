@@ -295,6 +295,6 @@ See the comprehensive documentation:
 * [What to consider when writing an Operator in Python](https://senbox.atlassian.net/wiki/spaces/SNAP/pages/42041346/What+to+consider+when+writing+an+Operator+in+Python)
 
 
-#### Finally, please don't hesitate to contact the [SNAP user forum](http://forum.step.esa.int).
+#### Finally, please don't hesitate to contact the [SNAP User Forum](http://forum.step.esa.int).
 
 *Have fun!*
