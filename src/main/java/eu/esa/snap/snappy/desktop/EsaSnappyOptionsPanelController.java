@@ -8,16 +8,20 @@ import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@SuppressWarnings("unused")
-@OptionsPanelController.TopLevelRegistration(
-        id = "ESASNAPPY",
-        categoryName = "ESA-Snappy",
-        // todo - only placeholder image - create better image
-        iconBase = "eu/esa/snap/snappy/desktop/snap-python32.png",
-        keywords = "python, snappy",
-        keywordsCategory = "ESA-Snappy",
-        position = 2000
-)
+// To show the tab for ESA-SNAPPY in the Tools --> Options dialog, activate the registration block below.
+// If needed, the option to configure esa_snappy from this ESA-Snappy options dialog is foreseen for a
+// future SNAP release >= 11.
+
+//@SuppressWarnings("unused")
+//@OptionsPanelController.TopLevelRegistration(
+//        id = "ESASNAPPY",
+//        categoryName = "ESA-Snappy",
+//        // todo - only placeholder image - create better image
+//        iconBase = "eu/esa/snap/snappy/desktop/snap-python32.png",
+//        keywords = "python, snappy",
+//        keywordsCategory = "ESA-Snappy",
+//        position = 2000
+//)
 public class EsaSnappyOptionsPanelController extends OptionsPanelController {
 
     private EsaSnappyOptionsPanel panel;
