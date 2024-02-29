@@ -81,13 +81,6 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.esa.snap</groupId>
-            <artifactId>snap-test-utils</artifactId>
-            <version>${snap.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -135,9 +128,9 @@
                     <licenseFile>LICENSE.txt</licenseFile>
                     <homePageUrl>https://step.esa.int/main/</homePageUrl>
                     <requiresRestart>true</requiresRestart>
-<!--                    <publicPackages>-->
-<!--                        <publicPackage>eu.esa.snap.snappy</publicPackage>-->
-<!--                    </publicPackages>-->
+                    <!--                    <publicPackages>-->
+                    <!--                        <publicPackage>eu.esa.snap.snappy</publicPackage>-->
+                    <!--                    </publicPackages>-->
                 </configuration>
             </plugin>
 
