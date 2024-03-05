@@ -2,9 +2,43 @@
 include:
   - 'https://gitlab.com/senbox-org/snap-engine/raw/master/.gitlab-ci.yml'
 
+compile-snap-engine:
+  stage: build
+  variables:
+    MAVEN_OPTS: >-
+      -Dhttps.protocols=TLSv1.2
+      -Dmaven.repo.local=${MAVEN_CFG_DIR}/repository
+      -Dorg.slf4j.simpleLogger.showDateTime=true
+      -Djava.awt.headless=true
+    MVN_FORBID_SNAPSHOT_DEPENDENCIES_DISABLED: "true"
+    MAVEN_DEPLOY_SNAPSHOT_WITH_SLUG_ENABLED: "false"
+    MAVEN_DEPLOY_ENABLED: "false"
+    MVN_SEMREL_RELEASE_DISABLED: "true"
+    MAVEN_SETTINGS_FILE: $MVN_SETTINGS_FILE
+    MAVEN_DEPLOY_ARGS: deploy
+    MAVEN_SBOM_DISABLED: 'true'
+    MAVEN_CLI_OPTS: >-
+      --no-transfer-progress
+      --batch-mode --errors
+      --fail-at-end --show-version
+      -DinstallAtEnd=true
+      -DdeployAtEnd=true
+      --projects=ceres-core,snap-gpf,snap-core,ceres-binding,ceres-ui,ceres-metadata,ceres-jai,ceres-glayer,ceres-binding,snap-runtime
+  trigger: 
+    project: senbox-org/snap-engine
+    branch: master
+    strategy: depend
+
 mvn-build:
   artifacts:
     paths:
+      - "${CI_PROJECT_DIR}/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/**/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/**/target/classes"
       - "${MAVEN_PROJECT_DIR}/**/target/*.nbm"
+  needs:
+    - job: compile-snap-engine
+    - project: senbox-org/snap-engine
+      job: mvn-build
+      ref: master
+      artifacts: true
