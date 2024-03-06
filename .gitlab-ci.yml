@@ -1,15 +1,86 @@
 # included templates
 include:
-  - local: '.gitlab-ci-trigger.yml'
-  - 'https://gitlab.com/senbox-org/snap-engine/raw/master/.gitlab-ci.yml'
+  # Maven template
+  - project: "to-be-continuous/maven"
+    ref: "3.7.1"
+    file: "templates/gitlab-ci-maven.yml"
+
+compile-snap-engine:
+  stage: build
+  variables:
+    MAVEN_OPTS: >-
+      -Dhttps.protocols=TLSv1.2
+      -Dmaven.repo.local=${MAVEN_CFG_DIR}/repository
+      -Dorg.slf4j.simpleLogger.showDateTime=true
+      -Djava.awt.headless=true
+    MVN_FORBID_SNAPSHOT_DEPENDENCIES_DISABLED: "true"
+    MAVEN_DEPLOY_SNAPSHOT_WITH_SLUG_ENABLED: "false"
+    MAVEN_DEPLOY_ENABLED: "false"
+    MVN_SEMREL_RELEASE_DISABLED: "true"
+    MAVEN_SETTINGS_FILE: $MVN_SETTINGS_FILE
+    MAVEN_DEPLOY_ARGS: deploy
+    MAVEN_SBOM_DISABLED: 'true'
+    MAVEN_CLI_OPTS: >-
+      --no-transfer-progress
+      --batch-mode --errors
+      --fail-at-end --show-version
+      -DinstallAtEnd=true
+      -DdeployAtEnd=true
+      --projects=ceres-core,snap-gpf,snap-core,ceres-binding,ceres-ui,ceres-metadata,ceres-jai,ceres-glayer,ceres-binding,snap-runtime
+  trigger: 
+    project: senbox-org/snap-engine
+    branch: master
+    strategy: depend
 
 mvn-build:
   artifacts:
     paths:
+      - "${CI_PROJECT_DIR}/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/**/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/**/target/classes"
       - "${MAVEN_PROJECT_DIR}/**/target/*.nbm"
-      - "${MAVEN_PROJECT_DIR}/**/target/site"
-      - "${MAVEN_PROJECT_DIR}/**/target/surefire-reports"
   needs:
     - job: compile-snap-engine
+    - project: senbox-org/snap-engine
+      job: mvn-build
+      ref: master
+      artifacts: true
+
+
+# Report on Github cf https://ecp-ci.gitlab.io/docs/guides/build-status-gitlab.html
+.report-status:
+  image: curlimages/curl
+  variables:
+    URL: "https://api.github.com/repos/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/statuses/${CI_COMMIT_SHA}"
+    STATUS_NAME: snap-ci
+  script:
+    # For complete details on the GitHub API please see:
+    # https://docs.github.com/en/rest/commits/statuses?apiVersion=2022-11-28#create-a-commit-status
+    - |-
+      curl -X POST $URL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" -d '{"state": "'$CI_JOB_NAME'", "context": "'$STATUS_NAME'", "target_url": "'$CI_PIPELINE_URL'", "description": "The build status"}'
+  environment:
+    name: reporting-github
+  dependencies: []
+
+pending:
+  stage: .pre
+  extends:
+    - .report-status
+  rules:
+    - if: '$CI_PIPELINE_TRIGGERED == "false"'
+
+success:
+  stage: .post
+  extends:
+    - .report-status
+  rules:
+    - if: '$CI_PIPELINE_TRIGGERED == "false"'
+  when: on_success
+
+failure:
+  stage: .post
+  extends:
+    - .report-status
+  rules:
+    - if: '$CI_PIPELINE_TRIGGERED == "false"'
+  when: on_failure
