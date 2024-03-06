@@ -5,7 +5,6 @@ include:
 
 mvn-build:
   artifacts:
-    artifacts:
     paths:
       - "${MAVEN_PROJECT_DIR}/**/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/**/target/classes"
