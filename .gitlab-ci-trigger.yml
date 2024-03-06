@@ -1,0 +1,51 @@
+# included templates
+include:
+  # Maven template
+  - project: "to-be-continuous/maven"
+    ref: "3.7.1"
+    file: "templates/gitlab-ci-maven.yml"
+
+# secret variables
+# (define the variables below in your GitLab group/project variables)
+# SONAR_TOKEN: SonarQube authentication [token](https://docs.sonarqube.org/latest/user-guide/user-token/) (depends on your authentication method)
+# SONAR_LOGIN: SonarQube login (depends on your authentication method)
+# SONAR_PASSWORD: SonarQube password (depends on your authentication method)
+# MVN_SETTINGS_FILE: File variable at Group level. It is the Maven settings.xml file
+
+# variables
+variables:
+  MAVEN_IMAGE: "ghcr.io/carlossg/maven:3.9.2-azulzulu-11"
+  MVN_FORBID_SNAPSHOT_DEPENDENCIES_DISABLED: "true"
+  MAVEN_DEPLOY_SNAPSHOT_WITH_SLUG_ENABLED: "false"
+  MAVEN_DEPLOY_ENABLED: "true"
+  MVN_SEMREL_RELEASE_DISABLED: "true"
+  MAVEN_SETTINGS_FILE: $MVN_SETTINGS_FILE
+  SONAR_BASE_ARGS: sonar:sonar -Dsonar.projectKey=$CI_PROJECT_NAME
+  MAVEN_CLI_OPTS: >-
+    --no-transfer-progress
+    --batch-mode --errors
+    --fail-at-end --show-version
+    -DinstallAtEnd=true
+    -DdeployAtEnd=true
+    --projects=ceres-core,snap-gpf,snap-core,ceres-binding,ceres-ui,ceres-metadata,ceres-jai,ceres-glayer,ceres-binding,snap-runtime
+
+# your pipeline stages
+stages:
+  - compile
+  - build
+  - test
+  - package-build
+  - package-test
+  - infra
+  - deploy
+  - acceptance
+  - publish
+  - infra-prod
+  - production
+
+compile-snap-engine:
+  stage: compile
+  trigger: 
+    project: senbox-org/snap-engine
+    branch: master
+    strategy: depend
