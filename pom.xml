@@ -136,7 +136,7 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.2.5</version>
                 <configuration>
                     <printSummary>true</printSummary>
                     <useFile>false</useFile>
