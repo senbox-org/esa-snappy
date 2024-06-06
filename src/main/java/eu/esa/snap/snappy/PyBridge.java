@@ -31,7 +31,9 @@ import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -195,6 +197,34 @@ public class PyBridge {
         }
     }
 
+    // package local for testing!
+    static String encodeJarPath(String prefix, String suffix, String input) {
+        if (input.endsWith(suffix)) {
+            input = input.substring(prefix.length(), input.length() - suffix.length());
+        } else {
+            int pos = input.indexOf(suffix);
+            if (pos > 0) {
+                input = input.substring(prefix.length(), pos);
+            } else {
+                input = input.substring(prefix.length());
+            }
+        }
+        String encodedString;
+        try {
+            // We must decode the inner URI string first
+            input = URLDecoder.decode(input, StandardCharsets.UTF_8);
+
+            // Seems that this does the job for us and i.e. deals with Windows blank chars.
+            // see https://stackoverflow.com/questions/4737841/urlencoder-not-able-to-translate-space-character
+            encodedString = URI.create(new URI(null, null, input, null).toASCIIString()).toString();
+        } catch (URISyntaxException e) {
+            LOG.severe("Cannot encode '" + input + "'.");
+            throw new RuntimeException(e);
+        }
+
+        return String.valueOf(Paths.get(URI.create(encodedString)));
+    }
+
     private static void configureJpy(Path pythonExecutable, Path snappyDir) throws IOException {
         LOG.info("Configuring SNAP-Python interface...");
 
@@ -205,7 +235,7 @@ public class PyBridge {
         command.add("--snap_home");
         command.add(SystemUtils.getApplicationHomeDir().getPath());
         command.add("--java_module");
-        command.add(stripJarScheme(MODULE_CODE_BASE_PATH).toString());
+        command.add(stripJarScheme(MODULE_CODE_BASE_PATH));
         command.add("--force");
         command.add("--log_file");
         command.add(Paths.get(".", SNAPPYUTIL_LOG_FILENAME).toString());
@@ -297,32 +327,29 @@ public class PyBridge {
         return ResourceInstaller.findModuleCodeBasePath(PyBridge.class);
     }
 
-    private static Path stripJarScheme(Path path) {
+    private static String stripJarScheme(Path path) {
         String prefix = "jar:";
         String suffix = "!/";
         String uriString = path.toUri().toString();
 
         if (uriString.startsWith(prefix)) {
-            if (uriString.endsWith(suffix)) {
-                uriString = uriString.substring(prefix.length(), uriString.length() - suffix.length());
-            } else {
-                int pos = uriString.indexOf(suffix);
-                if (pos > 0) {
-                    uriString = uriString.substring(prefix.length(), pos);
-                } else {
-                    uriString = uriString.substring(prefix.length());
-                }
-            }
-            try {
-                // We must decode the inner URI string first
-                uriString = URLDecoder.decode(uriString, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                // ?
-            }
-            path = Paths.get(URI.create(uriString));
+//            begin test
+//            run once for default Windows SNAP installation dir to make sure this works when used
+//            with snappy-conf
+//            String uriStringTest =
+//                    "jar:file:///C:/Program Files/esa-snap/snap/modules/eu-esa-snap-esa-snappy.jar!/";
+//            LOG.fine(String.format("TEST Jar string going into encodeJarTestPath: [%s]\n", uriStringTest));
+//            final String encodeJarTestPath = encodeJarPath(prefix, suffix, uriStringTest);
+//            LOG.fine(String.format("TEST Jar string coming from  encodeJarTestPath: [%s]\n", encodeJarTestPath));
+//            end test
+
+            LOG.fine(String.format("Jar string going into encodeJarTestPath: [%s]\n", uriString));
+            final String encodedJarPath = encodeJarPath(prefix, suffix, uriString);
+            LOG.fine(String.format("Jar string coming from  encodeJarTestPath: [%s]\n", encodedJarPath));
+            return encodedJarPath;
         }
 
-        return path;
+        return String.valueOf(path);
     }
 
     private static void unpackPythonModuleDir(Path pythonModuleDir) throws IOException {
@@ -363,7 +390,7 @@ public class PyBridge {
     }
 
 
-    private static boolean loadPythonConfig() {
+    private static void loadPythonConfig() {
         if (Files.isDirectory(PYTHON_CONFIG_DIR)) {
             Path pythonConfigFile = PYTHON_CONFIG_DIR.resolve(SNAPPY_PROPERTIES_NAME);
             if (Files.isRegularFile(pythonConfigFile)) {
@@ -381,17 +408,15 @@ public class PyBridge {
                         Config.instance().preferences().put(key, value);
                     }
                     LOG.info(String.format("SNAP-Python configuration loaded from '%s'", pythonConfigFile));
-                    return true;
                 } catch (IOException e) {
                     LOG.warning(String.format("Failed to load SNAP-Python configuration from '%s'", pythonConfigFile));
                 }
             }
         }
-        return false;
     }
 
-    private static boolean storePythonConfig(Path pythonExecutable,
-                                             Path pythonModuleInstallDir) {
+    private static void storePythonConfig(Path pythonExecutable,
+                                          Path pythonModuleInstallDir) {
 
         Path pythonConfigFile = PYTHON_CONFIG_DIR.resolve(SNAPPY_PROPERTIES_NAME);
         try {
@@ -405,10 +430,8 @@ public class PyBridge {
                 properties.store(bufferedWriter, "Created by " + PyBridge.class.getName());
             }
             LOG.info(String.format("SNAP-Python configuration written to '%s'", pythonConfigFile));
-            return true;
         } catch (IOException e) {
             LOG.warning(String.format("Failed to store SNAP-Python configuration to '%s'", pythonConfigFile));
-            return false;
         }
     }
 }
