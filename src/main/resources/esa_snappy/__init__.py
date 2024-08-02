@@ -59,12 +59,15 @@ if config.has_option('DEFAULT', 'debug'):
 # Pre-load Java VM shared library and import 'jpy', the Java-Python bridge
 if module_dir not in sys.path:
     sys.path.append(module_dir)
-import jpyutil
+    
+# import jpyutil
+# 
+# jpyutil.preload_jvm_dll()
+# import jpy
 
-jpyutil.preload_jvm_dll()
-import jpy
+import java
 
-if debug:
+# if debug:
     # jpy.diag.F_OFF    0x00
     # jpy.diag.F_TYPE   0x01
     # jpy.diag.F_METH   0x02
@@ -73,7 +76,7 @@ if debug:
     # jpy.diag.F_JVM    0x10
     # jpy.diag.F_ERR    0x20
     # jpy.diag.F_ALL    0xff
-    jpy.diag.flags = jpy.diag.F_EXEC + jpy.diag.F_ERR
+    # jpy.diag.flags = jpy.diag.F_EXEC + jpy.diag.F_ERR
 
 
 #
@@ -128,6 +131,17 @@ def _get_nb_user_modules_dir():
         return os.path.join(nb_user_dir, 'modules')
 
     return None
+
+def setup_graalpy_java_classpath(path='.'):
+    for entry in os.listdir(path):
+        full_path = os.path.join(path, entry)
+        if os.path.isdir(full_path):
+            print('setup_graalpy_java_classpath: Scanning directory ' + full_path + 'for jars...')
+            setup_graalpy_java_classpath(full_path)
+        else:
+            if full_path.endswith(".jar"):
+                java.add_to_classpath(full_path)
+                # print(full_path)
 
 
 #
@@ -201,6 +215,8 @@ def _get_snap_jvm_options():
                       "in file './snappy.ini' or set environment variable 'SNAP_HOME' to an " +
                       "existing SNAP distribution directory.")
 
+    # setup_graalpy_java_classpath(path=snap_home)
+
     env = _get_snap_jvm_env()
     class_path = list(env[0].values())
     library_path = env[1]
@@ -231,15 +247,15 @@ def _get_snap_jvm_options():
 
 
 # Figure out if this module is called from a Java VM. If not, derive a list of Java VM options and create the Java VM.
-called_from_java = jpy.has_jvm()
-if not called_from_java:
-    jpy.create_jvm(options=_get_snap_jvm_options())
+# called_from_java = jpy.has_jvm()
+# if not called_from_java:
+#     jpy.create_jvm(options=_get_snap_jvm_options())
 
 
 # Don't need these functions anymore
-del _get_snap_jvm_options
-del _get_snap_jvm_env
-del _collect_snap_jvm_env
+# del _get_snap_jvm_options
+# del _get_snap_jvm_env
+# del _collect_snap_jvm_env
 
 
 # noinspection PyUnusedLocal
@@ -283,101 +299,117 @@ def annotate_RasterDataNode_methods(type_name, method):
     return True
 
 
-jpy.type_callbacks['org.esa.snap.core.datamodel.RasterDataNode'] = annotate_RasterDataNode_methods
-jpy.type_callbacks['org.esa.snap.core.datamodel.AbstractBand'] = annotate_RasterDataNode_methods
-jpy.type_callbacks['org.esa.snap.core.datamodel.Band'] = annotate_RasterDataNode_methods
-jpy.type_callbacks['org.esa.snap.core.datamodel.VirtualBand'] = annotate_RasterDataNode_methods
+# jpy.type_callbacks['org.esa.snap.core.datamodel.RasterDataNode'] = annotate_RasterDataNode_methods
+# jpy.type_callbacks['org.esa.snap.core.datamodel.AbstractBand'] = annotate_RasterDataNode_methods
+# jpy.type_callbacks['org.esa.snap.core.datamodel.Band'] = annotate_RasterDataNode_methods
+# jpy.type_callbacks['org.esa.snap.core.datamodel.VirtualBand'] = annotate_RasterDataNode_methods
 
 #
 # Preload and assign frequently used Java classes from the Java SE and SNAP Java API.
 #
 
+print('Start preloading Java types...')
 try:
     # Note we may later want to read pre-defined types from a configuration file (snappy.ini)
+    options=_get_snap_jvm_options()
 
-    # Frequently used classes & interfaces from JRE
-    String = jpy.get_type('java.lang.String')
-    File = jpy.get_type('java.io.File')
-    Point = jpy.get_type('java.awt.Point')
-    Rectangle = jpy.get_type('java.awt.Rectangle')
-    Arrays = jpy.get_type('java.util.Arrays')
-    Collections = jpy.get_type('java.util.Collections')
-    List = jpy.get_type('java.util.List')
-    Map = jpy.get_type('java.util.Map')
-    Set = jpy.get_type('java.util.Set')
-    ArrayList = jpy.get_type('java.util.ArrayList')
-    HashMap = jpy.get_type('java.util.HashMap')
-    HashSet = jpy.get_type('java.util.HashSet')
+    # test:
+    java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-core.jar')
+    java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-ceres-core.jar')
+    java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-gpf.jar')
+    java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-esa-snap//snap-runtime.jar')
+    java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-geotools//gt-referencing.jar')
+    java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-geotools//gt-main.jar')
+    java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-locationtech-jts//jts-core.jar')
+
+
+# Frequently used classes & interfaces from JRE
+    String = java.type('java.lang.String')
+    File = java.type('java.io.File')
+    Point = java.type('java.awt.Point')
+    Rectangle = java.type('java.awt.Rectangle')
+    Arrays = java.type('java.util.Arrays')
+    Collections = java.type('java.util.Collections')
+    List = java.type('java.util.List')
+    Map = java.type('java.util.Map')
+    Set = java.type('java.util.Set')
+    ArrayList = java.type('java.util.ArrayList')
+    HashMap = java.type('java.util.HashMap')
+    HashSet = java.type('java.util.HashSet')
 
     #
     # Frequently used classes & interfaces from SNAP Engine
     #
 
     # Product tree & associates
-    Product = jpy.get_type('org.esa.snap.core.datamodel.Product')
-    VectorDataNode = jpy.get_type('org.esa.snap.core.datamodel.VectorDataNode')
-    RasterDataNode = jpy.get_type('org.esa.snap.core.datamodel.RasterDataNode')
-    TiePointGrid = jpy.get_type('org.esa.snap.core.datamodel.TiePointGrid')
-    AbstractBand = jpy.get_type('org.esa.snap.core.datamodel.AbstractBand')
-    Band = jpy.get_type('org.esa.snap.core.datamodel.Band')
-    VirtualBand = jpy.get_type('org.esa.snap.core.datamodel.VirtualBand')
-    Mask = jpy.get_type('org.esa.snap.core.datamodel.Mask')
-    GeneralFilterBand = jpy.get_type('org.esa.snap.core.datamodel.GeneralFilterBand')
-    ConvolutionFilterBand = jpy.get_type('org.esa.snap.core.datamodel.ConvolutionFilterBand')
+    Product = java.type('org.esa.snap.core.datamodel.Product')
+    VectorDataNode = java.type('org.esa.snap.core.datamodel.VectorDataNode')
+    RasterDataNode = java.type('org.esa.snap.core.datamodel.RasterDataNode')
+    TiePointGrid = java.type('org.esa.snap.core.datamodel.TiePointGrid')
+    AbstractBand = java.type('org.esa.snap.core.datamodel.AbstractBand')
+    Band = java.type('org.esa.snap.core.datamodel.Band')
+    VirtualBand = java.type('org.esa.snap.core.datamodel.VirtualBand')
+    Mask = java.type('org.esa.snap.core.datamodel.Mask')
+    GeneralFilterBand = java.type('org.esa.snap.core.datamodel.GeneralFilterBand')
+    ConvolutionFilterBand = java.type('org.esa.snap.core.datamodel.ConvolutionFilterBand')
 
     # Product tree associates
-    ProductData = jpy.get_type('org.esa.snap.core.datamodel.ProductData')
-    GeoCoding = jpy.get_type('org.esa.snap.core.datamodel.GeoCoding')
-    TiePointGeoCoding = jpy.get_type('org.esa.snap.core.datamodel.TiePointGeoCoding')
-    PixelGeoCoding = jpy.get_type('org.esa.snap.core.datamodel.PixelGeoCoding')
-    PixelGeoCoding2 = jpy.get_type('org.esa.snap.core.datamodel.PixelGeoCoding2')
-    CrsGeoCoding = jpy.get_type('org.esa.snap.core.datamodel.CrsGeoCoding')
-    GeoPos = jpy.get_type('org.esa.snap.core.datamodel.GeoPos')
-    PixelPos = jpy.get_type('org.esa.snap.core.datamodel.PixelPos')
-    FlagCoding = jpy.get_type('org.esa.snap.core.datamodel.FlagCoding')
-    ProductNodeGroup = jpy.get_type('org.esa.snap.core.datamodel.ProductNodeGroup')
+    ProductData = java.type('org.esa.snap.core.datamodel.ProductData')
+    GeoCoding = java.type('org.esa.snap.core.datamodel.GeoCoding')
+    TiePointGeoCoding = java.type('org.esa.snap.core.datamodel.TiePointGeoCoding')
+    ComponentGeoCoding = java.type('org.esa.snap.core.dataio.geocoding.ComponentGeoCoding')
+    CrsGeoCoding = java.type('org.esa.snap.core.datamodel.CrsGeoCoding')
+    GeoPos = java.type('org.esa.snap.core.datamodel.GeoPos')
+    PixelPos = java.type('org.esa.snap.core.datamodel.PixelPos')
+    FlagCoding = java.type('org.esa.snap.core.datamodel.FlagCoding')
+    ProductNodeGroup = java.type('org.esa.snap.core.datamodel.ProductNodeGroup')
 
     # Graph Processing Framework
-    GPF = jpy.get_type('org.esa.snap.core.gpf.GPF')
-    Operator = jpy.get_type('org.esa.snap.core.gpf.Operator')
-    Tile = jpy.get_type('org.esa.snap.core.gpf.Tile')
+    GPF = java.type('org.esa.snap.core.gpf.GPF')
+    Operator = java.type('org.esa.snap.core.gpf.Operator')
+    Tile = java.type('org.esa.snap.core.gpf.Tile')
 
     # Utilities
-    EngineConfig = jpy.get_type('org.esa.snap.runtime.EngineConfig')
-    Engine = jpy.get_type('org.esa.snap.runtime.Engine')
-    SystemUtils = jpy.get_type('org.esa.snap.core.util.SystemUtils')
-    ProductIO = jpy.get_type('org.esa.snap.core.dataio.ProductIO')
-    ProductUtils = jpy.get_type('org.esa.snap.core.util.ProductUtils')
-    GeoUtils = jpy.get_type('org.esa.snap.core.util.GeoUtils')
-    ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
-    PlainFeatureFactory = jpy.get_type('org.esa.snap.core.datamodel.PlainFeatureFactory')
-    FeatureUtils = jpy.get_type('org.esa.snap.core.util.FeatureUtils')
+    EngineConfig = java.type('org.esa.snap.runtime.EngineConfig')
+    Engine = java.type('org.esa.snap.runtime.Engine')
+    SystemUtils = java.type('org.esa.snap.core.util.SystemUtils')
+    ProductIO = java.type('org.esa.snap.core.dataio.ProductIO')
+    ProductUtils = java.type('org.esa.snap.core.util.ProductUtils')
+    GeoUtils = java.type('org.esa.snap.core.util.GeoUtils')
+    ProgressMonitor = java.type('com.bc.ceres.core.ProgressMonitor')
+    PlainFeatureFactory = java.type('org.esa.snap.core.datamodel.PlainFeatureFactory')
+    FeatureUtils = java.type('org.esa.snap.core.util.FeatureUtils')
 
     # GeoTools
-    DefaultGeographicCRS = jpy.get_type('org.geotools.referencing.crs.DefaultGeographicCRS')
-    ListFeatureCollection = jpy.get_type('org.geotools.data.collection.ListFeatureCollection')
-    SimpleFeatureBuilder = jpy.get_type('org.geotools.feature.simple.SimpleFeatureBuilder')
+    # DefaultGeographicCRS = java.type('org.geotools.referencing.crs.DefaultGeographicCRS')
+    ListFeatureCollection = java.type('org.geotools.data.collection.ListFeatureCollection')
+    SimpleFeatureBuilder = java.type('org.geotools.feature.simple.SimpleFeatureBuilder')
 
     # JTS
-    Geometry = jpy.get_type('org.locationtech.jts.geom.Geometry')
-    WKTReader = jpy.get_type('org.locationtech.jts.io.WKTReader')
+    Geometry = java.type('org.locationtech.jts.geom.Geometry')
+    WKTReader = java.type('org.locationtech.jts.io.WKTReader')
+
+    print('Finished preloading Java types.')
 
 
 except Exception:
-    jpy.destroy_jvm()
+    # jpy.destroy_jvm()
     raise
 
 
 # Note: use the following code to initialise SNAP's 3rd party libraries, JAI and GeoTools.
 # Only needed, if SNAP Python API is not called from Java (e.g. from SNAP gpt or SNAP desktop).
-if not called_from_java:
-    EngineConfig.instance().load()
-    SystemUtils.init3rdPartyLibs(None)
 
-    start_snap_engine = True
-    if config.has_option('DEFAULT', 'snap_start_engine'):
-        start_snap_engine = config.getboolean('DEFAULT', 'snap_start_engine')
-
-    if start_snap_engine:
-        Engine.start()
+# ???
+# check if needed for graalvm
+# if not called_from_java:
+#     EngineConfig.instance().load()
+#     SystemUtils.init3rdPartyLibs(None)
+#
+#     start_snap_engine = True
+#     if config.has_option('DEFAULT', 'snap_start_engine'):
+#         start_snap_engine = config.getboolean('DEFAULT', 'snap_start_engine')
+#
+#     if start_snap_engine:
+#         Engine.start()
 

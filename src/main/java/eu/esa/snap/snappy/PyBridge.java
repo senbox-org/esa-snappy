@@ -22,12 +22,11 @@ import org.esa.snap.core.util.SystemUtils;
 import org.esa.snap.core.util.io.TreeCopier;
 import org.esa.snap.core.util.io.TreeDeleter;
 import org.esa.snap.runtime.Config;
-import org.jpy.PyLib;
+//import org.jpy.PyLib;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URI;
@@ -80,14 +79,14 @@ public class PyBridge {
 
     public static final String SNAP_PYTHON_DIRNAME = "snap-python";
 //    public static final String SNAP_PYTHON_DIRNAME = "snap-python_TEST";
-    private static final String JPY_DEBUG_PROPERTY = "jpy.debug";
-    private static final String JPY_CONFIG_PROPERTY = "jpy.config";
+//    private static final String JPY_DEBUG_PROPERTY = "jpy.debug";
+//    private static final String JPY_CONFIG_PROPERTY = "jpy.config";
     public static final String SNAPPY_NAME = "esa_snappy";
     private static final String SNAPPY_NAME_OLD = "snappy";
     public static final String SNAPPY_PROPERTIES_NAME = "snappy.properties";
     private static final String SNAPPYUTIL_PY_FILENAME = "snappyutil.py";
     private static final String SNAPPYUTIL_LOG_FILENAME = "snappyutil.log";
-    private static final String JPY_JAVA_API_CONFIG_FILENAME = "jpyconfig.properties";
+    private static final String GRAALPY_JAVA_API_CONFIG_FILENAME = "graalpyconfig.properties";
     private static final Path MODULE_CODE_BASE_PATH;
 
     private static boolean established;
@@ -100,20 +99,20 @@ public class PyBridge {
     /**
      * Establishes the SNAP-Python bridge.
      */
-    public synchronized static void establish() throws IOException {
-        if (established) {
-            return;
-        }
-
-        Path snappyPath = installPythonModule(null, null, null);
-
-        synchronized (PyLib.class) {
-            if (!established) {
-                startPython(snappyPath.getParent());
-                established = true;
-            }
-        }
-    }
+//    public synchronized static void establish() throws IOException {
+//        if (established) {
+//            return;
+//        }
+//
+//        Path snappyPath = installPythonModule(null, null, null);
+//
+//        synchronized (PyLib.class) {
+//            if (!established) {
+//                startPython(snappyPath.getParent());
+//                established = true;
+//            }
+//        }
+//    }
 
     /**
      * Installs the SNAP-Python interface.
@@ -159,24 +158,24 @@ public class PyBridge {
             TreeDeleter.deleteDir(oldSnappyPath);
         }
 
-        Path jpyConfigFile = snappyPath.resolve(JPY_JAVA_API_CONFIG_FILENAME);
-        if (forcePythonConfig || !Files.exists(jpyConfigFile)) {
-            // Configure jpy Python-side
-            configureJpy(pythonExecutable, snappyPath);
+        Path graalpyConfigFile = snappyPath.resolve(GRAALPY_JAVA_API_CONFIG_FILENAME);
+        if (forcePythonConfig || !Files.exists(graalpyConfigFile)) {
+            // Configure graalpy Python-side
+            configureGraalpy(pythonExecutable, snappyPath);
         }
-        if (!Files.exists(jpyConfigFile)) {
+        if (!Files.exists(graalpyConfigFile)) {
             throw new IOException(String.format("SNAP-Python configuration incomplete.\n" +
                             "Missing file '%s'.\n" +
                             "Please check the log file '%s'.",
-                    jpyConfigFile,
+                    graalpyConfigFile,
                     snappyPath.resolve(SNAPPYUTIL_LOG_FILENAME)));
         }
 
         // Configure jpy Java-side
-        System.setProperty(JPY_CONFIG_PROPERTY, jpyConfigFile.toString());
-        if (Debug.isEnabled() && System.getProperty(JPY_DEBUG_PROPERTY) == null) {
-            System.setProperty(JPY_DEBUG_PROPERTY, "true");
-        }
+//        System.setProperty(JPY_CONFIG_PROPERTY, jpyConfigFile.toString());
+//        if (Debug.isEnabled() && System.getProperty(JPY_DEBUG_PROPERTY) == null) {
+//            System.setProperty(JPY_DEBUG_PROPERTY, "true");
+//        }
 
         return snappyPath;
     }
@@ -184,18 +183,18 @@ public class PyBridge {
     /**
      * Extends Python's system path (it's global {@code sys.path} variable) by the given path, if not already present.
      *
-     * @param path The new module path.
+//     * @param path The new module path.
      */
-    public static void extendSysPath(String path) {
-        if (path != null) {
-            String code = String.format("" +
-                            "import sys;\n" +
-                            "p = '%s';\n" +
-                            "if not p in sys.path: sys.path.append(p)",
-                    path.replace("\\", "\\\\"));
-            PyLib.execScript(code);
-        }
-    }
+//    public static void extendSysPath(String path) {
+//        if (path != null) {
+//            String code = String.format("" +
+//                            "import sys;\n" +
+//                            "p = '%s';\n" +
+//                            "if not p in sys.path: sys.path.append(p)",
+//                    path.replace("\\", "\\\\"));
+//            PyLib.execScript(code);
+//        }
+//    }
 
     // package local for testing!
     static String encodeJarPath(String prefix, String suffix, String input) {
@@ -225,7 +224,7 @@ public class PyBridge {
         return String.valueOf(Paths.get(URI.create(encodedString)));
     }
 
-    private static void configureJpy(Path pythonExecutable, Path snappyDir) throws IOException {
+    private static void configureGraalpy(Path pythonExecutable, Path snappyDir) throws IOException {
         LOG.info("Configuring SNAP-Python interface...");
 
         // "java.home" is always present
@@ -378,16 +377,16 @@ public class PyBridge {
     }
 
 
-    private static void startPython(Path pythonModuleInstallDir) {
-        //PyLib.Diag.setFlags(PyLib.Diag.F_ALL);
-        String pythonVersion = PyLib.getPythonVersion();
-        LOG.info("Starting Python " + pythonVersion);
-        if (!PyLib.isPythonRunning()) {
-            PyLib.startPython(pythonModuleInstallDir.toString());
-        } else {
-            extendSysPath(pythonModuleInstallDir.toString());
-        }
-    }
+//    private static void startPython(Path pythonModuleInstallDir) {
+//        //PyLib.Diag.setFlags(PyLib.Diag.F_ALL);
+//        String pythonVersion = PyLib.getPythonVersion();
+//        LOG.info("Starting Python " + pythonVersion);
+//        if (!PyLib.isPythonRunning()) {
+//            PyLib.startPython(pythonModuleInstallDir.toString());
+//        } else {
+//            extendSysPath(pythonModuleInstallDir.toString());
+//        }
+//    }
 
 
     private static void loadPythonConfig() {
