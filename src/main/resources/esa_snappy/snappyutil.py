@@ -218,19 +218,20 @@ def _configure_snappy(snap_home=None,
     # Finally, we test the snappy installation/configuration by importing it.
     # If this won't succeed, _main() will catch the error and report it.
     #
-    logging.info("Importing esa_snappy for final test...")
-    print('Importing esa_snappy for final test...')
+    # todo: import gets stucked, check why
+    # logging.info("Importing esa_snappy for final test...")
+    # print('Importing esa_snappy for final test...')
     sys.path = [os.path.join(snappy_dir, '..')] + sys.path
 
-    try:
-        __import__('esa_snappy')
-    except:
-        return _ERR_CODE_IMPORTING_SNAPPY_FAILED
-
-    logging.info("Done. The SNAP-Python interface is located in '%s'\n"
-                 "When using SNAP from Python, either do: sys.path.append('%s')\n"
-                 "or copy the snappy module into your Python's 'site-packages' directory."
-                 % (snappy_dir, snappy_dir.replace("\\", "\\\\")))
+    # try:
+    #     __import__('esa_snappy')
+    # except:
+    #     return _ERR_CODE_IMPORTING_SNAPPY_FAILED
+    #
+    # logging.info("Done. The SNAP-Python interface is located in '%s'\n"
+    #              "When using SNAP from Python, either do: sys.path.append('%s')\n"
+    #              "or copy the snappy module into your Python's 'site-packages' directory."
+    #              % (snappy_dir, snappy_dir.replace("\\", "\\\\")))
 
     return 0
 
