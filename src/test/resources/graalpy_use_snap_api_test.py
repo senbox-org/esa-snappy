@@ -1,12 +1,25 @@
 import argparse
 import os
+import glob
 
 import java
+import polyglot
+#from polyglot import register_interop_type
 
 from pathlib import Path
 
 # import numpy as np
 # import matplotlib.pyplot as plt
+
+EXCLUDED_NB_CLUSTERS = {'platform', 'ide', 'bin', 'etc'}
+
+EXCLUDED_DIR_NAMES = {'org.esa.snap.snap-worldwind', 'org.esa.snap.snap-rcp', 'org.esa.snap.snap-product-library',
+                      'org.esa.snap.snap-sta-ui'}
+
+EXCLUDED_JAR_NAMES = {'org-esa-snap-netbeans-docwin.jar', 'org-esa-snap-netbeans-tile.jar',
+                      'org-esa-snap-snap-worldwind.jar', 'org-esa-snap-snap-tango.jar', 'org-esa-snap-snap-rcp.jar',
+                      'org-esa-snap-snap-ui.jar', 'org-esa-snap-snap-graph-builder.jar',
+                      'org-esa-snap-snap-branding.jar'}
 
 def list_files_recursive(path='.'):
     for entry in os.listdir(path):
@@ -18,6 +31,104 @@ def list_files_recursive(path='.'):
                 java.add_to_classpath(full_path)
                 print(full_path)
 
+def list_files_recursive_2(path):
+    System = java.type("java.lang.System")
+    for entry in os.listdir(path):
+        full_path = os.path.join(path, entry)
+        if os.path.isdir(full_path):
+            print('DIR: ' + full_path)
+            list_files_recursive(full_path)
+        else:
+            if full_path.endswith(".jar"):
+                cp = System.getProperty("java.class.path")
+                cp2 = cp + ';' + full_path
+                System.setProperty("java.class.path", cp2)
+                # java.add_to_classpath(full_path)
+                print(full_path)
+
+
+def _get_snap_jvm_env(snap_home):
+    module_dir = os.path.dirname(os.path.realpath(__file__))
+
+    dir_names = []
+    for name in os.listdir(snap_home):
+        if os.path.isdir(os.path.join(snap_home, name)):
+            dir_names.append(name)
+
+    java_module_dirs = []
+
+    if 'bin' in dir_names and 'etc' in dir_names and 'snap' in dir_names:
+        # SNAP Desktop Distribution Directory
+        for dir_name in dir_names:
+            if dir_name not in EXCLUDED_NB_CLUSTERS:
+                dir_path = os.path.join(snap_home, dir_name, 'modules')
+                if os.path.isdir(dir_path):
+                    java_module_dirs.append(dir_path)
+    elif 'lib' in dir_names and 'modules' in dir_names:
+        # SNAP Engine Distribution Directory
+        java_module_dirs = [os.path.join(snap_home, 'modules'), os.path.join(snap_home, 'lib')]
+    elif glob.glob(snap_home + '/*snap-python*.jar'):
+        java_module_dirs = [snap_home]
+    else:
+        raise RuntimeError('does not seem to be a valid SNAP distribution directory: ' + snap_home)
+
+    # NetBeans modules dir will be scaned as last. It contains the latest module updates and they shall replace
+    # older modules
+    nb_user_modules_dir = _get_nb_user_modules_dir()
+    if nb_user_modules_dir and os.path.isdir(nb_user_modules_dir):
+        java_module_dirs.append(nb_user_modules_dir)
+
+        print(module_dir + ': java_module_dirs = ')
+
+    env = (dict(), [])
+    for path in java_module_dirs:
+        _collect_snap_jvm_env(path, env)
+
+    print(module_dir + ': env =')
+
+    return env
+
+def _get_nb_user_modules_dir():
+    import platform
+    from os.path import expanduser
+
+    home_dir = expanduser('~')
+    nb_user_dir = None
+    if platform.system() == 'Windows':
+        if home_dir:
+            nb_user_dir = os.path.join(home_dir, 'AppData\\Roaming\\SNAP')
+    else:
+        if home_dir:
+            nb_user_dir = os.path.join(home_dir, '.snap/system')
+
+    if nb_user_dir:
+        return os.path.join(nb_user_dir, 'modules')
+
+    return None
+
+def _collect_snap_jvm_env(dir_path, env):
+    for name in os.listdir(dir_path):
+        path = os.path.join(dir_path, name)
+        if os.path.isfile(path) and name.endswith('.jar'):
+            if not (name.endswith('-ui.jar') or name in EXCLUDED_JAR_NAMES):
+                env[0][name] = path
+        elif os.path.isdir(path) and name not in EXCLUDED_DIR_NAMES:
+            if name == 'lib':
+                import platform
+
+                os_arch = platform.machine().lower()
+                os_name = platform.system().lower()
+                lib_os_arch_path = os.path.join(path, os_arch)
+                if os.path.exists(lib_os_arch_path):
+                    lib_os_name_path = os.path.join(lib_os_arch_path, os_name)
+                    if os.path.exists(lib_os_name_path):
+                        env[1].append(lib_os_name_path)
+                    env[1].append(lib_os_arch_path)
+                env[1].append(path)
+            if not (name == 'locale' or name == 'docs'):
+                _collect_snap_jvm_env(path, env)
+
+
 def _main():
     print('hier')
     parser = argparse.ArgumentParser(description='Configures snappy, the SNAP-Python interface.')
@@ -28,9 +139,20 @@ def _main():
     product_path = args.input_product_path
     snap_home = args.snap_home
 
-    directory_path = snap_home + '//snap//modules'
+    # directory_path = snap_home + '\snap\modules'
     # directory_path = snap_home
-    list_files_recursive(directory_path)
+    # list_files_recursive_2(directory_path)
+
+    # Get the Java classpath and print it
+    System = java.type("java.lang.System")
+    classpath = System.getProperty("java.class.path")
+    print(f"Java Classpath: {classpath}")
+
+    env = _get_snap_jvm_env(snap_home)
+    class_path_entries = list(env[0].values())
+    class_path = os.pathsep.join(class_path_entries)
+    print('classpath: ' + class_path)
+    System.setProperty("java.class.path", class_path)
 
     ProductIO = java.type('org.esa.snap.core.dataio.ProductIO')
     print('hier 2')
@@ -93,26 +215,37 @@ def _main():
     ProgressMonitor = java.type('com.bc.ceres.core.ProgressMonitor')
     PlainFeatureFactory = java.type('org.esa.snap.core.datamodel.PlainFeatureFactory')
     FeatureUtils = java.type('org.esa.snap.core.util.FeatureUtils')
+    JavaTypeConverter = java.type('org.esa.snap.core.util.converters.JavaTypeConverter')
+    ClassConverter = java.type('com.bc.ceres.binding.converters.ClassConverter')
     print('hier 2')
 
     # GeoTools
     DefaultGeographicCRS = java.type('org.geotools.referencing.crs.DefaultGeographicCRS')
     ListFeatureCollection = java.type('org.geotools.data.collection.ListFeatureCollection')
     SimpleFeatureBuilder = java.type('org.geotools.feature.simple.SimpleFeatureBuilder')
-
     # JTS
     Geometry = java.type('org.locationtech.jts.geom.Geometry')
     WKTReader = java.type('org.locationtech.jts.io.WKTReader')
+    JAI = java.type('javax.media.jai.JAI')
 
     EngineConfig.instance().load()
-    # SystemUtils.init3rdPartyLibs(None)
+    # SystemUtils.init3rdPartyLibs(None)  # todo: check if needed
     Engine.start()
 
-    # p = ProductIO.readProduct(product_path)
-    p = Product("bla", "blubb", 3, 3)
+    BigInteger = java.type("java.math.BigInteger")
+    myBigInt = BigInteger.valueOf(42)
+    print(str(myBigInt))
+
     print('hier 3')
+    # p = ProductIO.readProduct(product_path)  # todo: we need complete classpath
+    # p = Product("bla", "blubb", 3, 3)
+    # print('CRS: ' + p.PROPERTY_NAME_SCENE_CRS)
+    gp = GeoPos(30.0, 45.0)
+    print('geopos: ' + str(gp.getLat()) + ', ' + str(gp.getLon()))
+    print('hier 4')
     # rad13 = p.getBand('radiance_13')
     # w = rad13.getRasterWidth()
+    # name = p.getName()
     # w = p.getSceneRasterWidth()
     # h = rad13.getRasterHeight()
     # h = p.getSceneRasterHeight()
