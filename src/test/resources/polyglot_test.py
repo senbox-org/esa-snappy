@@ -4,7 +4,7 @@ array = java.type("int[]")(4)
 array[2] = 42
 print(array[2])
 
-snap_home = 'D://olaf//bc//snap-snapshots//11//11.0-RC//esa-snap'
+snap_home = 'D://olaf//bc//snap-snapshots//12//12.0-SNAPSHOT'
 
 java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-core.jar')
 java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-ceres-core.jar')
