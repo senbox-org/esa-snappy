@@ -20,17 +20,17 @@ and a new Java Virtual Machine is created. They are ignored if the SNAP API is c
 and source code at https://github.com/bcdev/jpy
 """
 
-# EXCLUDED_NB_CLUSTERS = {'platform', 'ide', 'bin', 'etc'}
+EXCLUDED_NB_CLUSTERS = {'platform', 'ide', 'bin', 'etc'}
 
-# EXCLUDED_DIR_NAMES = {'org.esa.snap.snap-worldwind', 'org.esa.snap.snap-rcp', 'org.esa.snap.snap-product-library',
-#                       'org.esa.snap.snap-sta-ui'}
+EXCLUDED_DIR_NAMES = {'org.esa.snap.snap-worldwind', 'org.esa.snap.snap-rcp', 'org.esa.snap.snap-product-library',
+                      'org.esa.snap.snap-sta-ui'}
 
-# EXCLUDED_JAR_NAMES = {'org-esa-snap-netbeans-docwin.jar', 'org-esa-snap-netbeans-tile.jar',
-#                       'org-esa-snap-snap-worldwind.jar', 'org-esa-snap-snap-tango.jar', 'org-esa-snap-snap-rcp.jar',
-#                       'org-esa-snap-snap-ui.jar', 'org-esa-snap-snap-graph-builder.jar',
-#                       'org-esa-snap-snap-branding.jar'}
+EXCLUDED_JAR_NAMES = {'org-esa-snap-netbeans-docwin.jar', 'org-esa-snap-netbeans-tile.jar',
+                      'org-esa-snap-snap-worldwind.jar', 'org-esa-snap-snap-tango.jar', 'org-esa-snap-snap-rcp.jar',
+                      'org-esa-snap-snap-ui.jar', 'org-esa-snap-snap-graph-builder.jar',
+                      'org-esa-snap-snap-branding.jar'}
 
-# import glob
+import glob
 import os
 
 import sys
@@ -71,101 +71,101 @@ import java
 #
 # Note: This function is called only if the 'esa_snappy' module is not imported from Java.
 #
-# def _collect_snap_jvm_env(dir_path, env):
-#     for name in os.listdir(dir_path):
-#         path = os.path.join(dir_path, name)
-#         if os.path.isfile(path) and name.endswith('.jar'):
-#             if not (name.endswith('-ui.jar') or name in EXCLUDED_JAR_NAMES):
-#                 env[0][name] = path
-#         elif os.path.isdir(path) and name not in EXCLUDED_DIR_NAMES:
-#             if name == 'lib':
-#                 import platform
-#
-#                 os_arch = platform.machine().lower()
-#                 os_name = platform.system().lower()
-#                 lib_os_arch_path = os.path.join(path, os_arch)
-#                 if os.path.exists(lib_os_arch_path):
-#                     lib_os_name_path = os.path.join(lib_os_arch_path, os_name)
-#                     if os.path.exists(lib_os_name_path):
-#                         env[1].append(lib_os_name_path)
-#                     env[1].append(lib_os_arch_path)
-#                 env[1].append(path)
-#             if not (name == 'locale' or name == 'docs'):
-#                 _collect_snap_jvm_env(path, env)
+def _collect_snap_jvm_env(dir_path, env):
+    for name in os.listdir(dir_path):
+        path = os.path.join(dir_path, name)
+        if os.path.isfile(path) and name.endswith('.jar'):
+            if not (name.endswith('-ui.jar') or name in EXCLUDED_JAR_NAMES):
+                env[0][name] = path
+        elif os.path.isdir(path) and name not in EXCLUDED_DIR_NAMES:
+            if name == 'lib':
+                import platform
+
+                os_arch = platform.machine().lower()
+                os_name = platform.system().lower()
+                lib_os_arch_path = os.path.join(path, os_arch)
+                if os.path.exists(lib_os_arch_path):
+                    lib_os_name_path = os.path.join(lib_os_arch_path, os_name)
+                    if os.path.exists(lib_os_name_path):
+                        env[1].append(lib_os_name_path)
+                    env[1].append(lib_os_arch_path)
+                env[1].append(path)
+            if not (name == 'locale' or name == 'docs'):
+                _collect_snap_jvm_env(path, env)
 
 
 #
 # Get the NetBeans user directory for installed extra modules
 #
-# def _get_nb_user_modules_dir():
-#     import platform
-#     from os.path import expanduser
-#
-#     home_dir = expanduser('~')
-#     nb_user_dir = None
-#     if platform.system() == 'Windows':
-#         if home_dir:
-#             nb_user_dir = os.path.join(home_dir, 'AppData\\Roaming\\SNAP')
-#     else:
-#         if home_dir:
-#             nb_user_dir = os.path.join(home_dir, '.snap/system')
-#
-#     if nb_user_dir:
-#         return os.path.join(nb_user_dir, 'modules')
-#
-#     return None
+def _get_nb_user_modules_dir():
+    import platform
+    from os.path import expanduser
+
+    home_dir = expanduser('~')
+    nb_user_dir = None
+    if platform.system() == 'Windows':
+        if home_dir:
+            nb_user_dir = os.path.join(home_dir, 'AppData\\Roaming\\SNAP')
+    else:
+        if home_dir:
+            nb_user_dir = os.path.join(home_dir, '.snap/system')
+
+    if nb_user_dir:
+        return os.path.join(nb_user_dir, 'modules')
+
+    return None
 
 #
 # Searches for *.jar files in directory given by global 'snap_home' variable and returns them as a list.
 #
 # Note: This function is called only if the 'esa_snappy' module is not imported from Java.
 #
-# def _get_snap_jvm_env():
-#     dir_names = []
-#     for name in os.listdir(snap_home):
-#         if os.path.isdir(os.path.join(snap_home, name)):
-#             dir_names.append(name)
-#
-#     java_module_dirs = []
-#
-#     if 'bin' in dir_names and 'etc' in dir_names and 'snap' in dir_names:
-#         # SNAP Desktop Distribution Directory
-#         for dir_name in dir_names:
-#             if dir_name not in EXCLUDED_NB_CLUSTERS:
-#                 dir_path = os.path.join(snap_home, dir_name, 'modules')
-#                 if os.path.isdir(dir_path):
-#                     java_module_dirs.append(dir_path)
-#     elif 'lib' in dir_names and 'modules' in dir_names:
-#         # SNAP Engine Distribution Directory
-#         java_module_dirs = [os.path.join(snap_home, 'modules'), os.path.join(snap_home, 'lib')]
-#     elif glob.glob(snap_home + '/*snap-python*.jar'):
-#         java_module_dirs = [snap_home]
-#     else:
-#         raise RuntimeError('does not seem to be a valid SNAP distribution directory: ' + snap_home)
-#
-#     # NetBeans modules dir will be scaned as last. It contains the latest module updates and they shall replace
-#     # older modules
-#     nb_user_modules_dir = _get_nb_user_modules_dir()
-#     if nb_user_modules_dir and os.path.isdir(nb_user_modules_dir):
-#         java_module_dirs.append(nb_user_modules_dir)
-#
-#     if debug:
-#         import pprint
-#
-#         print(module_dir + ': java_module_dirs = ')
-#         pprint.pprint(java_module_dirs)
-#
-#     env = (dict(), [])
-#     for path in java_module_dirs:
-#         _collect_snap_jvm_env(path, env)
-#
-#     if debug:
-#         import pprint
-#
-#         print(module_dir + ': env =')
-#         pprint.pprint(env)
-#
-#     return env
+def _get_snap_jvm_env():
+    dir_names = []
+    for name in os.listdir(snap_home):
+        if os.path.isdir(os.path.join(snap_home, name)):
+            dir_names.append(name)
+
+    java_module_dirs = []
+
+    if 'bin' in dir_names and 'etc' in dir_names and 'snap' in dir_names:
+        # SNAP Desktop Distribution Directory
+        for dir_name in dir_names:
+            if dir_name not in EXCLUDED_NB_CLUSTERS:
+                dir_path = os.path.join(snap_home, dir_name, 'modules')
+                if os.path.isdir(dir_path):
+                    java_module_dirs.append(dir_path)
+    elif 'lib' in dir_names and 'modules' in dir_names:
+        # SNAP Engine Distribution Directory
+        java_module_dirs = [os.path.join(snap_home, 'modules'), os.path.join(snap_home, 'lib')]
+    elif glob.glob(snap_home + '/*snap-python*.jar'):
+        java_module_dirs = [snap_home]
+    else:
+        raise RuntimeError('does not seem to be a valid SNAP distribution directory: ' + snap_home)
+
+    # NetBeans modules dir will be scaned as last. It contains the latest module updates and they shall replace
+    # older modules
+    nb_user_modules_dir = _get_nb_user_modules_dir()
+    if nb_user_modules_dir and os.path.isdir(nb_user_modules_dir):
+        java_module_dirs.append(nb_user_modules_dir)
+
+    if debug:
+        import pprint
+
+        print(module_dir + ': java_module_dirs = ')
+        pprint.pprint(java_module_dirs)
+
+    env = (dict(), [])
+    for path in java_module_dirs:
+        _collect_snap_jvm_env(path, env)
+
+    if debug:
+        import pprint
+
+        print(module_dir + ': env =')
+        pprint.pprint(env)
+
+    return env
 
 
 #
@@ -289,22 +289,6 @@ def setup_graalpy_java_classpath(path='.'):
 #
 
 try:
-    # Note we may later want to read pre-defined types from a configuration file (snappy.ini)
-    print('Setting up classpath...')
-    # test:
-    # java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-core.jar')
-    # java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-ceres-core.jar')
-    # java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-gpf.jar')
-    # # In SNAP 12 the following are in subdir ext...
-    # java.add_to_classpath(snap_home + '//snap//modules//ext//org.esa.snap.snap-core//org-esa-snap//snap-runtime.jar')
-    # java.add_to_classpath(snap_home + '//snap//modules//ext//org.esa.snap.snap-core//org-geotools//gt-referencing.jar')
-    # java.add_to_classpath(snap_home + '//snap//modules//ext//org.esa.snap.snap-core//org-geotools//gt-main.jar')
-    # java.add_to_classpath(snap_home + '//snap//modules//ext//org.esa.snap.snap-core//org-locationtech-jts//jts-core.jar')
-    #
-    # java.add_to_classpath(snap_home + '//snap//modules//ext//org.esa.snap.snap-core//org-geotools//gt-opengis.jar')
-    # java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-ceres-glayer.jar')
-    # # java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.ceres-jai//javax-media-jai//jai-core-openjdk.jar')
-    # java.add_to_classpath('C://Users//olafd//.m2//repository//javax//media//jai_core//1.1.3//jai_core-1.1.3.jar')
 
     if config.has_option('DEFAULT', 'snap_home'):
         snap_home = config.get('DEFAULT', 'snap_home')
@@ -316,13 +300,20 @@ try:
                       "in file './snappy.ini' or set environment variable 'SNAP_HOME' to an " +
                       "existing SNAP distribution directory.")
 
-    setup_graalpy_java_classpath(path=snap_home+ '//snap//modules')
+    ### START initialization...
 
-    print('Done setting up classpath.')
+    # Collect jars to put on classpath (taken from old __init.py__)
+    env = _get_snap_jvm_env()
 
-    print('Preloading frequently used classes...')
+    # now add classpath entries in the 'graalpy way':
+    class_path_entries = list(env[0].values())
+    for entry in class_path_entries:
+        # print('jar: ' + entry)
+        java.add_to_classpath(entry)
 
-    # Frequently used classes & interfaces from JRE
+    #
+    # Frequently used classes from Java API
+    #
     String = java.type('java.lang.String')
     File = java.type('java.io.File')
     Point = java.type('java.awt.Point')
@@ -362,7 +353,6 @@ try:
     PixelPos = java.type('org.esa.snap.core.datamodel.PixelPos')
     FlagCoding = java.type('org.esa.snap.core.datamodel.FlagCoding')
     ProductNodeGroup = java.type('org.esa.snap.core.datamodel.ProductNodeGroup')
-    MultiLevelModel = java.type('com.bc.ceres.glevel.MultiLevelModel')
 
     # Graph Processing Framework
     GPF = java.type('org.esa.snap.core.gpf.GPF')
@@ -376,41 +366,45 @@ try:
     ProductIO = java.type('org.esa.snap.core.dataio.ProductIO')
     ProductUtils = java.type('org.esa.snap.core.util.ProductUtils')
     GeoUtils = java.type('org.esa.snap.core.util.GeoUtils')
+    RsMathUtils = java.type('org.esa.snap.core.util.math.RsMathUtils')
     ProgressMonitor = java.type('com.bc.ceres.core.ProgressMonitor')
     PlainFeatureFactory = java.type('org.esa.snap.core.datamodel.PlainFeatureFactory')
     FeatureUtils = java.type('org.esa.snap.core.util.FeatureUtils')
+    JavaTypeConverter = java.type('org.esa.snap.core.util.converters.JavaTypeConverter')
+    ClassConverter = java.type('com.bc.ceres.binding.converters.ClassConverter')
 
     # GeoTools
-    CoordinateReferenceSystem = java.type('org.opengis.referencing.crs.CoordinateReferenceSystem')
     DefaultGeographicCRS = java.type('org.geotools.referencing.crs.DefaultGeographicCRS')
     ListFeatureCollection = java.type('org.geotools.data.collection.ListFeatureCollection')
     SimpleFeatureBuilder = java.type('org.geotools.feature.simple.SimpleFeatureBuilder')
-
     # JTS
     Geometry = java.type('org.locationtech.jts.geom.Geometry')
     WKTReader = java.type('org.locationtech.jts.io.WKTReader')
+    JAI = java.type('javax.media.jai.JAI')
 
-    print('Done preloading frequently used classes..')
+    # Note: use the following code to initialise SNAP's 3rd party libraries, JAI and GeoTools.
+    # Only needed, if SNAP Python API is not called from Java (e.g. from SNAP gpt or SNAP desktop).
+    called_from_java = False  # todo: how to determine this for Graal? Needed at all?
+    if not called_from_java:
+        EngineConfig.instance().load()
+        SystemUtils.init3rdPartyLibs(None)
 
+        start_snap_engine = True
+        if config.has_option('DEFAULT', 'snap_start_engine'):
+            start_snap_engine = config.getboolean('DEFAULT', 'snap_start_engine')
+
+        if start_snap_engine:
+            Engine.start()
+
+    # Don't need these functions anymore
+    del _get_nb_user_modules_dir
+    del _get_snap_jvm_env
+    del _collect_snap_jvm_env
+
+    ### FINISHED initialization.
 
 except Exception:
     # jpy.destroy_jvm()
     raise
 
-
-# Note: use the following code to initialise SNAP's 3rd party libraries, JAI and GeoTools.
-# Only needed, if SNAP Python API is not called from Java (e.g. from SNAP gpt or SNAP desktop).
-
-# todo ???
-# check if needed for graalvm
-# if not called_from_java:
-#     EngineConfig.instance().load()
-#     SystemUtils.init3rdPartyLibs(None)
-#
-#     start_snap_engine = True
-#     if config.has_option('DEFAULT', 'snap_start_engine'):
-#         start_snap_engine = config.getboolean('DEFAULT', 'snap_start_engine')
-#
-#     if start_snap_engine:
-#         Engine.start()
 

@@ -163,13 +163,14 @@ public class PyBridge {
             // Configure graalpy Python-side
             configureGraalpy(pythonExecutable, snappyPath);
         }
-        if (!Files.exists(graalpyConfigFile)) {
-            throw new IOException(String.format("SNAP-Python configuration incomplete.\n" +
-                            "Missing file '%s'.\n" +
-                            "Please check the log file '%s'.",
-                    graalpyConfigFile,
-                    snappyPath.resolve(SNAPPYUTIL_LOG_FILENAME)));
-        }
+//         todo: check this:
+//        if (!Files.exists(graalpyConfigFile)) {
+//            throw new IOException(String.format("SNAP-Python configuration incomplete.\n" +
+//                            "Missing file '%s'.\n" +
+//                            "Please check the log file '%s'.",
+//                    graalpyConfigFile,
+//                    snappyPath.resolve(SNAPPYUTIL_LOG_FILENAME)));
+//        }
 
         // Configure jpy Java-side
 //        System.setProperty(JPY_CONFIG_PROPERTY, jpyConfigFile.toString());

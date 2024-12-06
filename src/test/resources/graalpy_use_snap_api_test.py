@@ -4,8 +4,8 @@ import glob
 
 import java
 
-# import numpy as np
-# import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
 
 EXCLUDED_NB_CLUSTERS = {'platform', 'ide', 'bin', 'etc'}
 
@@ -124,7 +124,7 @@ def _main():
     # now add classpath entries in the 'graalpy way':
     class_path_entries = list(env[0].values())
     for entry in class_path_entries:
-        print('jar: ' + entry)
+        # print('jar: ' + entry)
         java.add_to_classpath(entry)
 
     #
@@ -239,6 +239,13 @@ def _main():
     h = p.getSceneRasterHeight()
     print('scene raster width = ' + str(w))
     print('scene raster height = ' + str(h))
+
+    rad13_data = np.zeros(w * h, np.float32)
+    rad13.readPixels(0, 0, w, h, rad13_data)
+    p.dispose()
+    rad13_data.shape = h, w
+    imgplot = plt.imshow(rad13_data)
+    imgplot.write_png('radiance_13.png')
 
 if __name__ == '__main__':
     _main()
