@@ -3,10 +3,6 @@ import os
 import glob
 
 import java
-import polyglot
-#from polyglot import register_interop_type
-
-from pathlib import Path
 
 # import numpy as np
 # import matplotlib.pyplot as plt
@@ -20,31 +16,6 @@ EXCLUDED_JAR_NAMES = {'org-esa-snap-netbeans-docwin.jar', 'org-esa-snap-netbeans
                       'org-esa-snap-snap-worldwind.jar', 'org-esa-snap-snap-tango.jar', 'org-esa-snap-snap-rcp.jar',
                       'org-esa-snap-snap-ui.jar', 'org-esa-snap-snap-graph-builder.jar',
                       'org-esa-snap-snap-branding.jar'}
-
-def list_files_recursive(path='.'):
-    for entry in os.listdir(path):
-        full_path = os.path.join(path, entry)
-        if os.path.isdir(full_path):
-            list_files_recursive(full_path)
-        else:
-            if full_path.endswith(".jar"):
-                java.add_to_classpath(full_path)
-                print(full_path)
-
-def list_files_recursive_2(path):
-    System = java.type("java.lang.System")
-    for entry in os.listdir(path):
-        full_path = os.path.join(path, entry)
-        if os.path.isdir(full_path):
-            print('DIR: ' + full_path)
-            list_files_recursive(full_path)
-        else:
-            if full_path.endswith(".jar"):
-                cp = System.getProperty("java.class.path")
-                cp2 = cp + ';' + full_path
-                System.setProperty("java.class.path", cp2)
-                # java.add_to_classpath(full_path)
-                print(full_path)
 
 
 def _get_snap_jvm_env(snap_home):
@@ -130,6 +101,10 @@ def _collect_snap_jvm_env(dir_path, env):
 
 
 def _main():
+    """
+    Tests access of SNAP API from graalpy. We no longer need jpy!
+    :return:
+    """
     parser = argparse.ArgumentParser(description='Configures snappy, the SNAP-Python interface.')
     parser.add_argument('--input_product_path', default=None, help='SNAP input test product path')
     parser.add_argument('--snap_home', default=None, help='SNAP installation dir')
@@ -242,18 +217,28 @@ def _main():
     gp = GeoPos(30.0, 45.0)
     print('geopos: ' + str(gp.getLat()) + ', ' + str(gp.getLon()))
 
+    # Test: set up a Java Product from SNAP API
+    p = Product("bla", "blubb", 3, 3)
+    print('product name = ' + p.getName())
+    print('product type = ' + p.getProductType())
+    w = p.getSceneRasterWidth()
+    h = p.getSceneRasterHeight()
+    print('scene raster width = ' + str(w))
+    print('scene raster height = ' + str(h))
+
     # Test: access Product via ProductIO from SNAP API
     p = ProductIO.readProduct(product_path)
-    # p = Product("bla", "blubb", 3, 3)
-
-    # rad13 = p.getBand('radiance_13')
-    # w = rad13.getRasterWidth()
-    # name = p.getName()
+    name = p.getName()
+    print('product name = ' + name)
+    rad13 = p.getBand('radiance_13')
+    w = rad13.getRasterWidth()
+    h = rad13.getRasterHeight()
+    print('radiance_13 raster width = ' + str(w))
+    print('radiance_13 raster height = ' + str(h))
     w = p.getSceneRasterWidth()
-    # h = rad13.getRasterHeight()
-    # h = p.getSceneRasterHeight()
-    print('w = ' + str(w))
-    # print('h = ' + str(h))
+    h = p.getSceneRasterHeight()
+    print('scene raster width = ' + str(w))
+    print('scene raster height = ' + str(h))
 
 if __name__ == '__main__':
     _main()
