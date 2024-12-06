@@ -139,20 +139,22 @@ def _main():
     product_path = args.input_product_path
     snap_home = args.snap_home
 
-    # directory_path = snap_home + '\snap\modules'
-    # directory_path = snap_home
-    # list_files_recursive_2(directory_path)
-
-    # Get the Java classpath and print it
+    # Test: Get the Java classpath and print it
     System = java.type("java.lang.System")
     classpath = System.getProperty("java.class.path")
     print(f"Java Classpath: {classpath}")
 
+    # Collect jars to put on classpath (taken from old __init.py__)
     env = _get_snap_jvm_env(snap_home)
+
+    # now add classpath entries in the 'graalpy way':
     class_path_entries = list(env[0].values())
-    class_path = os.pathsep.join(class_path_entries)
-    print('classpath: ' + class_path)
-    System.setProperty("java.class.path", class_path)
+    for entry in class_path_entries:
+        print('jar: ' + entry)
+        java.add_to_classpath(entry)
+    # class_path = os.pathsep.join(class_path_entries)
+    # print('classpath: ' + class_path)
+    # System.setProperty("java.class.path", class_path)
 
     ProductIO = java.type('org.esa.snap.core.dataio.ProductIO')
     print('hier 2')
@@ -229,7 +231,7 @@ def _main():
     JAI = java.type('javax.media.jai.JAI')
 
     EngineConfig.instance().load()
-    # SystemUtils.init3rdPartyLibs(None)  # todo: check if needed
+    SystemUtils.init3rdPartyLibs(None)  # todo: check if needed
     Engine.start()
 
     BigInteger = java.type("java.math.BigInteger")
@@ -237,7 +239,7 @@ def _main():
     print(str(myBigInt))
 
     print('hier 3')
-    # p = ProductIO.readProduct(product_path)  # todo: we need complete classpath
+    p = ProductIO.readProduct(product_path)  # todo: we need complete classpath
     # p = Product("bla", "blubb", 3, 3)
     # print('CRS: ' + p.PROPERTY_NAME_SCENE_CRS)
     gp = GeoPos(30.0, 45.0)
@@ -246,10 +248,10 @@ def _main():
     # rad13 = p.getBand('radiance_13')
     # w = rad13.getRasterWidth()
     # name = p.getName()
-    # w = p.getSceneRasterWidth()
+    w = p.getSceneRasterWidth()
     # h = rad13.getRasterHeight()
     # h = p.getSceneRasterHeight()
-    # print('w = ' + str(w))
+    print('w = ' + str(w))
     # print('h = ' + str(h))
 
 if __name__ == '__main__':

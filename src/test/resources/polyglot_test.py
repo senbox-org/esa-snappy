@@ -4,9 +4,27 @@ array = java.type("int[]")(4)
 array[2] = 42
 print(array[2])
 
+ArrayList = java.type('java.util.ArrayList')
+my_list = ArrayList()
+assert java.is_symbol(ArrayList)
+assert not java.is_symbol(my_list)
+assert java.is_object(ArrayList)
+assert java.is_function(my_list.add)
+assert java.instanceof(my_list, ArrayList)
+
+# jstring = java.type('java.lang.String')("bla")
+# jstringU = java.type('java.lang.String')(jstring.toUpperCase())
+# print('string: ' + jstring)
+# l = jstring.length()
+# print('stringlength: ' + str(l))
+
+
 snap_home = 'D://olaf//bc//snap-snapshots//12//12.0-SNAPSHOT'
 
+System = java.type("java.lang.System")
 java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-core.jar')
+classpath = System.getProperty("java.class.path") + ';' + snap_home + '//snap//modules//org-esa-snap-snap-core.jar'
+System.setProperty("java.class.path", classpath)
 java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-ceres-core.jar')
 java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-snap-gpf.jar')
 java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-geotools//gt-referencing.jar')
@@ -14,14 +32,20 @@ java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-
 java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-locationtech-jts//jts-core.jar')
 java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.snap-core//org-geotools//gt-opengis.jar')
 java.add_to_classpath(snap_home + '//snap//modules//org-esa-snap-ceres-glayer.jar')
-# java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.ceres-jai//javax-media-jai//jai-core-openjdk.jar')
+java.add_to_classpath(snap_home + '//snap//modules//org.esa.snap.ceres-jai//javax-media-jai//jai-core-openjdk.jar')
 java.add_to_classpath('C://Users//olafd//.m2//repository//javax//media//jai_core//1.1.3//jai_core-1.1.3.jar')
 
+classpath = System.getProperty("java.class.path")
+print(f"Java Classpath: {classpath}")
+
 rsmu = java.type('org.esa.snap.core.util.math.RsMathUtils')
-print(rsmu.DEG_PER_RAD)
+print('deg2rad: ' + str(rsmu.DEG_PER_RAD))
+print('elevationToZenith: ' + str(rsmu.elevationToZenith(60.0)))
 
 print('hier 1')
-String = java.type('java.lang.String')
+
+GeoPos = java.type('org.esa.snap.core.datamodel.GeoPos')
+
 File = java.type('java.io.File')
 Point = java.type('java.awt.Point')
 Rectangle = java.type('java.awt.Rectangle')
