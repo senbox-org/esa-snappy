@@ -130,7 +130,6 @@ def _collect_snap_jvm_env(dir_path, env):
 
 
 def _main():
-    print('hier')
     parser = argparse.ArgumentParser(description='Configures snappy, the SNAP-Python interface.')
     parser.add_argument('--input_product_path', default=None, help='SNAP input test product path')
     parser.add_argument('--snap_home', default=None, help='SNAP installation dir')
@@ -152,16 +151,10 @@ def _main():
     for entry in class_path_entries:
         print('jar: ' + entry)
         java.add_to_classpath(entry)
-    # class_path = os.pathsep.join(class_path_entries)
-    # print('classpath: ' + class_path)
-    # System.setProperty("java.class.path", class_path)
 
-    ProductIO = java.type('org.esa.snap.core.dataio.ProductIO')
-    print('hier 2')
-    EngineConfig = java.type('org.esa.snap.runtime.EngineConfig')
-    Engine = java.type('org.esa.snap.runtime.Engine')
-    SystemUtils = java.type('org.esa.snap.core.util.SystemUtils')
-
+    #
+    # Frequently used classes from Java API
+    #
     String = java.type('java.lang.String')
     File = java.type('java.io.File')
     Point = java.type('java.awt.Point')
@@ -208,18 +201,18 @@ def _main():
     Tile = java.type('org.esa.snap.core.gpf.Tile')
 
     # Utilities
-    # EngineConfig = java.type('org.esa.snap.runtime.EngineConfig')
-    # Engine = java.type('org.esa.snap.runtime.Engine')
+    EngineConfig = java.type('org.esa.snap.runtime.EngineConfig')
+    Engine = java.type('org.esa.snap.runtime.Engine')
     SystemUtils = java.type('org.esa.snap.core.util.SystemUtils')
     ProductIO = java.type('org.esa.snap.core.dataio.ProductIO')
     ProductUtils = java.type('org.esa.snap.core.util.ProductUtils')
     GeoUtils = java.type('org.esa.snap.core.util.GeoUtils')
+    RsMathUtils = java.type('org.esa.snap.core.util.math.RsMathUtils')
     ProgressMonitor = java.type('com.bc.ceres.core.ProgressMonitor')
     PlainFeatureFactory = java.type('org.esa.snap.core.datamodel.PlainFeatureFactory')
     FeatureUtils = java.type('org.esa.snap.core.util.FeatureUtils')
     JavaTypeConverter = java.type('org.esa.snap.core.util.converters.JavaTypeConverter')
     ClassConverter = java.type('com.bc.ceres.binding.converters.ClassConverter')
-    print('hier 2')
 
     # GeoTools
     DefaultGeographicCRS = java.type('org.geotools.referencing.crs.DefaultGeographicCRS')
@@ -231,20 +224,28 @@ def _main():
     JAI = java.type('javax.media.jai.JAI')
 
     EngineConfig.instance().load()
-    SystemUtils.init3rdPartyLibs(None)  # todo: check if needed
+    SystemUtils.init3rdPartyLibs(None)
     Engine.start()
 
+    ### FINISHED preparations - now test something...
+
+    # Test: access Java BigInteger
     BigInteger = java.type("java.math.BigInteger")
     myBigInt = BigInteger.valueOf(42)
     print(str(myBigInt))
 
-    print('hier 3')
-    p = ProductIO.readProduct(product_path)  # todo: we need complete classpath
-    # p = Product("bla", "blubb", 3, 3)
-    # print('CRS: ' + p.PROPERTY_NAME_SCENE_CRS)
+    # Test: access Java RsMathUtils from SNAP API, access public class constant and use static method:
+    print('deg2rad: ' + str(RsMathUtils.DEG_PER_RAD))
+    print('elevationToZenith: ' + str(RsMathUtils.elevationToZenith(60.0)))
+
+    # Test: access Java GeoPos from SNAP API, use non-static method:
     gp = GeoPos(30.0, 45.0)
     print('geopos: ' + str(gp.getLat()) + ', ' + str(gp.getLon()))
-    print('hier 4')
+
+    # Test: access Product via ProductIO from SNAP API
+    p = ProductIO.readProduct(product_path)
+    # p = Product("bla", "blubb", 3, 3)
+
     # rad13 = p.getBand('radiance_13')
     # w = rad13.getRasterWidth()
     # name = p.getName()
