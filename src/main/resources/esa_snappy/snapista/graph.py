@@ -1,6 +1,7 @@
 import os
 import subprocess
 import tempfile
+import platform
 import lxml.etree as etree
 from esa_snappy import GPF
 from xml.sax.saxutils import unescape
@@ -56,11 +57,18 @@ class Graph:
 
         gpt_cmd = None
 
-        for p in os.environ["PATH"].split(":"):
+        if platform.system() == 'Windows':
+            path_split_char = ";"
+            gpt_executable = "gpt.exe"
+        else:
+            path_split_char = ":"
+            gpt_executable = "gpt"
 
-            if os.path.exists(os.path.join(p, "gpt")):
+        for p in os.environ["PATH"].split(path_split_char):
 
-                gpt_cmd = os.path.join(p, "gpt")
+            if os.path.exists(os.path.join(p, gpt_executable)):
+
+                gpt_cmd = os.path.join(p, gpt_executable)
 
                 break
 
@@ -135,33 +143,34 @@ class Graph:
 
         return desc_dict
 
-    def nice_view(self):
-
-        try:
-            from pygments import highlight
-            from pygments.lexers import XmlLexer
-            from pygments.formatters import HtmlFormatter
-            import IPython
-            from IPython.display import HTML
-
-            def display_xml_nice(xml):
-                formatter = HtmlFormatter()
-                IPython.display.display(
-                    HTML(
-                        '<style type="text/css">{}</style>    {}'.format(
-                            formatter.get_style_defs(".highlight"),
-                            highlight(xml, XmlLexer(), formatter),
-                        )
-                    )
-                )
-
-            display_xml_nice(etree.tostring(self.root, pretty_print=True))
-
-        except ModuleNotFoundError:
-
-            print(etree.tostring(self.root, pretty_print=True).decode("utf-8")).replace(
-                "\\n", "\n"
-            )
+    # todo: seems that this is not needed. Check.
+    # def nice_view(self):
+    #
+    #     try:
+    #         from pygments import highlight
+    #         from pygments.lexers import XmlLexer
+    #         from pygments.formatters import HtmlFormatter
+    #         import IPython
+    #         from IPython.display import HTML
+    #
+    #         def display_xml_nice(xml):
+    #             formatter = HtmlFormatter()
+    #             IPython.display.display(
+    #                 HTML(
+    #                     '<style type="text/css">{}</style>    {}'.format(
+    #                         formatter.get_style_defs(".highlight"),
+    #                         highlight(xml, XmlLexer(), formatter),
+    #                     )
+    #                 )
+    #             )
+    #
+    #         display_xml_nice(etree.tostring(self.root, pretty_print=True))
+    #
+    #     except ModuleNotFoundError:
+    #
+    #         print(etree.tostring(self.root, pretty_print=True).decode("utf-8")).replace(
+    #             "\\n", "\n"
+    #         )
 
     def view(self):
         """This method prints SNAP Graph
