@@ -64,7 +64,7 @@ class Graph:
             path_split_char = ":"
             gpt_executable = "gpt"
 
-        for p in os.environ["PATH"].split(path_split_char):
+        for p in os.getenv("PATH").split(path_split_char):
 
             if os.path.exists(os.path.join(p, gpt_executable)):
 
