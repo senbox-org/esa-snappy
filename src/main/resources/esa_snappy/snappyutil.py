@@ -110,6 +110,16 @@ def _configure_snappy(snap_home=None,
         jpy_wheel_file_re = jpy_wheel_file_pat.replace('{version}', '[^\-]+').replace('{abi_tag}', '[^\-]+')
         jpy_wheel_file_rec = re.compile(jpy_wheel_file_re)
 
+        # for macos, discard platform version in whl search, as jpy provides just
+        # one whl per Python version anyway.
+        # lib folder contains renamed wheels as:
+        # jpy-{version}-cp3<x>-{abi-tag}-macosx_X_y_<arch>.whl --> jpy-{version}-cp3<x>-{abi-tag}-macosx.whl
+        # e.g. jpy-1.0.0-cp37-cp37m-macosx_11_0_x86_64.whl --> jpy-1.0.0-cp37-cp37m-macosx.whl
+        if 'macosx' in jpy_wheel_file_re:
+            _jpy_wheel_file_re = jpy_wheel_file_re.split("macosx")
+            jpy_wheel_file_re = _jpy_wheel_file_re[0] + 'macosx.whl'
+            jpy_wheel_file_rec = re.compile(jpy_wheel_file_re)
+
         #
         # See if user put a custom jpy platform wheel into snappy dir
         # ./snappy/jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
