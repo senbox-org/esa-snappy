@@ -1,6 +1,7 @@
 package eu.esa.snap.snappy.gpf;
 
 import eu.esa.snap.snappy.PyBridge;
+import eu.esa.snap.snappy.SnappyConstants;
 import org.esa.snap.core.gpf.GPF;
 import org.esa.snap.core.gpf.Operator;
 import org.esa.snap.core.gpf.OperatorException;
@@ -39,7 +40,7 @@ public class PyOperatorSpi extends OperatorSpi {
         if (Files.isDirectory(PyBridge.PYTHON_CONFIG_DIR)) {
             serviceFinder.addSearchPath(PyBridge.PYTHON_CONFIG_DIR);
         }
-        serviceFinder.addSearchPathsFromPreferences(PyBridge.PYTHON_EXTRA_PATHS_PROPERTY);
+        serviceFinder.addSearchPathsFromPreferences(SnappyConstants.PYTHON_EXTRA_PATHS_PROPERTY);
         serviceFinder.setUseClassPath(true);
         for (ServiceFinder.Module module : serviceFinder.findServices()) {
             for (String pythonClassName : module.getServiceNames()) {

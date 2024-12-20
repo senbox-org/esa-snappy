@@ -1,6 +1,7 @@
 package eu.esa.snap.snappy.gpf;
 
 
+import eu.esa.snap.snappy.SnappyConstants;
 import org.esa.snap.core.gpf.GPF;
 import org.esa.snap.core.gpf.OperatorSpi;
 import org.esa.snap.core.gpf.OperatorSpiRegistry;
@@ -30,7 +31,7 @@ public class PyOperatorSpiTest {
     public static void init() {
         File file = PyOperatorTest.getResourceFile("/");
         assertTrue(file.isDirectory());
-        Config.instance().preferences().put(PyBridge.PYTHON_EXTRA_PATHS_PROPERTY, file.getPath());
+        Config.instance().preferences().put(SnappyConstants.PYTHON_EXTRA_PATHS_PROPERTY, file.getPath());
     }
 
     /*

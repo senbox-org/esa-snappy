@@ -1,6 +1,7 @@
 package eu.esa.snap.main;
 
 
+import eu.esa.snap.snappy.SnappyConstants;
 import org.esa.snap.core.util.SystemUtils;
 import org.esa.snap.core.util.io.TreeDeleter;
 import eu.esa.snap.snappy.PyBridge;
@@ -32,7 +33,7 @@ public class EsaSnappyConfiguratorTest {
         esaSnappyPath = null;
         snappyCustomPath = null;
         final Path snapApplicationPath = SystemUtils.getApplicationDataDir(true).toPath();
-        snapPythonPath = snapApplicationPath.resolve(PyBridge.SNAP_PYTHON_DIRNAME);
+        snapPythonPath = snapApplicationPath.resolve(SnappyConstants.SNAP_PYTHON_DIRNAME);
     }
 
     @Test
@@ -53,9 +54,9 @@ public class EsaSnappyConfiguratorTest {
 //        SnapArgsProcessor.processPython(new String[]{pythonExecPath, snappyCustomDirName});
         EsaSnappyConfigurator.main(pythonExecPath, snappyCustomDirName);
         assertTrue(Files.isDirectory(snappyCustomPath));
-        snappyPropertiesFilePath = Paths.get(snapPythonPath + File.separator + PyBridge.SNAPPY_PROPERTIES_NAME);
+        snappyPropertiesFilePath = Paths.get(snapPythonPath + File.separator + SnappyConstants.SNAPPY_PROPERTIES_NAME);
         assertTrue(Files.isRegularFile(snappyPropertiesFilePath));
-        assertTrue(Files.isDirectory(Paths.get(snappyCustomPath + File.separator + PyBridge.SNAPPY_NAME)));
+        assertTrue(Files.isDirectory(Paths.get(snappyCustomPath + File.separator + SnappyConstants.SNAPPY_NAME)));
     }
 
     @Test
@@ -69,9 +70,9 @@ public class EsaSnappyConfiguratorTest {
 //        SnapArgsProcessor.processPython(new String[]{pythonExecPath});
         EsaSnappyConfigurator.main(pythonExecPath);
         assertTrue(Files.isDirectory(snapPythonPath));
-        snappyPropertiesFilePath = Paths.get(snapPythonPath + File.separator + PyBridge.SNAPPY_PROPERTIES_NAME);
+        snappyPropertiesFilePath = Paths.get(snapPythonPath + File.separator + SnappyConstants.SNAPPY_PROPERTIES_NAME);
         assertTrue(Files.isRegularFile(snappyPropertiesFilePath));
-        esaSnappyPath = Paths.get(snapPythonPath + File.separator + PyBridge.SNAPPY_NAME);
+        esaSnappyPath = Paths.get(snapPythonPath + File.separator + SnappyConstants.SNAPPY_NAME);
         assertTrue(Files.isDirectory(esaSnappyPath));
     }
 

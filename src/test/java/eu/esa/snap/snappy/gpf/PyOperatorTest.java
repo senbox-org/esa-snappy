@@ -1,6 +1,7 @@
 package eu.esa.snap.snappy.gpf;
 
 
+import eu.esa.snap.snappy.SnappyConstants;
 import org.esa.snap.core.dataio.ProductIO;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.GPF;
@@ -37,13 +38,13 @@ public class PyOperatorTest {
         assertTrue(moduleDir.isDirectory());
 
         // e.g. use -Dsnap.pythonExecutable=C:/Python34/python.exe
-        String pythonExe = Config.instance().preferences().get(PyBridge.PYTHON_EXECUTABLE_PROPERTY, null);
+        String pythonExe = Config.instance().preferences().get(SnappyConstants.PYTHON_EXECUTABLE_PROPERTY, null);
 
-        assumeTrue(String.format("Please set '%s' to execute this test", PyBridge.PYTHON_EXECUTABLE_PROPERTY),
+        assumeTrue(String.format("Please set '%s' to execute this test", SnappyConstants.PYTHON_EXECUTABLE_PROPERTY),
                    pythonExe != null);
 
-        Config.instance().preferences().put(PyBridge.FORCE_PYTHON_CONFIG_PROPERTY, "false");
-        Config.instance().preferences().put(PyBridge.PYTHON_MODULE_DIR_PROPERTY, moduleDir.getPath());
+        Config.instance().preferences().put(SnappyConstants.FORCE_PYTHON_CONFIG_PROPERTY, "false");
+        Config.instance().preferences().put(SnappyConstants.PYTHON_MODULE_DIR_PROPERTY, moduleDir.getPath());
 
         PyOperatorSpiTest.init();
     }

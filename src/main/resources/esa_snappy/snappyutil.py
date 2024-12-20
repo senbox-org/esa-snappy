@@ -99,9 +99,11 @@ def _configure_snappy(snap_home=None,
 
         # See "PEP 0425 -- Compatibility Tags for Built Distributions"
         # https://www.python.org/dev/peps/pep-0425/
-        import distutils.util
+        # import distutils.util
+        import sysconfig  # switch to sysconfig, as distutils is deprecated in Python 3.10
 
-        platform_tag = distutils.util.get_platform().replace('-', '_').replace('.', '_')
+        # platform_tag = distutils.util.get_platform().replace('-', '_').replace('.', '_')
+        platform_tag = sysconfig.get_platform().replace('-', '_').replace('.', '_')
         python_tag = 'cp%d%d' % (sys.version_info.major, sys.version_info.minor,)
         jpy_wheel_file_pat = 'jpy-{version}-%s-{abi_tag}-%s.whl' % (python_tag, platform_tag)
 

@@ -37,11 +37,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
+import static eu.esa.snap.snappy.SnappyConstants.*;
 import static org.esa.snap.core.util.SystemUtils.*;
 
 /**
@@ -71,23 +69,7 @@ import static org.esa.snap.core.util.SystemUtils.*;
  * @author Norman Fomferra
  */
 public class PyBridge {
-
-    public static final String PYTHON_EXECUTABLE_PROPERTY = "snap.pythonExecutable";
-    public static final String PYTHON_MODULE_DIR_PROPERTY = "snap.pythonModuleDir";
-    public static final String FORCE_PYTHON_CONFIG_PROPERTY = "snap.forcePythonConfig";
-    public static final String PYTHON_EXTRA_PATHS_PROPERTY = "snap.pythonExtraPaths";
     public static final Path PYTHON_CONFIG_DIR;
-
-    public static final String SNAP_PYTHON_DIRNAME = "snap-python";
-//    public static final String SNAP_PYTHON_DIRNAME = "snap-python_TEST";
-    private static final String JPY_DEBUG_PROPERTY = "jpy.debug";
-    private static final String JPY_CONFIG_PROPERTY = "jpy.config";
-    public static final String SNAPPY_NAME = "esa_snappy";
-    private static final String SNAPPY_NAME_OLD = "snappy";
-    public static final String SNAPPY_PROPERTIES_NAME = "snappy.properties";
-    private static final String SNAPPYUTIL_PY_FILENAME = "snappyutil.py";
-    private static final String SNAPPYUTIL_LOG_FILENAME = "snappyutil.log";
-    private static final String JPY_JAVA_API_CONFIG_FILENAME = "jpyconfig.properties";
     private static final Path MODULE_CODE_BASE_PATH;
 
     private static boolean established;
@@ -148,17 +130,6 @@ public class PyBridge {
             storePythonConfig(pythonExecutable, snappyParentDir);
         }
 
-        // remove old snappy dir:
-        // todo: Python operators which use the new 'esa_snappy' still jump into the old 'snappy'
-        //  module if folder <snappyParentDir>/snappy (e.g. default .snap/snap-python/snappy) is still present.
-        //  Find out why. (The other way round is ok: operators which use the old 'snappy' work fine even if
-        //  both folders 'snappy' and 'esa_snappy' are present.)
-        //  (This issue might disappear in future SNAP releases if snap-python module is completely removed.)
-        Path oldSnappyPath = snappyParentDir.resolve(SNAPPY_NAME_OLD);
-        if (Files.isDirectory(oldSnappyPath)) {
-            TreeDeleter.deleteDir(oldSnappyPath);
-        }
-
         Path jpyConfigFile = snappyPath.resolve(JPY_JAVA_API_CONFIG_FILENAME);
         if (forcePythonConfig || !Files.exists(jpyConfigFile)) {
             // Configure jpy Python-side
@@ -177,6 +148,9 @@ public class PyBridge {
         if (Debug.isEnabled() && System.getProperty(JPY_DEBUG_PROPERTY) == null) {
             System.setProperty(JPY_DEBUG_PROPERTY, "true");
         }
+
+        // Configure Snapista:
+        configureSnapista(pythonExecutable, snappyPath);
 
         return snappyPath;
     }
@@ -267,9 +241,7 @@ public class PyBridge {
         String commandLine = toCommandLine(command);
         LOG.info(String.format("Executing command: [%s]\n", commandLine));
         try {
-            Process process = new ProcessBuilder()
-                    .command(command)
-                    .directory(snappyDir.toFile()).start();
+            Process process = new ProcessBuilder().command(command).directory(snappyDir.toFile()).start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 throw new IOException(
@@ -277,6 +249,39 @@ public class PyBridge {
                                         "Command [%s]\nfailed with return code %s.\n" +
                                         "Please check the log file '%s'.",
                                 commandLine, exitCode, snappyDir.resolve(SNAPPYUTIL_LOG_FILENAME)));
+            }
+        } catch (InterruptedException e) {
+            throw new IOException(
+                    String.format("Python configuration failed.\n" +
+                                    "Command [%s]\nfailed with exception %s.\n" +
+                                    "Please check the log file '%s'.",
+                            commandLine, e.getMessage(), snappyDir.resolve(SNAPPYUTIL_LOG_FILENAME)), e);
+        }
+    }
+
+    private static void configureSnapista(Path pythonExecutable, Path snappyDir) throws IOException {
+        LOG.info("Configuring Snapista...");
+
+        List<String> command = new ArrayList<>();
+        command.add(pythonExecutable.toString());
+        command.add("-m");
+        command.add("pip");
+        command.add("install");
+        Collections.addAll(command, SNAPISTA_REQUIRED_PACKAGES);
+
+        String commandLine = toCommandLine(command);
+        LOG.info(String.format("Executing command: [%s]\n", commandLine));
+        try {
+            Process process = new ProcessBuilder().command(command).directory(snappyDir.toFile()).start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException(
+                        String.format("Installation of Snapista Python packages with pip failed.\n" +
+                                        "Command [%s]\nfailed with return code %s.\n" +
+                                        "Please check your Python installation.",
+                                commandLine, exitCode));
+            } else {
+                // todo: try to fix pip?
             }
         } catch (InterruptedException e) {
             throw new IOException(
