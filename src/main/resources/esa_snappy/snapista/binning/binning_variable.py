@@ -1,13 +1,13 @@
-import attr
+from attrs import asdict, define, field
 import lxml.etree as etree
 
 
-@attr.s
+@define
 class BinningVariable(object):
 
-    name = attr.ib()
-    expression = attr.ib()
-    valid_expression = attr.ib()
+    name = field()
+    expression = field()
+    valid_expression = field()
 
     def __str__(self):
 
@@ -23,7 +23,7 @@ class BinningVariable(object):
 
     def to_dict(self):
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def format_key(self, key):
 

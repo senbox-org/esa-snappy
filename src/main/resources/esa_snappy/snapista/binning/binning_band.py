@@ -1,14 +1,14 @@
-import attr
+from attrs import asdict, define, field
 import lxml.etree as etree
 
 
-@attr.s
+@define
 class BinningBand(object):
 
-    index = attr.ib()
-    name = attr.ib()
-    minValue = attr.ib()
-    maxValue = attr.ib()
+    index = field()
+    name = field()
+    min_value = field()
+    max_value = field()
 
     def __str__(self):
 
@@ -24,7 +24,7 @@ class BinningBand(object):
 
     def to_dict(self):
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 

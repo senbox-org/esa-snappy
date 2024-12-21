@@ -1,14 +1,14 @@
-import attr
+from attrs import asdict, define, field
 import lxml.etree as etree
 
 
-@attr.s
+@define
 class AggregatorPercentile(object):
 
-    type = attr.ib(init=False, default="PERCENTILE")
-    varName = attr.ib()
-    targetName = attr.ib()
-    percentage = attr.ib(default=90)
+    type = field(init=False, default="PERCENTILE")
+    var_name = field()
+    target_name = field()
+    percentage = field(default=90)
 
     @percentage.validator
     def _check_type(self, attribute, value):
@@ -39,7 +39,7 @@ class AggregatorPercentile(object):
 
         self.type = "PERCENTILE"
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 

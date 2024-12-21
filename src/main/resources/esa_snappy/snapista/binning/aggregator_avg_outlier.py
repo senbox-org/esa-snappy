@@ -1,13 +1,13 @@
-import attr
 import lxml.etree as etree
+from attrs import asdict, define, field
 
 
-@attr.s
+@define
 class AggregatorAvgOutlier(object):
 
-    type = attr.ib(init=False, default="AVG_OUTLIER")
-    varName = attr.ib()
-    targetName = attr.ib()
+    type = field(init=False, default="AVG_OUTLIER")
+    var_name = field()
+    target_name = field()
 
     def __str__(self):
 
@@ -29,7 +29,7 @@ class AggregatorAvgOutlier(object):
 
         self.type = "AVG_OUTLIER"
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 

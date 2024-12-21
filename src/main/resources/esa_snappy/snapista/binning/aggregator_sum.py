@@ -1,13 +1,13 @@
-import attr
+from attrs import asdict, define, field
 import lxml.etree as etree
 
 
-@attr.s
+@define
 class AggregatorSum(object):
 
-    type = attr.ib(init=False, default="SUM")
-    varName = attr.ib()
-    targetName = attr.ib()
+    type = field(init=False, default="SUM")
+    var_name = field()
+    target_name = field()
 
     def __str__(self):
 
@@ -29,7 +29,7 @@ class AggregatorSum(object):
 
         self.type = "SUM"
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 

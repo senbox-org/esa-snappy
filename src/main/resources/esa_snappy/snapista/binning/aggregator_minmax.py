@@ -1,13 +1,13 @@
-import attr
+from attrs import asdict, define, field
 import lxml.etree as etree
 
 
-@attr.s
+@define
 class AggregatorMinMax(object):
 
-    type = attr.ib(init=False, default="MIN_MAX")
-    varName = attr.ib()
-    targetName = attr.ib()
+    type = field(init=False, default="MIN_MAX")
+    var_name = field()
+    target_name = field()
 
     def __str__(self):
 
@@ -29,7 +29,7 @@ class AggregatorMinMax(object):
 
         self.type = "MIN_MAX"
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 

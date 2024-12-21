@@ -1,23 +1,31 @@
-import attr
+#import attr
 import lxml.etree as etree
+from attrs import asdict, define, field
 
 
-@attr.s
+# @attr.s
+@define
 class AggregatorAvg(object):
 
-    type = attr.ib(init=False, default="AVG")
-    varName = attr.ib()
-    targetName = attr.ib()
-    weightCoeff = attr.ib(default=0.0)
-    outputCounts = attr.ib(default="true")
-    outputSums = attr.ib(default="true")
+    # type = attr.ib(init=False, default="AVG")
+    # varName = attr.ib()
+    # targetName = attr.ib()
+    # weightCoeff = attr.ib(default=0.0)
+    # outputCounts = attr.ib(default="true")
+    # outputSums = attr.ib(default="true")
 
-    @outputCounts.validator
+    type = field(init=False, default="AVG")
+    var_name = field()
+    target_name = field()
+    weight_coeff = field(default=0.0)
+    output_counts = field(default="true")
+    output_sums = field(default="true")
+    @output_counts.validator
     def _check_type(self, attribute, value):
         if value not in ["true", "false"]:
             raise ValueError("output_counts value is either 'true' or 'false'")
 
-    @outputSums.validator
+    @output_sums.validator
     def _check_type(self, attribute, value):
         if value not in ["true", "false"]:
             raise ValueError("output_sums value is either 'true' or 'false'")
@@ -42,7 +50,8 @@ class AggregatorAvg(object):
 
         self.type = "AVG"
 
-        return attr.asdict(self)
+        # return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 

@@ -1,14 +1,14 @@
-import attr
+from attrs import asdict, define, field
 import lxml.etree as etree
 
 
-@attr.s
+@define
 class AggregatorOnMaxSet(object):
 
-    type = attr.ib(init=False, default="ON_MAX_SET")
-    targetName = attr.ib()
-    onMaxVarName = attr.ib()
-    setVarNames = attr.ib(default=None)
+    type = field(init=False, default="ON_MAX_SET")
+    var_name = field()
+    target_name = field()
+    set_var_names = field(default=None)
 
     def __str__(self):
 
@@ -30,7 +30,7 @@ class AggregatorOnMaxSet(object):
 
         self.type = "ON_MAX_SET"
 
-        return attr.asdict(self)
+        return asdict(self)
 
     def to_xml(self):
 
