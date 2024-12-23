@@ -24,10 +24,7 @@ import org.esa.snap.core.util.io.TreeDeleter;
 import org.esa.snap.runtime.Config;
 import org.jpy.PyLib;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URI;
@@ -261,6 +258,11 @@ public class PyBridge {
 
     private static void configureSnapista(Path pythonExecutable, Path snappyDir) throws IOException {
         LOG.info("Configuring Snapista...");
+        // todo: further check and investigate:
+        // - make sure that pip is installed and found under all setups in order to run command below
+        // - check this also for virtual envs
+        // - try to output log messages not in SNAP messages.log, but on snappy_config console!
+        // - Python psutils package should not be installed (not needed and requires Python >= 3.9
 
         List<String> command = new ArrayList<>();
         command.add(pythonExecutable.toString());
@@ -274,7 +276,25 @@ public class PyBridge {
         try {
             Process process = new ProcessBuilder().command(command).directory(snappyDir.toFile()).start();
             int exitCode = process.waitFor();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),
+                    StandardCharsets.UTF_8));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                LOG.info(line);
+            }
+
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
+            while ((line = reader.readLine()) != null) {
+                LOG.severe(line);
+            }
+
+            LOG.info("Java Runtime.getRuntime(): exitValue = " + process.exitValue());
+            reader.close();
+
             if (exitCode != 0) {
+                System.out.println("Configuration of Snapista failed (IOException)!");
                 throw new IOException(
                         String.format("Installation of Snapista Python packages with pip failed.\n" +
                                         "Command [%s]\nfailed with return code %s.\n" +
@@ -284,6 +304,7 @@ public class PyBridge {
                 // todo: try to fix pip?
             }
         } catch (InterruptedException e) {
+            System.out.println("Configuration of Snapista failed (InterruptedException)!");
             throw new IOException(
                     String.format("Python configuration failed.\n" +
                                     "Command [%s]\nfailed with exception %s.\n" +

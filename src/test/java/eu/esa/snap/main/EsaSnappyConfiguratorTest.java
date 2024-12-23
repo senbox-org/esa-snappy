@@ -1,6 +1,7 @@
 package eu.esa.snap.main;
 
 
+import eu.esa.snap.snappy.EsaSnappyArgsProcessor;
 import eu.esa.snap.snappy.SnappyConstants;
 import org.esa.snap.core.util.SystemUtils;
 import org.esa.snap.core.util.io.TreeDeleter;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -87,6 +89,23 @@ public class EsaSnappyConfiguratorTest {
             return null;
         }
         return pythonExecPath;
+    }
+
+    @Test
+    public void testGetPythonModuleInstallDir() {
+
+        final String expectedInstallDir = SystemUtils.getUserHomeDir().getAbsolutePath() + File.separator +
+                "python310" + File.separator + "Lib" + File.separator + "site-packages";
+
+        // Windows
+        String pythonExecPath = SystemUtils.getUserHomeDir().getAbsolutePath() + File.separator + "python310" +
+                File.separator + "python.exe";
+        assertEquals(expectedInstallDir, EsaSnappyArgsProcessor.getPythonModuleInstallDir(pythonExecPath).toString());
+
+        // Linux/Mac
+        pythonExecPath = SystemUtils.getUserHomeDir().getAbsolutePath() + File.separator + "python310" +
+                File.separator + "bin" + File.separator + "python";
+        assertEquals(expectedInstallDir, EsaSnappyArgsProcessor.getPythonModuleInstallDir(pythonExecPath).toString());
     }
 
     private void deleteOldConfig(Path snapPythonPath) throws IOException {

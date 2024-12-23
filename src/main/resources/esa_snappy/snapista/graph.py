@@ -144,33 +144,33 @@ class Graph:
         return desc_dict
 
     # todo: seems that this is not needed. Check.
-    # def nice_view(self):
-    #
-    #     try:
-    #         from pygments import highlight
-    #         from pygments.lexers import XmlLexer
-    #         from pygments.formatters import HtmlFormatter
-    #         import IPython
-    #         from IPython.display import HTML
-    #
-    #         def display_xml_nice(xml):
-    #             formatter = HtmlFormatter()
-    #             IPython.display.display(
-    #                 HTML(
-    #                     '<style type="text/css">{}</style>    {}'.format(
-    #                         formatter.get_style_defs(".highlight"),
-    #                         highlight(xml, XmlLexer(), formatter),
-    #                     )
-    #                 )
-    #             )
-    #
-    #         display_xml_nice(etree.tostring(self.root, pretty_print=True))
-    #
-    #     except ModuleNotFoundError:
-    #
-    #         print(etree.tostring(self.root, pretty_print=True).decode("utf-8")).replace(
-    #             "\\n", "\n"
-    #         )
+    def nice_view(self):
+
+        try:
+            from pygments import highlight
+            from pygments.lexers import XmlLexer
+            from pygments.formatters import HtmlFormatter
+            import IPython
+            from IPython.display import HTML
+
+            def display_xml_nice(xml):
+                formatter = HtmlFormatter()
+                IPython.display.display(
+                    HTML(
+                        '<style type="text/css">{}</style>    {}'.format(
+                            formatter.get_style_defs(".highlight"),
+                            highlight(xml, XmlLexer(), formatter),
+                        )
+                    )
+                )
+
+            display_xml_nice(etree.tostring(self.root, pretty_print=True))
+
+        except ModuleNotFoundError:
+
+            print(etree.tostring(self.root, pretty_print=True).decode("utf-8")).replace(
+                "\\n", "\n"
+            )
 
     def view(self):
         """This method prints SNAP Graph

@@ -5,6 +5,7 @@ import org.netbeans.spi.sendopts.ArgsProcessor;
 import org.netbeans.spi.sendopts.Description;
 import org.netbeans.spi.sendopts.Env;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,15 +30,25 @@ public class EsaSnappyArgsProcessor  implements ArgsProcessor {
         System.out.flush();
 
         Configurator configurator = new Configurator();
-        if (args.length >= 1) {
+//        if (args.length >= 1) {
+//            configurator.setPythonExecutable(Paths.get(args[0]));
+//        }
+//        if (args.length >= 2) {
+//            configurator.setPythonModuleInstallDir(Paths.get(args[1]));
+//        }
+
+        // use Python executble as only parameter, and install in Lib/site-packages of current Python
+        // todo: check with ESA
+        if (args.length != 1) {
+            throw new IllegalArgumentException("EsaSnappyArgsProcessor: wrong number of arguments: " + args.length);
+        } else {
             configurator.setPythonExecutable(Paths.get(args[0]));
-        }
-        if (args.length >= 2) {
-            configurator.setPythonModuleInstallDir(Paths.get(args[1]));
+            configurator.setPythonModuleInstallDir(getPythonModuleInstallDir(args[0]));
         }
 
         ConfigurationReport report = configurator.doConfig();
 
+        // todo: check and improve this output, in particular in error case with empty stack trace!
         if(report.isSuccessful()) {
             System.out.println("Configuration finished successful!");
             Path snappyDir = report.getSnappyDir();
@@ -56,6 +67,25 @@ public class EsaSnappyArgsProcessor  implements ArgsProcessor {
         }
         System.out.flush();
 
+    }
+
+    public static Path getPythonModuleInstallDir(String pathToPythonExec) {
+        if (pathToPythonExec != null) {
+            if (pathToPythonExec.endsWith("python")) {
+                // Linux/Macos
+                // e.g. /home/Python310/bin/python
+                return Paths.get(new File(pathToPythonExec).getParentFile().getParentFile().getAbsolutePath() +
+                        File.separator + "Lib" + File.separator + "site-packages");
+            } else if (pathToPythonExec.endsWith("python.exe")) {
+                // Windows
+                // e.g. C:\\User\\Python310\\python.exe
+                return Paths.get(new File(pathToPythonExec).getParentFile().getAbsolutePath() +
+                        File.separator + "Lib" + File.separator + "site-packages");
+            } else {
+                throw new IllegalArgumentException("Input does not seem to be a path to a Python executable");
+            }
+        }
+        return null;
     }
 
 }
