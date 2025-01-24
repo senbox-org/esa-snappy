@@ -1,7 +1,5 @@
 package eu.esa.snap.snappy;
 
-import java.nio.file.Path;
-
 public class SnappyConstants {
     public static final String PYTHON_EXECUTABLE_PROPERTY = "snap.pythonExecutable";
     public static final String PYTHON_MODULE_DIR_PROPERTY = "snap.pythonModuleDir";

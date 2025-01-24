@@ -9,7 +9,6 @@ import org.esa.snap.core.gpf.OperatorSpiRegistry;
 import org.esa.snap.core.gpf.descriptor.DefaultOperatorDescriptor;
 import org.esa.snap.core.gpf.main.GPT;
 import org.esa.snap.core.util.io.TreeDeleter;
-import eu.esa.snap.snappy.PyBridge;
 import org.esa.snap.runtime.Config;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +62,7 @@ public class PyOperatorTest {
                      "-t", targetDim.toString(),
                      "-PlowerName=radiance_13",
                      "-PupperName=radiance_7",
-                     "-Ssource=" + getResourceFile("/esa_snappy/testdata/MER_FRS_L1B_SUBSET.dim"));
+                     "-Ssource=" + getResourceFile("/esa_snappy/esa_snappy/testdata/MER_FRS_L1B_SUBSET.dim"));
 
             assertTrue(Files.isRegularFile(targetDim));
             assertTrue(Files.isDirectory(targetData));
@@ -132,7 +131,7 @@ public class PyOperatorTest {
             GPT.main(graphFile.getAbsolutePath(),
                      "-e",
                      "-t", targetFile.getAbsolutePath(),
-                     "-Sinput=" + getResourceFile("/esa_snappy/testdata/MER_FRS_L1B_SUBSET.dim"));
+                     "-Sinput=" + getResourceFile("/esa_snappy/esa_snappy/testdata/MER_FRS_L1B_SUBSET.dim"));
 
             assertTrue(targetFile.exists());
 

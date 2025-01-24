@@ -123,7 +123,7 @@ public class PyBridge {
 
         Path snappyPath = snappyParentDir.resolve(SNAPPY_NAME);
         if (forcePythonConfig || !Files.isDirectory(snappyPath)) {
-            unpackPythonModuleDir(snappyPath);
+//            unpackPythonModuleDir(snappyPath);
             storePythonConfig(pythonExecutable, snappyParentDir);
         }
 
@@ -147,7 +147,7 @@ public class PyBridge {
         }
 
         // Configure Snapista:
-        configureSnapista(pythonExecutable, snappyPath);
+//        configureSnapista(pythonExecutable, snappyPath);
 
         return snappyPath;
     }

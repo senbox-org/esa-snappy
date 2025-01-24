@@ -1,6 +1,5 @@
 import unittest
 import array
-import sys
 
 import numpy as np
 
