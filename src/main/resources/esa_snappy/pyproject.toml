@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "esa_snappy"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="Olaf Danne, Norman Fomferra (Brockmann Consult GmbH)" },
 ]
@@ -46,6 +46,18 @@ readme = {file = "README.md", content-type = "text/markdown"}
 exclude = [
     "testconfigs"
 ]
+
+[tool.setuptools.package-data]
+#"esa_snappy" = [
+#    "testdata/*.*",
+#    "testdata/MER_FRS_L1B_SUBSET.data/*.*",
+#    "testdata/MER_FRS_L1B_SUBSET.data/tie_point_grids/*.*",
+#    "testdata/MER_FRS_L1B_SUBSET.data/vector_data/*.*",
+#]
+"esa_snappy" = [
+    "testdata/**"  # this ensures that whole tree of Dimap test product is packaged
+]
+
 
 [project.urls]
 Homepage = "https://github.com/pypa/sampleproject"
