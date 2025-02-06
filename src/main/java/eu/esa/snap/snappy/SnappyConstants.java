@@ -15,5 +15,5 @@ public class SnappyConstants {
     public static final String SNAPPYUTIL_LOG_FILENAME = "snappyutil.log";
     public static final String JPY_JAVA_API_CONFIG_FILENAME = "jpyconfig.properties";
 
-    public static final String[] SNAPISTA_REQUIRED_PACKAGES = {"lxml", "psutils", "attrs", "requests"};
+    public static final String[] SNAPISTA_REQUIRED_PACKAGES = {"lxml", "attrs", "requests"};
 }

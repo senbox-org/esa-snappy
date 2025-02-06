@@ -112,11 +112,21 @@ public class EsaSnappyArgsProcessor  implements ArgsProcessor {
                 throw new IllegalArgumentException("Input does not seem to be a path to a Python executable");
             }
 
+            try {
+                Files.walk(pythonRootPath).forEach(System.out::println);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             Optional<Path> foundPath;
-            try (Stream<Path> paths = Files.walk(pythonRootPath)) {
+            try (Stream<Path> paths2 = Files.walk(pythonRootPath)) {
                 // todo: check for envs
-                foundPath = paths.filter(Files::isDirectory)
-                        .filter(path -> path.getFileName().toString().equals("site-packages"))
+                foundPath = paths2.filter(Files::isDirectory)
+                        .filter(path -> {
+                            final String s = path.getFileName().toString();
+//                            System.out.println("s = " + s);
+                            return s.equals("site-packages");
+                        })
                         .findFirst();
             }
 
