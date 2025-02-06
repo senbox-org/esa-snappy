@@ -6,8 +6,15 @@ import org.netbeans.spi.sendopts.Description;
 import org.netbeans.spi.sendopts.Env;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class EsaSnappyArgsProcessor  implements ArgsProcessor {
 
@@ -84,6 +91,42 @@ public class EsaSnappyArgsProcessor  implements ArgsProcessor {
             } else {
                 throw new IllegalArgumentException("Input does not seem to be a path to a Python executable");
             }
+        }
+        return null;
+    }
+
+    public static Path getPythonSitePackagesPath(String pathToPythonExec) throws IOException {
+        // todo: write test. If ok, replace getPythonModuleInstallDir(..)
+        if (pathToPythonExec != null) {
+
+            Path pythonRootPath;
+
+            final String osName = System.getProperty("os.name").toLowerCase();
+            if ((osName.contains("linux") || osName.contains("mac")) && pathToPythonExec.endsWith("python")) {
+                // e.g. /home/Python310/bin/python
+                pythonRootPath = Paths.get(new File(pathToPythonExec).getParentFile().getParentFile().getAbsolutePath());
+            } else if ((osName.contains("windows")) && pathToPythonExec.endsWith("python.exe")) {
+                // e.g. C:\\User\\Python310\\python.exe
+                pythonRootPath = Paths.get(new File(pathToPythonExec).getParentFile().getAbsolutePath());
+            } else {
+                throw new IllegalArgumentException("Input does not seem to be a path to a Python executable");
+            }
+
+            Optional<Path> foundPath;
+            try (Stream<Path> paths = Files.walk(pythonRootPath)) {
+                // todo: check for envs
+                foundPath = paths.filter(Files::isDirectory)
+                        .filter(path -> path.getFileName().toString().equals("site-packages"))
+                        .findFirst();
+            }
+
+            if (foundPath.isPresent()) {
+                System.out.printf("Python site packages dir: " + foundPath.get().toAbsolutePath());
+                return foundPath.get();
+            }
+
+            return foundPath.isPresent() ? foundPath.get() : null;
+
         }
         return null;
     }

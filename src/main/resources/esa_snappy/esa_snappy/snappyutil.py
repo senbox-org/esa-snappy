@@ -10,10 +10,11 @@ import zipfile
 _ERR_CODE_NO_MATCHING_JPY_WHEEL_FOUND = 10
 _ERR_CODE_MISSING_MODULE_JPYUTIL = 20
 _ERR_CODE_IMPORTING_SNAPPY_FAILED = 30
-_ERR_CODE_INTERNAL_ERROR = 40
+_ERR_CODE_IMPORTING_SNAPISTA_FAILED = 40
+_ERR_CODE_INTERNAL_ERROR = 50
 
 
-def _find_file(dir_path, regex):
+def _find_file_old(dir_path, regex):
     if os.path.isdir(dir_path):
         for filename in os.listdir(dir_path):
             if regex.match(filename):
@@ -21,6 +22,35 @@ def _find_file(dir_path, regex):
                 if os.path.isfile(file):
                     return file
     return None
+
+
+def _find_file(dir_path, jpy_whl_pat):
+    if os.path.isdir(dir_path):
+        for jpy_whl_filename in os.listdir(dir_path):
+            # Windows AMD64
+            if "win_amd64" in jpy_whl_pat and "win_amd64" in jpy_whl_filename:
+                return _get_file_in_dir(dir_path, jpy_whl_filename)
+            # Linux x86_64
+            if "linux" in jpy_whl_pat and 'x86_64' in jpy_whl_pat and 'linux' in jpy_whl_filename:
+                if 'x86_64' in jpy_whl_filename:
+                    return _get_file_in_dir(dir_path, jpy_whl_filename)
+            # Linux aarch64
+            if 'linux' in jpy_whl_pat and 'aarch64' in jpy_whl_pat and 'linux' in jpy_whl_filename:
+                if 'aarch64' in jpy_whl_filename:
+                    return _get_file_in_dir(dir_path, jpy_whl_filename)
+            # Macos
+            if 'macosx' in jpy_whl_pat and 'arm64' in jpy_whl_pat and 'macosx' in jpy_whl_filename:
+                if 'arm64' in jpy_whl_filename:
+                    return _get_file_in_dir(dir_path, jpy_whl_filename)
+    return None
+
+
+def _get_file_in_dir(dir_path, filename):
+    file = os.path.join(dir_path, filename)
+    if os.path.isfile(file):
+        return file
+    else:
+        return None
 
 
 def _configure_snappy(snap_home=None,
@@ -97,12 +127,13 @@ def _configure_snappy(snap_home=None,
     if must_install_jpy:
         logging.info("Installing jpy...")
 
-        # See "PEP 0425 -- Compatibility Tags for Built Distributions"
-        # https://www.python.org/dev/peps/pep-0425/
-        # import distutils.util
-        import sysconfig  # switch to sysconfig, as distutils is deprecated in Python 3.10
+        # See "Platform compatibility tags"
+        # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
 
+        # import distutils.util
         # platform_tag = distutils.util.get_platform().replace('-', '_').replace('.', '_')
+
+        import sysconfig  # switch to sysconfig, as distutils is deprecated in Python 3.10
         platform_tag = sysconfig.get_platform().replace('-', '_').replace('.', '_')
         python_tag = 'cp%d%d' % (sys.version_info.major, sys.version_info.minor,)
         jpy_wheel_file_pat = 'jpy-{version}-%s-{abi_tag}-%s.whl' % (python_tag, platform_tag)
@@ -112,59 +143,50 @@ def _configure_snappy(snap_home=None,
         jpy_wheel_file_re = jpy_wheel_file_pat.replace('{version}', '[^\-]+').replace('{abi_tag}', '[^\-]+')
         jpy_wheel_file_rec = re.compile(jpy_wheel_file_re)
 
-        # for macos, discard platform version in whl search, as jpy provides just
-        # one whl per Python version anyway.
-        # lib folder contains renamed wheels as:
-        # jpy-{version}-cp3<x>-{abi-tag}-macosx_X_y_<arch>.whl --> jpy-{version}-cp3<x>-{abi-tag}-macosx.whl
-        # e.g. jpy-1.0.0-cp37-cp37m-macosx_11_0_x86_64.whl --> jpy-1.0.0-cp37-cp37m-macosx.whl
-        if 'macosx' in jpy_wheel_file_re:
-            _jpy_wheel_file_re = jpy_wheel_file_re.split("macosx")
-            jpy_wheel_file_re = _jpy_wheel_file_re[0] + 'macosx.whl'
-            jpy_wheel_file_rec = re.compile(jpy_wheel_file_re)
+        #
+        # Look for jpy platform wheel in <Python install dir>/Lib/site-packages/esa-snappy/lib
+        # For the given Python there should be 4 wheels:
+        #     win_amd64, manylinux_x_y_x86_64, manylinux_x_y_aarch64, macos_x_y_universal2
+        # in the form jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
+        #
+        jpy_wheel_file = _find_file(snappy_dir + os.sep + "lib", jpy_wheel_file_re)
 
-        #
-        # See if user put a custom jpy platform wheel into snappy dir
-        # ./snappy/jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
-        #
-        jpy_wheel_file = _find_file(snappy_dir, jpy_wheel_file_rec)
         # No, then search for it in the snap-python module
-        if not jpy_wheel_file:
-            #
-            # Look for
-            # ${java_module}/lib/jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
-            # depending of whether ${java_module} it is a JAR file or directory
-            #
-            if os.path.isfile(java_module):
-                with zipfile.ZipFile(java_module) as zf:
-                    lib_prefix = 'lib/'
-                    for name in zf.namelist():
-                        if name.startswith(lib_prefix):
-                            basename = name[len(lib_prefix):]
-                            if jpy_wheel_file_rec.match(basename):
-                                logging.info("Extracting '" + name + "' from '" + java_module + "'")
-                                jpy_wheel_file = zf.extract(name, snappy_dir)
-                                break
-            else:
-                lib_dir = os.path.join(java_module, 'lib')
-                jpy_wheel_file = _find_file(lib_dir, jpy_wheel_file_rec)
+        # SHOULD NO LONGER BE NEEDED!
+        # if not jpy_wheel_file:
+        #
+        #     # Look for
+        #     # ${java_module}/lib/jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
+        #     # depending of whether ${java_module} it is a JAR file or directory
+        #
+        #     if os.path.isfile(java_module):
+        #         with zipfile.ZipFile(java_module) as zf:
+        #             lib_prefix = 'lib/'
+        #             for name in zf.namelist():
+        #                 if name.startswith(lib_prefix):
+        #                     basename = name[len(lib_prefix):]
+        #                     if jpy_wheel_file_rec.match(basename):
+        #                         logging.info("Extracting '" + name + "' from '" + java_module + "'")
+        #                         jpy_wheel_file = zf.extract(name, snappy_dir)
+        #                         break
+        #     else:
+        #         lib_dir = os.path.join(java_module, 'lib')
+        #         jpy_wheel_file = _find_file(lib_dir, jpy_wheel_file_rec)
 
         if jpy_wheel_file and os.path.exists(jpy_wheel_file):
             logging.info("Unzipping '" + jpy_wheel_file + "'")
             with zipfile.ZipFile(jpy_wheel_file) as zf:
                 zf.extractall(snappy_dir)
         else:
-            logging.error("\n".join(["The module 'jpy' is required to run snappy, but no binary 'jpy' wheel matching the pattern",
-                           "'" + jpy_wheel_file_pat + "' could be found.",
-                           "You can try to build a 'jpy' wheel yourself, then copy it into",
-                           "\"" + snappy_dir + "\", and then run the configuration again.",
-                           "Unzip the jpy sources in " + snappy_dir + "/jpy-<version>.zip, then",
-                           "  $ cd jpy-<version>",
-                           "  $ python setup.py bdist_wheel",
-                           "  $ cp dist/*.whl \"" + snappy_dir + "\"",
-                           "Or get the source code from https://github.com/bcdev/jpy and follow the build instructions:",
-                           "  $ git clone https://github.com/bcdev/jpy.git",
-                           "  $ cd jpy"
-                           ]))
+            logging.error("\n".join(
+                ["The Java-Python bridge 'jpy' is required to run esa_snappy, but no binary 'jpy' wheel for platform",
+                 "'" + sysconfig.get_platform() + "' could be found.",
+                 "For further information, please check the esa_snappy log file in: ",
+                 "   " + snappy_dir + "/snappyutil.log.",
+                 "Please also double-check your installation steps with the documentation in: ",
+                 "   https://senbox.atlassian.net/wiki/spaces/SNAP/pages/2499051521/Configure+Python+to+use+the+new+SNAP-Python+esa_snappy+interface+SNAP+version+10",
+                 "If this does not help, please feel free to report your problem to the SNAP forum: ",
+                 ]))
 
             return _ERR_CODE_NO_MATCHING_JPY_WHEEL_FOUND
     else:
@@ -230,18 +252,16 @@ def _configure_snappy(snap_home=None,
     # Finally, we test the snappy installation/configuration by importing it.
     # If this won't succeed, _main() will catch the error and report it.
     #
-    logging.info("Importing esa_snappy for final test...")
+    logging.info("Importing esa_snappy.snapista for final test...")
     sys.path = [os.path.join(snappy_dir, '..')] + sys.path
 
     try:
-        __import__('esa_snappy')
+        __import__('esa_snappy.snapista')
     except:
-        return _ERR_CODE_IMPORTING_SNAPPY_FAILED
+        return _ERR_CODE_IMPORTING_SNAPISTA_FAILED
 
-    logging.info("Done. The SNAP-Python interface is located in '%s'\n"
-                 "When using SNAP from Python, either do: sys.path.append('%s')\n"
-                 "or copy the snappy module into your Python's 'site-packages' directory."
-                 % (snappy_dir, snappy_dir.replace("\\", "\\\\")))
+    logging.info("Done. The SNAP-Python interface is located as package 'esa_snappy' in "
+                 "your Python's 'site-packages' directory..\n")
 
     return 0
 

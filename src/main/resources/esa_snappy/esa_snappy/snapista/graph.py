@@ -5,7 +5,7 @@ import platform
 import lxml.etree as etree
 from esa_snappy import GPF
 from xml.sax.saxutils import unescape
-from esa_snappy import BinningOutputBands
+from esa_snappy.snapista.binning.output_bands import BinningOutputBands
 from .target_band_descriptors import TargetBandDescriptors
 from .binning import Aggregators
 from .binning import BinningVariables
@@ -333,6 +333,11 @@ class Graph:
                     print(param, getattr(operator, param))
                     if (param in ["bandConfigurations", "variableConfigs", "postProcessorConfig", "productCustomizerConfig" ] and not getattr(operator, param)): continue
 
+                    print('Instance TargetBandDescriptors: ' + str(isinstance(getattr(operator, param), TargetBandDescriptors)))
+                    print('Instance Aggregators: ' + str(isinstance(getattr(operator, param), Aggregators)))
+                    print('Instance BinningOutputBands: ' + str(isinstance(getattr(operator, param), BinningOutputBands)))
+                    print('Instance BinningVariables: ' + str(isinstance(getattr(operator, param), BinningVariables)))
+                    print('Instance str: ' + str(isinstance(getattr(operator, param), str)))
                     if (
                         isinstance(getattr(operator, param), TargetBandDescriptors)
                         or isinstance(getattr(operator, param), Aggregators)

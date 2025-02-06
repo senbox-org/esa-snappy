@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "esa_snappy"
-version = "0.0.3"
+version = "0.0.10"
 authors = [
   { name="Olaf Danne, Norman Fomferra (Brockmann Consult GmbH)" },
 ]
@@ -55,9 +55,9 @@ exclude = [
 #    "testdata/MER_FRS_L1B_SUBSET.data/vector_data/*.*",
 #]
 "esa_snappy" = [
-    "testdata/**"  # this ensures that whole tree of Dimap test product is packaged
+    "testdata/**",  # this ensures that whole tree of Dimap test product is packaged
+    "lib/jpy*.whl",  # this ensures that jpy whl is packaged
 ]
-
 
 [project.urls]
 Homepage = "https://github.com/pypa/sampleproject"
