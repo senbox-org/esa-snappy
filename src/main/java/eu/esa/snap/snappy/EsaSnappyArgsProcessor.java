@@ -1,18 +1,23 @@
 package eu.esa.snap.snappy;
 
+import eu.esa.snap.main.EsaSnappyConfigurator;
+import org.apache.commons.io.FileUtils;
 import org.netbeans.spi.sendopts.Arg;
 import org.netbeans.spi.sendopts.ArgsProcessor;
 import org.netbeans.spi.sendopts.Description;
 import org.netbeans.spi.sendopts.Env;
+import org.openide.modules.InstalledFileLocator;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EsaSnappyArgsProcessor implements ArgsProcessor {
 
@@ -54,7 +59,7 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
                 try {
                     // determine default esa_snappy install dir. Should be in Lib/site-packages of current Python!
                     configurator.setPythonModuleInstallDir(getPythonSitePackagesPath(args[0]));
-                } catch (RuntimeException e) {
+                } catch (RuntimeException | URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -86,29 +91,51 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
     }
 
 
-    /**
-     * todo
-     *
-     * @param pathToPythonExec
-     * @return
-     * @throws RuntimeException
-     */
-    static Path getPythonSitePackagesPath(String pathToPythonExec) throws RuntimeException {
+    static Path getPythonSitePackagesPath(String pathToPythonExec) throws RuntimeException, URISyntaxException {
         // todo: in case of error pass appropriate message(s) to the user.
         if (pathToPythonExec != null) {
 
             // obviously this is the most recommended way to detect the package installation dir for a given Python
             // see: https://discuss.python.org/t/understanding-site-packages-directories/12959
             //      https://ffy00.github.io/blog/02-python-debian-and-the-install-locations/
+
+            // Unfortunately this does not seem to work with Linux - Python output is not passed to process input stream:
+            //final String[] commands = {
+            //        pathToPythonExec,
+            //        "-c",
+            //        "\"import sysconfig; print(sysconfig.get_path('platlib'))\""
+            //};
+
+            // thus we introduce  a small Python script like this:
+            final URL pythonScriptProvidingSitePackagesUrl = Objects.requireNonNull(EsaSnappyArgsProcessor.class.
+                    getResource("get_site_packages_dir.py"));
+
+            // Unfortunately we cannot use this directly as file from a jar (URI is not hierarchical):
+            //final String pythonScriptProvidingSitePackagesPath =
+            //        new File(pythonScriptProvidingSitePackagesUrl.toURI()).getAbsolutePath();
+
+            // so we must read from an input stream and copy into a temp file (we need a Python file!):
+            InputStream in = Objects.requireNonNull(EsaSnappyArgsProcessor.class.
+                    getResourceAsStream("get_site_packages_dir.py"));
+            File tempFile;
+            try {
+                tempFile = Files.createTempFile("", ".py").toFile();
+                FileUtils.copyInputStreamToFile(in, tempFile);
+            } catch (IOException e) {
+                // todo
+                throw new RuntimeException(e);
+            }
+
             final String[] commands = {
                     pathToPythonExec,
-                    "-c",
-                    "\"import sysconfig; print(sysconfig.get_path('platlib'))\""
+                    "-u",
+                    tempFile.getAbsolutePath(),
+                    "print_site_packages_dir"
             };
 
             try {
-                Process process = Runtime.getRuntime().exec(commands);
-                process.waitFor();
+                ProcessBuilder pb = new ProcessBuilder().command(commands);
+                final Process process = pb.start();
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),
                         StandardCharsets.UTF_8));
@@ -121,6 +148,7 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
                     // store output in a list of lines. Anyway, the result should be just one line.
                     lines.add(line);
                 }
+                process.waitFor();
                 reader.close();
 
                 if (process.exitValue() != 0) {

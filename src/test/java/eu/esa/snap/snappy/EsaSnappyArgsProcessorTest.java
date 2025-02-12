@@ -6,9 +6,17 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +43,7 @@ public class EsaSnappyArgsProcessorTest {
 
     @Test
     @Ignore
-    public void testGetPythonSitePackagesPath_main_install_dir() {
+    public void testGetPythonSitePackagesPath_main_install_dir() throws URISyntaxException {
         //test Windows with python.exe in main install dir:
         // before enabling the test, make sure this is an existing Python installation:
         String pyInstallWin = "D:" + File.separator + "olaf" + File.separator + "miniconda3_py310";
@@ -49,9 +57,10 @@ public class EsaSnappyArgsProcessorTest {
 
     }
 
+
     @Test
     @Ignore
-    public void testGetPythonSitePackagesPath_virtualenv() {
+    public void testGetPythonSitePackagesPath_virtualenv() throws URISyntaxException {
         //test Windows with python.exe in virtual env dir:
         // before enabling the test, make sure this is an existing Python installation:
         String  pyInstallWin = "D:" + File.separator + "olaf" + File.separator + "miniconda3_py38" +
