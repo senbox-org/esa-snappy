@@ -40,7 +40,7 @@ def _find_file(dir_path, jpy_whl_pat):
                     return _get_file_in_dir(dir_path, jpy_whl_filename)
             # Macos
             if 'macosx' in jpy_whl_pat and 'arm64' in jpy_whl_pat and 'macosx' in jpy_whl_filename:
-                if 'arm64' in jpy_whl_filename:
+                if 'x86_64' in jpy_whl_filename or 'universal2' in jpy_whl_filename:
                     return _get_file_in_dir(dir_path, jpy_whl_filename)
     return None
 
@@ -185,7 +185,7 @@ def _configure_snappy(snap_home=None,
                  "   " + snappy_dir + "/snappyutil.log.",
                  "Please also double-check your installation steps with the documentation in: ",
                  "   https://senbox.atlassian.net/wiki/spaces/SNAP/pages/2499051521/Configure+Python+to+use+the+new+SNAP-Python+esa_snappy+interface+SNAP+version+10",
-                 "If this does not help, please feel free to report your problem to the SNAP forum: ",
+                 "If this does not help, please feel free to report your problem to the SNAP forum. ",
                  ]))
 
             return _ERR_CODE_NO_MATCHING_JPY_WHEEL_FOUND
