@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "esa_snappy"
-version = "0.0.11"
+version = "1.0.2"
 authors = [
   { name="Olaf Danne, Norman Fomferra (Brockmann Consult GmbH)" },
 ]
@@ -36,7 +36,8 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
 ]
-license = {file = "LICENSE"}
+#license = {file = "LICENSE"}
+license = {text = "MIT"}
 
 [tool.setuptools.dynamic]
 readme = {file = "README.md", content-type = "text/markdown"}

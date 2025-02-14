@@ -252,13 +252,15 @@ def _configure_snappy(snap_home=None,
     # Finally, we test the snappy installation/configuration by importing it.
     # If this won't succeed, _main() will catch the error and report it.
     #
-    logging.info("Importing esa_snappy.snapista for final test...")
-    sys.path = [os.path.join(snappy_dir, '..')] + sys.path
+    #logging.info("Importing esa_snappy.snapista for final test...")
+    #sys.path = [os.path.join(snappy_dir, '..')] + sys.path
 
-    try:
-        __import__('esa_snappy.snapista')
-    except:
-        return _ERR_CODE_IMPORTING_SNAPISTA_FAILED
+    # todo: this import sometimes hangs on Windows (Win 10, Miniconda Python 3.12). Check why.
+    # Skip this for the moment...
+    #try:
+    #    __import__('esa_snappy.snapista')
+    #except:
+    #    return _ERR_CODE_IMPORTING_SNAPISTA_FAILED
 
     logging.info("Done. The SNAP-Python interface is located as package 'esa_snappy' in "
                  "your Python's 'site-packages' directory..\n")

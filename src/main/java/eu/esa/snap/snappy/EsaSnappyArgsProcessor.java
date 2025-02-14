@@ -1,16 +1,13 @@
 package eu.esa.snap.snappy;
 
-import eu.esa.snap.main.EsaSnappyConfigurator;
 import org.apache.commons.io.FileUtils;
 import org.netbeans.spi.sendopts.Arg;
 import org.netbeans.spi.sendopts.ArgsProcessor;
 import org.netbeans.spi.sendopts.Description;
 import org.netbeans.spi.sendopts.Env;
-import org.openide.modules.InstalledFileLocator;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -95,25 +92,14 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
         // todo: in case of error pass appropriate message(s) to the user.
         if (pathToPythonExec != null) {
 
+            String[] commands;
+
             // obviously this is the most recommended way to detect the package installation dir for a given Python
             // see: https://discuss.python.org/t/understanding-site-packages-directories/12959
             //      https://ffy00.github.io/blog/02-python-debian-and-the-install-locations/
 
-            // Unfortunately this does not seem to work with Linux - Python output is not passed to process input stream:
-            //final String[] commands = {
-            //        pathToPythonExec,
-            //        "-c",
-            //        "\"import sysconfig; print(sysconfig.get_path('platlib'))\""
-            //};
-
-            // thus we introduce  a small Python script like this:
-            final URL pythonScriptProvidingSitePackagesUrl = Objects.requireNonNull(EsaSnappyArgsProcessor.class.
-                    getResource("get_site_packages_dir.py"));
-
-            // Unfortunately we cannot use this directly as file from a jar (URI is not hierarchical):
-            //final String pythonScriptProvidingSitePackagesPath =
-            //        new File(pythonScriptProvidingSitePackagesUrl.toURI()).getAbsolutePath();
-
+            // We introduce a small Python script as resource doing this.
+            // Unfortunately again, we cannot use this directly as file from a jar (URI is not hierarchical),
             // so we must read from an input stream and copy into a temp file (we need a Python file!):
             InputStream in = Objects.requireNonNull(EsaSnappyArgsProcessor.class.
                     getResourceAsStream("get_site_packages_dir.py"));
@@ -126,7 +112,7 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
                 throw new RuntimeException(e);
             }
 
-            final String[] commands = {
+            commands = new String[]{
                     pathToPythonExec,
                     "-u",
                     tempFile.getAbsolutePath(),
@@ -136,19 +122,20 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
             try {
                 ProcessBuilder pb = new ProcessBuilder().command(commands);
                 final Process process = pb.start();
+                process.waitFor();
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),
                         StandardCharsets.UTF_8));
 
                 String line;
-                List lines = new ArrayList();
+                List<String> lines = new ArrayList<>();
 
                 while ((line = reader.readLine()) != null) {
                     System.out.printf(line);
                     // store output in a list of lines. Anyway, the result should be just one line.
                     lines.add(line);
                 }
-                process.waitFor();
+
                 reader.close();
 
                 if (process.exitValue() != 0) {
@@ -160,6 +147,94 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
 
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException("Determination of Python site-packages path failed: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    static Path getPythonSitePackagesPath_test(String pathToPythonExec) throws RuntimeException, URISyntaxException {
+        // todo: in case of error pass appropriate message(s) to the user.
+        if (pathToPythonExec != null) {
+
+            String[] commands;
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                String pythonRootDir;
+                Path sitePackagesPath;
+
+                // keep it simple for Windows...
+                final String pythonExeParentDir = new File(pathToPythonExec).getParentFile().getAbsolutePath();
+                if (pythonExeParentDir.endsWith("Scripts")) {
+                    // virtual env for Python from python.org:
+                    // <pyInstallDir>\envs\<env_name>\Scripts\python.exe
+                    // <pyInstallDir>\envs\<env_name>\Lib\site-packages
+                    pythonRootDir = new File(pythonExeParentDir).getParentFile().getAbsolutePath();
+                    sitePackagesPath = Paths.get(pythonRootDir + File.separator + "Lib" + File.separator + "site-packages");
+                } else {
+                    // main dir for Python from python.org, main dir or virtual env for Python from Anaconda/Miniconda:
+                    // <pyInstallDir>\python.exe
+                    // <pyInstallDir>\Lib\site-packages
+                    // <pyInstallDir>\envs\<env_name>\python.exe
+                    // <pyInstallDir>\envs\<env_name>\Lib\site-packages
+                    pythonRootDir = new File(pathToPythonExec).getParentFile().getAbsolutePath();
+                    sitePackagesPath = Paths.get(pythonRootDir + File.separator + "Lib" + File.separator + "site-packages");
+                }
+
+                return sitePackagesPath;
+            } else {
+                // obviously this is the most recommended way to detect the package installation dir for a given Python
+                // see: https://discuss.python.org/t/understanding-site-packages-directories/12959
+                //      https://ffy00.github.io/blog/02-python-debian-and-the-install-locations/
+
+                // We introduce a small Python script as resource doing this.
+                // Unfortunately again, we cannot use this directly as file from a jar (URI is not hierarchical),
+                // so we must read from an input stream and copy into a temp file (we need a Python file!):
+                InputStream in = Objects.requireNonNull(EsaSnappyArgsProcessor.class.
+                        getResourceAsStream("get_site_packages_dir.py"));
+                File tempFile;
+                try {
+                    tempFile = Files.createTempFile("", ".py").toFile();
+                    FileUtils.copyInputStreamToFile(in, tempFile);
+                } catch (IOException e) {
+                    // todo
+                    throw new RuntimeException(e);
+                }
+
+                commands = new String[]{
+                        pathToPythonExec,
+                        "-u",
+                        tempFile.getAbsolutePath(),
+                        "print_site_packages_dir"
+                };
+
+                try {
+                    ProcessBuilder pb = new ProcessBuilder().command(commands);
+                    final Process process = pb.start();
+                    process.waitFor();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),
+                            StandardCharsets.UTF_8));
+
+                    String line;
+                    List<String> lines = new ArrayList<>();
+
+                    while ((line = reader.readLine()) != null) {
+                        System.out.printf(line);
+                        // store output in a list of lines. Anyway, the result should be just one line.
+                        lines.add(line);
+                    }
+
+                    reader.close();
+
+                    if (process.exitValue() != 0) {
+                        throw new RuntimeException("External Python call terminated with an error.");
+                    }
+
+                    final String[] linesArr = (String[]) lines.toArray(new String[0]);
+                    return Paths.get(linesArr[0]);
+
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException("Determination of Python site-packages path failed: " + e.getMessage());
+                }
             }
         }
         return null;
