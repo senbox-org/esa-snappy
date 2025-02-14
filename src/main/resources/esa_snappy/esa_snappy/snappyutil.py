@@ -14,17 +14,14 @@ _ERR_CODE_IMPORTING_SNAPISTA_FAILED = 40
 _ERR_CODE_INTERNAL_ERROR = 50
 
 
-def _find_file_old(dir_path, regex):
-    if os.path.isdir(dir_path):
-        for filename in os.listdir(dir_path):
-            if regex.match(filename):
-                file = os.path.join(dir_path, filename)
-                if os.path.isfile(file):
-                    return file
-    return None
-
-
 def _find_file(dir_path, jpy_whl_pat):
+    """
+    Finds jpy whl file with given pattern in given directory.
+
+    :param dir_path: directory
+    :param jpy_whl_pat:
+    :return:
+    """
     if os.path.isdir(dir_path):
         for jpy_whl_filename in os.listdir(dir_path):
             # Windows AMD64
@@ -46,6 +43,13 @@ def _find_file(dir_path, jpy_whl_pat):
 
 
 def _get_file_in_dir(dir_path, filename):
+    """
+    wrapper function
+
+    :param dir_path:
+    :param filename:
+    :return:
+    """
     file = os.path.join(dir_path, filename)
     if os.path.isfile(file):
         return file
@@ -121,8 +125,7 @@ def _configure_snappy(snap_home=None,
                             or not os.path.exists(snappy_ini_file)
 
     #
-    # If jpy is not installed yet at all, try to do so by using any compatible binary wheel found
-    # in ${snappy_dir} or ${java_module}.
+    # If jpy is not installed yet at all, try to do so by using any compatible binary wheel found in ${snappy_dir}.
     #
     if must_install_jpy:
         logging.info("Installing jpy...")
@@ -138,40 +141,14 @@ def _configure_snappy(snap_home=None,
         python_tag = 'cp%d%d' % (sys.version_info.major, sys.version_info.minor,)
         jpy_wheel_file_pat = 'jpy-{version}-%s-{abi_tag}-%s.whl' % (python_tag, platform_tag)
 
-        import re
-
         jpy_wheel_file_re = jpy_wheel_file_pat.replace('{version}', '[^\-]+').replace('{abi_tag}', '[^\-]+')
-        jpy_wheel_file_rec = re.compile(jpy_wheel_file_re)
 
-        #
         # Look for jpy platform wheel in <Python install dir>/Lib/site-packages/esa-snappy/lib
         # For the given Python there should be 4 wheels:
         #     win_amd64, manylinux_x_y_x86_64, manylinux_x_y_aarch64, macos_x_y_universal2
         # in the form jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
         #
         jpy_wheel_file = _find_file(snappy_dir + os.sep + "lib", jpy_wheel_file_re)
-
-        # No, then search for it in the snap-python module
-        # SHOULD NO LONGER BE NEEDED!
-        # if not jpy_wheel_file:
-        #
-        #     # Look for
-        #     # ${java_module}/lib/jpy-{version}-{python_tag}-{abi_tag}-{platform_tag}.whl
-        #     # depending of whether ${java_module} it is a JAR file or directory
-        #
-        #     if os.path.isfile(java_module):
-        #         with zipfile.ZipFile(java_module) as zf:
-        #             lib_prefix = 'lib/'
-        #             for name in zf.namelist():
-        #                 if name.startswith(lib_prefix):
-        #                     basename = name[len(lib_prefix):]
-        #                     if jpy_wheel_file_rec.match(basename):
-        #                         logging.info("Extracting '" + name + "' from '" + java_module + "'")
-        #                         jpy_wheel_file = zf.extract(name, snappy_dir)
-        #                         break
-        #     else:
-        #         lib_dir = os.path.join(java_module, 'lib')
-        #         jpy_wheel_file = _find_file(lib_dir, jpy_wheel_file_rec)
 
         if jpy_wheel_file and os.path.exists(jpy_wheel_file):
             logging.info("Unzipping '" + jpy_wheel_file + "'")
@@ -228,7 +205,6 @@ def _configure_snappy(snap_home=None,
     else:
         logging.info("jpy is already configured")
 
-    #
     # If snappy isn't configured yet, do so by writing a default "snappy.ini".
     # Note, this file is only used if you use SNAP from Python, i.e. importing
     # the snappy module in your Python programs.
@@ -248,18 +224,17 @@ def _configure_snappy(snap_home=None,
     else:
         logging.info("snappy is already configured")
 
-    #
     # Finally, we test the snappy installation/configuration by importing it.
     # If this won't succeed, _main() will catch the error and report it.
     #
-    #logging.info("Importing esa_snappy.snapista for final test...")
-    #sys.path = [os.path.join(snappy_dir, '..')] + sys.path
+    # logging.info("Importing esa_snappy.snapista for final test...")
+    # sys.path = [os.path.join(snappy_dir, '..')] + sys.path
 
     # todo: this import sometimes hangs on Windows (Win 10, Miniconda Python 3.12). Check why.
-    # Skip this for the moment...
-    #try:
+    # Comment for the moment. If we reach this point, everything should be ok anyway...
+    # try:
     #    __import__('esa_snappy.snapista')
-    #except:
+    # except:
     #    return _ERR_CODE_IMPORTING_SNAPISTA_FAILED
 
     logging.info("Done. The SNAP-Python interface is located as package 'esa_snappy' in "

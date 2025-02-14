@@ -20,8 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 public class EsaSnappyArgsProcessorTest {
@@ -73,5 +72,23 @@ public class EsaSnappyArgsProcessorTest {
         String  expectedSitePackagesString = pyInstallWin  + "/Lib/site-packages/";
         Path expectedSitePackagesPath = Paths.get(expectedSitePackagesString);
         assertEquals(expectedSitePackagesPath, actualSitePackagesPath);
+    }
+
+    @Test
+    @Ignore
+    public void testCheckIfPathExists() {
+        final String existing = "D:" + File.separator + "olaf";
+        final String notExisting = "D:" + File.separator + "olaf" + File.separator + "fakedir";
+        final Path existingPath = Paths.get(existing);
+        final File existingFile = existingPath.toFile();
+        final Path notExistingPath = Paths.get(notExisting);
+        final File notExistingFile = notExistingPath.toFile();
+        assertTrue(existingFile.exists());
+        assertFalse(notExistingFile.exists());
+
+        final File existingSubdir = new File(existingPath.toFile().getAbsolutePath() + File.separator + "bc");
+        final File notExistingSubdir = new File(existingPath.toFile().getAbsolutePath() + File.separator + "not_bc");
+        assertTrue(existingSubdir.exists());
+        assertFalse(notExistingSubdir.exists());
     }
 }

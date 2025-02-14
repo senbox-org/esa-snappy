@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "esa_snappy"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
   { name="Olaf Danne, Norman Fomferra (Brockmann Consult GmbH)" },
 ]
@@ -22,12 +22,11 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development",
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
@@ -36,7 +35,6 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
 ]
-#license = {file = "LICENSE"}
 license = {text = "MIT"}
 
 [tool.setuptools.dynamic]
@@ -48,12 +46,6 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-#"esa_snappy" = [
-#    "testdata/*.*",
-#    "testdata/MER_FRS_L1B_SUBSET.data/*.*",
-#    "testdata/MER_FRS_L1B_SUBSET.data/tie_point_grids/*.*",
-#    "testdata/MER_FRS_L1B_SUBSET.data/vector_data/*.*",
-#]
 "esa_snappy" = [
     "testdata/**",  # this ensures that whole tree of Dimap test product is packaged
     "lib/jpy*.whl",  # this ensures that jpy whl is packaged
