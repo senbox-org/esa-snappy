@@ -2,10 +2,6 @@
 
 import sys
 
-# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
-# Adapt this path if script shall be run from a different location!
-sys.path.append('../../')
-
 from esa_snappy import (ProgressMonitor, VectorDataNode,
                         WKTReader, ProductIO, PlainFeatureFactory,
                         SimpleFeatureBuilder, DefaultGeographicCRS,
@@ -13,6 +9,7 @@ from esa_snappy import (ProgressMonitor, VectorDataNode,
 
 if len(sys.argv) != 3:
     print("usage: %s <inputProduct> <wkt>" % sys.argv[0])
+    print(" e.g.: %s ./TEST.dim \"POLYGON((15.786082 45.30223, 11.798364 46.118263, 10.878688 43.61961, 14.72272742.85818, 15.786082 45.30223))\"" % sys.argv[0])
     sys.exit(1)
 
 input = sys.argv[1]

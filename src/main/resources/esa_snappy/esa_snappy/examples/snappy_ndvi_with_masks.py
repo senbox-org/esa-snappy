@@ -4,10 +4,6 @@ import numpy
 
 # This example requires a MERIS L1b product as input
 
-# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
-# Adapt this path if script shall be run from a different location!
-sys.path.append('../../')
-
 from esa_snappy import String
 from esa_snappy import Product
 from esa_snappy import ProductData
@@ -16,7 +12,7 @@ from esa_snappy import ProductUtils
 
 
 if len(sys.argv) != 2:
-    print("usage: %s <file>" % sys.argv[0]);
+    print("usage: %s <MERIS L1b product>" % sys.argv[0]);
     sys.exit(1)
 
 print("Reading...")

@@ -2,15 +2,11 @@ import sys
 
 # This example requires a MERIS L1b product as input
 
-# This relative path is for the esa_snappy test setup only, as the esa_snappy module is located two folder levels above.
-# Adapt this path if script shall be run from a different location!
-sys.path.append('../../')
-
 import esa_snappy
 from esa_snappy import (ProductIO, ProductUtils, ProgressMonitor)
 
 if len(sys.argv) != 2:
-    print("usage: %s <file>" % sys.argv[0])
+    print("usage: %s <MERIS L1b product>" % sys.argv[0])
     sys.exit(1)
 
 file = sys.argv[1]
