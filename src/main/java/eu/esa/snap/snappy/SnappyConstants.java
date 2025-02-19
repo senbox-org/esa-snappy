@@ -1,5 +1,10 @@
 package eu.esa.snap.snappy;
 
+
+/**
+ * Class providing constants for esa_snappy module.
+ *
+ */
 public class SnappyConstants {
     public static final String PYTHON_EXECUTABLE_PROPERTY = "snap.pythonExecutable";
     public static final String PYTHON_MODULE_DIR_PROPERTY = "snap.pythonModuleDir";
@@ -14,6 +19,4 @@ public class SnappyConstants {
     public static final String SNAPPYUTIL_PY_FILENAME = "snappyutil.py";
     public static final String SNAPPYUTIL_LOG_FILENAME = "snappyutil.log";
     public static final String JPY_JAVA_API_CONFIG_FILENAME = "jpyconfig.properties";
-
-    public static final String[] SNAPISTA_REQUIRED_PACKAGES = {"lxml", "attrs", "requests"};
 }

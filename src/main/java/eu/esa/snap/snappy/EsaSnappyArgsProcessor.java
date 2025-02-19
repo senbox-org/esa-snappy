@@ -15,7 +15,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+/**
+ * EsaSnappy command-line arguments:
+ * <ul>
+ * <li>{@code --snappy <python-interpreter> [<snappy-python-module-dir>]}</li>
+ * </ul>
+ *
+ * @author Norman Fomferra, Olaf Danne
+ */
 public class EsaSnappyArgsProcessor implements ArgsProcessor {
 
     @Arg(longName = "snappy")
@@ -29,8 +36,6 @@ public class EsaSnappyArgsProcessor implements ArgsProcessor {
         }
 
     }
-
-    // can be private if not used by EsaSnappyConfigurator anymore
 
     /**
      * Initiates the SNAP-Python configuration with given arguments.

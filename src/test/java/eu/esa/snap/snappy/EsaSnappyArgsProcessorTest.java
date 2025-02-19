@@ -25,7 +25,8 @@ import static org.junit.Assert.*;
 
 public class EsaSnappyArgsProcessorTest {
 
-    // TODO: currently, tests are ignored by default. Try to configure something more general.
+    // TODO: currently, tests are ignored by default, as they need adaptation of local paths.
+    //       Try to configure something more general.
 
     Path snapPythonPath;
     Path esaSnappyPath;

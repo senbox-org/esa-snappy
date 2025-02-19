@@ -19,12 +19,12 @@ package eu.esa.snap.snappy;
 import org.esa.snap.core.util.Debug;
 import org.esa.snap.core.util.ResourceInstaller;
 import org.esa.snap.core.util.SystemUtils;
-import org.esa.snap.core.util.io.TreeCopier;
-import org.esa.snap.core.util.io.TreeDeleter;
 import org.esa.snap.runtime.Config;
 import org.jpy.PyLib;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URI;
@@ -34,19 +34,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import static eu.esa.snap.snappy.SnappyConstants.*;
-import static org.esa.snap.core.util.SystemUtils.*;
+import static org.esa.snap.core.util.SystemUtils.LOG;
 
 /**
  * This class is used to establish the bridge between Java and Python.
- * It unpacks the Python module 'esa_' to a user configurable location
- * and executes the script 'snappy/snappyutil.py' with appropriate parameters.
+ * It executes the script 'snappy/snappyutil.py' with appropriate parameters.
  * <p>
- * 'snappyutil.py' again configures 'jpy' by selecting and unpacking appropriate
- * jpy tools and binaries found as 'jpy.&lt;platform&gt;-&lt;python-version&gt;.zip' in the 'lib' resources folder
- * of this Java module.
+ * In return, 'snappyutil.py' configures 'jpy' by selecting and unpacking appropriate
+ * jpy tools and binaries which are included in the Python part of this module, available as
+ * 'esa_snappy' Python package from the PyPI package index.
  * 'snappyutil.py' will then call 'jpyutil.py' to write the Java- and Python-side configuration files
  * 'jpyutil.properties' and 'jpyconfig.py'.
  * <p>
@@ -57,7 +59,7 @@ import static org.esa.snap.core.util.SystemUtils.*;
  * The following system properties can be used to configure this class:
  * <p>
  * <ol>
- * <li>{@code snap.pythonModuleDir}: The directory in which the Python module 'snappy' will be installed. The default value is {@code "~/modules/snap-python"}.</li>
+ * <li>{@code snap.pythonModuleDir}: The directory in which the Python package 'esa_snappy' will be installed. The default value is the 'site-packages' folder of the Python installation.</li>
  * <li>{@code snap.pythonExecutable}: The Python executable to be used with SNAP. The default value is {@code "python"}.</li>
  * <li>{@code snap.forcePythonConfig}: Forces reconfiguration of the bridge for each SNAP run. The default value is {@code "true"}</li>
  * <li>{@code snap.pythonExtraPaths}: Extra paths to be searched for SNAP Python extensions such as operators</li>
@@ -123,7 +125,8 @@ public class PyBridge {
 
         Path snappyPath = snappyParentDir.resolve(SNAPPY_NAME);
         if (forcePythonConfig || !Files.isDirectory(snappyPath)) {
-//            unpackPythonModuleDir(snappyPath);
+            // we do no longer need this, as we now get the Python package from PyPI...
+            // unpackPythonModuleDir(snappyPath);
             storePythonConfig(pythonExecutable, snappyParentDir);
         }
 
@@ -145,9 +148,6 @@ public class PyBridge {
         if (Debug.isEnabled() && System.getProperty(JPY_DEBUG_PROPERTY) == null) {
             System.setProperty(JPY_DEBUG_PROPERTY, "true");
         }
-
-        // Configure Snapista:
-//        configureSnapista(pythonExecutable, snappyPath);
 
         return snappyPath;
     }
@@ -206,7 +206,7 @@ public class PyBridge {
         command.add("--snap_home");
         command.add(SystemUtils.getApplicationHomeDir().getPath());
         command.add("--java_module");
-        command.add(stripJarScheme(MODULE_CODE_BASE_PATH));
+        command.add(stripJarScheme());
         command.add("--force");
         command.add("--log_file");
         command.add(Paths.get(".", SNAPPYUTIL_LOG_FILENAME).toString());
@@ -289,18 +289,14 @@ public class PyBridge {
         return sb.toString();
     }
 
-    private static Path getResourcePath(String resource) {
-        return MODULE_CODE_BASE_PATH.resolve(resource);
-    }
-
     private static Path findModuleCodeBasePath() {
         return ResourceInstaller.findModuleCodeBasePath(PyBridge.class);
     }
 
-    private static String stripJarScheme(Path path) {
+    private static String stripJarScheme() {
         String prefix = "jar:";
         String suffix = "!/";
-        String uriString = path.toUri().toString();
+        String uriString = PyBridge.MODULE_CODE_BASE_PATH.toUri().toString();
 
         if (uriString.startsWith(prefix)) {
 //            begin test
@@ -319,13 +315,7 @@ public class PyBridge {
             return encodedJarPath;
         }
 
-        return String.valueOf(path);
-    }
-
-    private static void unpackPythonModuleDir(Path pythonModuleDir) throws IOException {
-        Files.createDirectories(pythonModuleDir);
-        TreeCopier.copy(getResourcePath(SNAPPY_NAME), pythonModuleDir);
-        LOG.info(String.format("SNAP-Python module '%s' located at %s", SNAPPY_NAME, pythonModuleDir));
+        return String.valueOf(PyBridge.MODULE_CODE_BASE_PATH);
     }
 
     private static boolean isForceGeneratingNewPythonConfig() {
