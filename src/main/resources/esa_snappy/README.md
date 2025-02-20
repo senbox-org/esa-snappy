@@ -6,7 +6,7 @@ basically realized by the components:
 - Java module for the configuration of the SNAP - Python interaction.
 - Java-Python bridge *jpy* that enables calls from Python into a Java virtual machine.
   and, at the same time, the other way round. This bridge is implemented by the
-  [jpy Project](https://deephaven.io/core/docs/how-to-guides/use-jpy/) and is independent of esa_snappy.
+  [jpy Project](https://deephaven.io/core/docs/how-to-guides/use-jpy/) and is independent of *esa_snappy*.
 - **This package**, which provides:
   - Integration of *jpy* and configuration and initialization of the Java-Python bridge for usage with SNAP.
   - Extended support for using SNAP functionalities from Python, e.g. running chains of SNAP GPT operators from 
