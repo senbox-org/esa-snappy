@@ -8,5 +8,5 @@ mvn-build:
       - "${MAVEN_PROJECT_DIR}/**/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/**/target/classes"
       - "${MAVEN_PROJECT_DIR}/**/target/nbm/*.nbm"
-      - "${MAVEN_PROJECT_DIR}/**/target/nbm/netbeans/extra"
+      - "${MAVEN_PROJECT_DIR}/target/nbm/netbeans/extra"
       - "${MAVEN_PROJECT_DIR}/**/target/surefire-reports"
