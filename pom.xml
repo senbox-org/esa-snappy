@@ -142,7 +142,31 @@
                     <useFile>false</useFile>
                     <argLine>-Xmx1024M -Dfile.encoding=UTF-8</argLine>
                 </configuration>
-            </plugin>
+            </plugin>            
+    
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-target-folder</id>
+                        <phase>package</phase>  <!-- Runs after packaging -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/../esasnappy-kit/target</outputDirectory> <!-- Destination -->
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory> <!-- Source (target folder) -->
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>    
+
 
         </plugins>
 
