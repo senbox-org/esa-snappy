@@ -15,17 +15,17 @@ class AggregatorAvg(object):
     # outputSums = attr.ib(default="true")
 
     type = field(init=False, default="AVG")
-    var_name = field()
-    target_name = field()
-    weight_coeff = field(default=0.0)
-    output_counts = field(default="true")
-    output_sums = field(default="true")
-    @output_counts.validator
+    varName = field()
+    targetName = field()
+    weightCoeff = field(default=0.0)
+    outputCounts = field(default="true")
+    outputSums = field(default="true")
+    @outputCounts.validator
     def _check_type(self, attribute, value):
         if value not in ["true", "false"]:
             raise ValueError("output_counts value is either 'true' or 'false'")
 
-    @output_sums.validator
+    @outputSums.validator
     def _check_type(self, attribute, value):
         if value not in ["true", "false"]:
             raise ValueError("output_sums value is either 'true' or 'false'")

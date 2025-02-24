@@ -405,23 +405,34 @@ class Graph:
 
         def _run_command(command, **kwargs):
 
+            #process = subprocess.Popen(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,  **kwargs)
+            #while True:
+            #    output = process.stdout.readline()
+            #    err = process.stderr.readline()
+            #    if output.decode() == "" and process.poll() is not None:
+            #        break
+            #    if output:
+            #        print(output.strip().decode())
+            #    if err:
+            #        print(err.strip().decode())
+
+            # this works:
             process = subprocess.Popen(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,  **kwargs)
-            while True:
-                output = process.stdout.readline()
-                err = process.stderr.readline()
-                if output.decode() == "" and process.poll() is not None:
-                    break
-                if output:
-                    print(output.strip().decode())
-                if err:
-                    print(err.strip().decode())
+            out, err = process.communicate()
+            if out:
+                print ('standard output of subprocess: ')
+                print (out.strip().decode())
+            #if err:
+            #    print ('standard error of subprocess: ')
+            #    print (err.strip().decode())
+
             rc = process.poll()
 
             return rc
 
         os.environ["LD_LIBRARY_PATH"] = "."
 
-        print("Processing the graph")
+        print("Processing the graph, this may take a while. Please wait...")
 
         fd, path = tempfile.mkstemp()
 
@@ -436,11 +447,14 @@ class Graph:
             rc = _run_command(options)
 
         finally:
-
-            os.remove(path)
+            try:
+                os.remove(path)
+            except:
+                pass
 
         if rc != 0:
-
             raise Exception("Graph execution failed (exit code {})".format(rc))
+        else:
+            print("Processing finished successfully.")
 
         return rc

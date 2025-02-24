@@ -6,8 +6,8 @@ import lxml.etree as etree
 class AggregatorMinMax(object):
 
     type = field(init=False, default="MIN_MAX")
-    var_name = field()
-    target_name = field()
+    varName = field()
+    targetName = field()
 
     def __str__(self):
 

@@ -6,9 +6,9 @@ import lxml.etree as etree
 class AggregatorOnMaxSet(object):
 
     type = field(init=False, default="ON_MAX_SET")
-    target_name = field()
-    on_max_var_name = field()
-    set_var_names = field(default=None)
+    targetName = field()
+    onMaxVarName = field()
+    setVarNames = field(default=None)
 
     def __str__(self):
 

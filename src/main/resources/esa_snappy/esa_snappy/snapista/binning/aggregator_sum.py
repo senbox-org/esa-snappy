@@ -6,8 +6,8 @@ import lxml.etree as etree
 class AggregatorSum(object):
 
     type = field(init=False, default="SUM")
-    var_name = field()
-    target_name = field()
+    varName = field()
+    targetName = field()
 
     def __str__(self):
 

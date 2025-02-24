@@ -7,8 +7,8 @@ class BinningBand(object):
 
     index = field()
     name = field()
-    min_value = field()
-    max_value = field()
+    minValue = field()
+    maxValue = field()
 
     def __str__(self):
 

@@ -6,8 +6,8 @@ from attrs import asdict, define, field
 class AggregatorAvgOutlier(object):
 
     type = field(init=False, default="AVG_OUTLIER")
-    var_name = field()
-    target_name = field()
+    varName = field()
+    targetName = field()
 
     def __str__(self):
 

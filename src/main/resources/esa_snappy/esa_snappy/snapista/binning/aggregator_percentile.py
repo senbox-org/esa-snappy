@@ -6,8 +6,8 @@ import lxml.etree as etree
 class AggregatorPercentile(object):
 
     type = field(init=False, default="PERCENTILE")
-    var_name = field()
-    target_name = field()
+    varName = field()
+    targetName = field()
     percentage = field(default=90)
 
     @percentage.validator
