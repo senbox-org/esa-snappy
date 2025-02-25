@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "esa_snappy"
-version = "1.0.3"
+version = "1.0.4"
 authors = [
   { name="Olaf Danne, Norman Fomferra (Brockmann Consult GmbH)" },
 ]
@@ -49,6 +49,7 @@ exclude = [
 "esa_snappy" = [
     "testdata/**",  # this ensures that whole tree of Dimap test product is packaged
     "lib/jpy*.whl",  # this ensures that jpy whl is packaged
+    "snapista/demo/**"  # this ensures that demo notebook folder is packaged
 ]
 
 [project.urls]
