@@ -406,6 +406,7 @@ class Graph:
         def _run_command(command, **kwargs):
 
             #process = subprocess.Popen(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,  **kwargs)
+            # todo: this hangs in the while loop. Check why!
             #while True:
             #    output = process.stdout.readline()
             #    err = process.stderr.readline()
@@ -416,15 +417,15 @@ class Graph:
             #    if err:
             #        print(err.strip().decode())
 
-            # this works:
+            # this works, but output (i.e. gpt progress) is not written before subprocess finished. todo: try to improve
             process = subprocess.Popen(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,  **kwargs)
             out, err = process.communicate()
             if out:
-                print ('standard output of subprocess: ')
+                #print ('standard output of subprocess: ')
                 print (out.strip().decode())
-            #if err:
-            #    print ('standard error of subprocess: ')
-            #    print (err.strip().decode())
+            if err:
+                #print ('standard error of subprocess: ')
+                print (err.strip().decode())
 
             rc = process.poll()
 
