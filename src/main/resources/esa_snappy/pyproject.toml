@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "esa_snappy"
-version = "1.0.6"
+version = "1.0.8"
 authors = [
   { name="Olaf Danne, Norman Fomferra (Brockmann Consult GmbH)" },
 ]

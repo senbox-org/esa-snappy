@@ -2,6 +2,8 @@ import os
 import subprocess
 import tempfile
 import platform
+import sysconfig
+import configparser
 import lxml.etree as etree
 from esa_snappy import GPF
 from xml.sax.saxutils import unescape
@@ -52,8 +54,27 @@ class Graph:
 
         return "Graph(wdir='{}')".format(self.wdir)
 
+
     @staticmethod
     def get_gpt_cmd():
+        """
+        Retrieves the path of the SNAP gpt command.
+
+        :return: SNAP gpt path
+        """
+        def get_snap_bin_path():
+            """
+            Retrieves the SNAP bin path from esa_snappy.ini.
+
+            :return: SNAP bin path
+            """
+            esa_snappy_package_path = sysconfig.get_paths()['purelib'] + os.sep + "esa_snappy"
+            esa_snappy_ini_file_path = esa_snappy_package_path + os.sep + "esa_snappy.ini"
+            esa_snappy_config = configparser.ConfigParser()
+            esa_snappy_config.read(esa_snappy_ini_file_path)
+
+            return esa_snappy_config['DEFAULT']['snap_home'] + os.sep + "bin"
+
 
         gpt_cmd = None
 
@@ -64,13 +85,23 @@ class Graph:
             path_split_char = ":"
             gpt_executable = "gpt"
 
-        for p in os.getenv("PATH").split(path_split_char):
+        # this may fail in case a wrong gpt is found on the path, as observed on a MacOS test machine,
+        # like this: https://github.com/kharvd/gpt-cli/issues/58
+        #
+        # for p in os.getenv("PATH").split(path_split_char):
+        #
+        #     if os.path.exists(os.path.join(p, gpt_executable)):
+        #
+        #         gpt_cmd = os.path.join(p, gpt_executable)
+        #
+        #         break
 
-            if os.path.exists(os.path.join(p, gpt_executable)):
-
-                gpt_cmd = os.path.join(p, gpt_executable)
-
-                break
+        # better get it directly from esa_snappy.ini
+        if gpt_cmd == None:
+            # get SNAP bin path from esa_snappy.ini and try again:
+            snap_bin_path = get_snap_bin_path()
+            os.environ['PATH'] = snap_bin_path + path_split_char + os.environ['PATH']
+            gpt_cmd = os.path.join(snap_bin_path, gpt_executable)
 
         return gpt_cmd
 
