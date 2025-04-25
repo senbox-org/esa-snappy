@@ -11,5 +11,5 @@ mvn-build:
       - "${MAVEN_PROJECT_DIR}/esasnappy-kit/target/*.jar"
       - "${MAVEN_PROJECT_DIR}/esasnappy-kit/target/classes"
       - "${MAVEN_PROJECT_DIR}/esasnappy-kit/target/nbm/*.nbm"
-      - "${MAVEN_PROJECT_DIR}/esasnappy-kit/target/nbm/netbeans/extra"
+      - "${MAVEN_PROJECT_DIR}/esasnappy-kit/target/nbm/clusters/extra"
       
