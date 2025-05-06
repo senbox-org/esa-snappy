@@ -35,10 +35,17 @@ def _find_file(dir_path, jpy_whl_pat):
             if 'linux' in jpy_whl_pat and 'aarch64' in jpy_whl_pat and 'linux' in jpy_whl_filename:
                 if 'aarch64' in jpy_whl_filename:
                     return _get_file_in_dir(dir_path, jpy_whl_filename)
-            # Macos
-            if 'macosx' in jpy_whl_pat and 'arm64' in jpy_whl_pat and 'macosx' in jpy_whl_filename:
-                if 'x86_64' in jpy_whl_filename or 'universal2' in jpy_whl_filename:
+            # Macos ARM 64 (Apple Silicon, version >= 11)
+            # whl pat: e.g. macosx-11.1-arm64; wheel filename: jpy-...-macosx_..._universal2.whl
+            if 'macosx' in jpy_whl_pat and 'arm64' in jpy_whl_pat:
+                if 'macosx' in jpy_whl_filename and 'universal2' in jpy_whl_filename:
                     return _get_file_in_dir(dir_path, jpy_whl_filename)
+            # Macos X86 (Intel, version 10.4.7-)
+            # whl pat: e.g. macosx-10.9-x86_64; wheel filename: jpy-...-macosx_..._universal2.whl
+            if 'macosx' in jpy_whl_pat and 'x86_64' in jpy_whl_pat:
+                if 'macosx' in jpy_whl_filename and 'universal2' in jpy_whl_filename:
+                    return _get_file_in_dir(dir_path, jpy_whl_filename)
+
     return None
 
 

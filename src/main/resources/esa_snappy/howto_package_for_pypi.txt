@@ -9,7 +9,7 @@ This guide is meant for SNAP (in particular esa_snappy) developers. We assume we
 ## open cmd window in ..\senbox-org\esa-snappy\src\main\resources\esa_snappy
 
 ## upgrade pip, just in case
-# <Python install dir>\python.exe -m pip install --upgrade twine
+# <Python install dir>\python.exe -m pip install --upgrade pip
 
 ## upgrade twine (installs requests package if not present)
 # <Python install dir>\python.exe -m pip install --upgrade twine
