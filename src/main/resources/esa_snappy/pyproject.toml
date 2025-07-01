@@ -34,7 +34,7 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
 ]
-license = {text = "MIT"}
+license = "MIT"
 
 [tool.setuptools.dynamic]
 readme = {file = "README.md", content-type = "text/markdown"}
@@ -52,5 +52,6 @@ exclude = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Repository = "https://github.com/senbox-org/esa-snappy.git"
+Homepage = "https://step.esa.int/main/"
+Issues = "https://github.com/senbox-org/esa-snappy/issues"
