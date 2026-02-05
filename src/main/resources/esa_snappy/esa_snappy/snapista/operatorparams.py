@@ -12,7 +12,6 @@ class OperatorParams:
         """This function returns the SNAP operator ParameterDescriptors (snappy method op_spi.getOperatorDescriptor().getParameterDescriptors())
 
         Args:
-            operator: SNAP operator
 
         Returns
             The snappy object returned by op_spi.getOperatorDescriptor().getParameterDescriptors().
@@ -30,7 +29,6 @@ class OperatorParams:
         """This function returns a Python dictionary with the SNAP operator parameters and their default values, if available.
 
         Args:
-            operator: SNAP operator
 
         Returns
             A Python dictionary with the SNAP operator parameters and their default values.
