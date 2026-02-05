@@ -1,0 +1,47 @@
+Steps to provide esa_snappy Python part as PyPi package (setup as of 20250731, date of SNAP 13 RC-1):
+---------------------------------------------------------------------------------------------------------------
+
+This guide is meant for SNAP (in particular esa_snappy) developers. We assume we're on Windows.
+
+## see https://packaging.python.org/en/latest/guides/section-build-and-publish/
+## see https://packaging.python.org/en/latest/tutorials/installing-packages/
+
+## open cmd window in ..\senbox-org\esa-snappy\src\main\resources\esa_snappy
+
+## upgrade pip, just in case
+# <Python install dir>\python.exe -m pip install --upgrade pip
+
+## upgrade twine (installs requests package if not present)
+# <Python install dir>\python.exe -m pip install --upgrade twine
+## (there was an issue with twine with Python 3.12, use a lower version here!)
+
+## install build:
+# <Python install dir>\python.exe -m pip install build
+
+## build tar.gz and whl in dist:
+## in pyproject.toml, increase esa_snappy version under [project]
+## for each Python 3.9, .., 3.13:
+### copy matching jpy wheels from lib/1.0.0 into empty 'lib' folder in esa_snappy  
+### delete wheels from previous build in 'lib' folder in esa_snappy 
+### <python 3.x install dir>\python.exe -m build
+### rename esa_snappy-<version>-py3-none-any.whl to esa_snappy-<version>-cp3x-none-any.whl, x = 9,..,13
+### after last run, copy again ALL jpy wheels from lib/1.0.0 into empty 'lib' folder in esa_snappy 
+### do a final build with all wheels included in the tar.gz
+### delete esa_snappy-<version>-py3-none-any.whl
+## --> in ..\senbox-org\esa-snappy\src\main\resources\esa_snappy\dist, we have now 5 wheels and 1 tar.gz
+
+## upload to test.pypi (account and token required):
+## test repo:
+# <Python install dir>\python.exe -m twine upload --repository testpypi dist/*
+## real repo:
+# <Python install dir>\python.exe -m twine upload dist/*
+## NOTE: copy token via 'Bearbeiten - Einfügen) in Win Powershell Menu, does not work with simple ctrl-v!)
+## also NOTE: does not work with Miniconda Python 3.12 (InvalidDistribution: Invalid distribution metadata:
+unrecognized or malformed field 'license-file'), use Python <= 3.11 for this step
+
+## install package from test.pypi by a user
+## (note that for installation from test.pypi, extra-index-url must be added here to get dependecies from 'real' pypi)
+# ..\python.exe -m pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple esa-snappy
+## by default, installation is done from whl, not from tar.gz, but whl tags must be compatible!
+## Can be checked with: pip debug --verbose
+## see https://stackoverflow.com/questions/59018893/how-to-tell-pip3-to-prefer-download-and-install-wheel-files-over-the-tar-gz-wh
