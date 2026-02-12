@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph>
+  <version>1.0</version>
+  <node id="Read_1">
+    <operator>Read</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>true</copyMetadata>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\data\subset_0_of_S3A_OL_1_EFR____20180509T101337_20180509T101637_20180510T150001_0179_031_065_1980_MAR_O_NT_002.nc</file>
+      <formatName/>
+      <geometryRegion/>
+      <maskNames/>
+      <pixelRegion/>
+      <polygonRegion/>
+      <useAdvancedOptions>false</useAdvancedOptions>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="Read_2">
+    <operator>Read</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>true</copyMetadata>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\data\subset_1_of_S3A_OL_1_EFR____20180509T101337_20180509T101637_20180510T150001_0179_031_065_1980_MAR_O_NT_002.nc</file>
+      <formatName/>
+      <geometryRegion/>
+      <maskNames/>
+      <pixelRegion/>
+      <polygonRegion/>
+      <useAdvancedOptions>false</useAdvancedOptions>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="Collocate">
+    <operator>Collocate</operator>
+    <sources>
+      <reference refid="Read_1"/>
+      <source.1 refid="Read_2"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <copySecondaryMetadata>false</copySecondaryMetadata>
+      <referenceComponentPattern>${ORIGINAL_NAME}_M</referenceComponentPattern>
+      <referenceProductName/>
+      <renameReferenceComponents>true</renameReferenceComponents>
+      <renameSecondaryComponents>true</renameSecondaryComponents>
+      <resamplingType>NEAREST_NEIGHBOUR</resamplingType>
+      <secondaryComponentPattern>${ORIGINAL_NAME}_S${SLAVE_NUMBER_ID}</secondaryComponentPattern>
+      <sourceProductPaths/>
+      <targetProductName>_collocated</targetProductName>
+      <targetProductType>COLLOCATED</targetProductType>
+    </parameters>
+  </node>
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="Collocate"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <clearCacheAfterRowWrite>false</clearCacheAfterRowWrite>
+      <deleteOutputOnFailure>true</deleteOutputOnFailure>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\results\snap_nb_olci_collocate_result.nc</file>
+      <formatName>NetCDF4-BEAM</formatName>
+      <writeEntireTileRows>false</writeEntireTileRows>
+    </parameters>
+  </node>
+</graph>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph>
+  <version>1.0</version>
+  <node id="Read_l1c">
+    <operator>Read</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>true</copyMetadata>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\data\S2A_MSIL1C_20180803T103021_N0500_R108_T32UNE_20230730T062418.SAFE</file>
+      <formatName/>
+      <geometryRegion/>
+      <maskNames/>
+      <pixelRegion/>
+      <polygonRegion/>
+      <useAdvancedOptions>false</useAdvancedOptions>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="Subset">
+    <operator>Subset</operator>
+    <sources>
+      <sourceProduct refid="Read_l1c"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>false</copyMetadata>
+      <fullSwath>false</fullSwath>
+      <geoRegion/>
+      <polygonRegion/>
+      <referenceBand/>
+      <region>5001, 6001, 2000, 2000</region>
+      <sourceBands>B4,B8</sourceBands>
+      <subSamplingX>1</subSamplingX>
+      <subSamplingY>1</subSamplingY>
+      <tiePointGridNames/>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="BandMaths">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="Subset"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>ndvi</name>
+          <expression>(B8 - B4)/(B8 + B4)</expression>
+          <type>float32</type>
+          <description/>
+          <unit/>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="Merge">
+    <operator>BandMerge</operator>
+    <sources>
+      <source refid="Subset"/>
+      <source.1 refid="BandMaths"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <geographicError>1.0E-5f</geographicError>
+      <sourceBandNames/>
+      <sourceBands>B4,B8,ndvi</sourceBands>
+    </parameters>
+  </node>
+  <node id="WriteNdvi">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="Merge"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <clearCacheAfterRowWrite>false</clearCacheAfterRowWrite>
+      <deleteOutputOnFailure>true</deleteOutputOnFailure>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\results\./snap_nb_comparing_apis_ndvi_result_snapista.nc</file>
+      <formatName>NetCDF4-BEAM</formatName>
+      <writeEntireTileRows>false</writeEntireTileRows>
+    </parameters>
+  </node>
+</graph>
