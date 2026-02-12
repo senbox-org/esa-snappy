@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph>
+  <version>1.0</version>
+  <node id="Read">
+    <operator>Read</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>true</copyMetadata>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\data\subset_0_of_S3A_OL_1_EFR____20180509T101337_20180509T101637_20180510T150001_0179_031_065_1980_MAR_O_NT_002.nc</file>
+      <formatName/>
+      <geometryRegion/>
+      <maskNames/>
+      <pixelRegion/>
+      <polygonRegion/>
+      <useAdvancedOptions>false</useAdvancedOptions>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="Idepix.Olci">
+    <operator>Idepix.Olci</operator>
+    <sources>
+      <sourceProduct refid="Read"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <alternativeCtpNNDir/>
+      <alternativeNNFile/>
+      <alternativeNNThresholdsFile/>
+      <cloudBufferWidth>2</cloudBufferWidth>
+      <computeCloudBuffer>true</computeCloudBuffer>
+      <computeCloudShadow>true</computeCloudShadow>
+      <computeMountainShadow>true</computeMountainShadow>
+      <mntShadowExtent>0.9</mntShadowExtent>
+      <outputCtp>false</outputCtp>
+      <outputSchillerNNValue>false</outputSchillerNNValue>
+      <radianceBandsToCopy/>
+      <reflBandsToCopy/>
+      <useLakeAndSeaIceClimatology>false</useLakeAndSeaIceClimatology>
+      <useO2HarmonizedRadiancesForNN>true</useO2HarmonizedRadiancesForNN>
+      <useSrtmLandWaterMask>false</useSrtmLandWaterMask>
+    </parameters>
+  </node>
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="Idepix.Olci"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <clearCacheAfterRowWrite>false</clearCacheAfterRowWrite>
+      <deleteOutputOnFailure>true</deleteOutputOnFailure>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\results\snap_nb_olci_idepix_result.nc</file>
+      <formatName>NetCDF4-BEAM</formatName>
+      <writeEntireTileRows>false</writeEntireTileRows>
+    </parameters>
+  </node>
+</graph>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph>
+  <version>1.0</version>
+  <node id="Read">
+    <operator>Read</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>true</copyMetadata>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\data\subset_0_of_S3A_OL_1_ERR____20160701T092853_20160701T093053_20170919T102725_0119_006_036______MR1_R_NT_002.nc</file>
+      <formatName/>
+      <geometryRegion/>
+      <maskNames/>
+      <pixelRegion/>
+      <polygonRegion/>
+      <useAdvancedOptions>false</useAdvancedOptions>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="BandMaths">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="Read"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>ndvi</name>
+          <expression>(Oa08_radiance - Oa17_radiance)/(Oa08_radiance + Oa17_radiance)</expression>
+          <type>float32</type>
+          <description/>
+          <unit/>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="Merge">
+    <operator>BandMerge</operator>
+    <sources>
+      <source refid="Read"/>
+      <source.1 refid="BandMaths"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <geographicError>1.0E-5f</geographicError>
+      <sourceBandNames/>
+    </parameters>
+  </node>
+  <node id="Subset">
+    <operator>Subset</operator>
+    <sources>
+      <sourceProduct refid="Merge"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames>Oa08_radiance,Oa17_radiance,ndvi</bandNames>
+      <copyMetadata>false</copyMetadata>
+      <fullSwath>false</fullSwath>
+      <geoRegion/>
+      <polygonRegion/>
+      <referenceBand/>
+      <region/>
+      <subSamplingX>1</subSamplingX>
+      <subSamplingY>1</subSamplingY>
+      <tiePointGridNames/>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="Subset"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <clearCacheAfterRowWrite>false</clearCacheAfterRowWrite>
+      <deleteOutputOnFailure>true</deleteOutputOnFailure>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\results\snap_nb_olci_bandmaths_merge_subset_result.nc</file>
+      <formatName>NetCDF4-BEAM</formatName>
+      <writeEntireTileRows>false</writeEntireTileRows>
+    </parameters>
+  </node>
+</graph>
