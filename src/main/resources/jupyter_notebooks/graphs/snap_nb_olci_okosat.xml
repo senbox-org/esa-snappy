@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph>
+  <version>1.0</version>
+  <node id="Read">
+    <operator>Read</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <bandNames/>
+      <copyMetadata>true</copyMetadata>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\data\subset_0_of_S3A_OL_1_EFR____20180509T101337_20180509T101637_20180510T150001_0179_031_065_1980_MAR_O_NT_002.nc</file>
+      <formatName/>
+      <geometryRegion/>
+      <maskNames/>
+      <pixelRegion/>
+      <polygonRegion/>
+      <useAdvancedOptions>false</useAdvancedOptions>
+      <vectorFile/>
+    </parameters>
+  </node>
+  <node id="idepix_tobecached">
+    <operator>Idepix.Olci</operator>
+    <sources>
+      <sourceProduct refid="Read"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <alternativeCtpNNDir/>
+      <alternativeNNFile/>
+      <alternativeNNThresholdsFile/>
+      <cloudBufferWidth>2</cloudBufferWidth>
+      <computeCloudBuffer>true</computeCloudBuffer>
+      <computeCloudShadow>true</computeCloudShadow>
+      <computeMountainShadow>true</computeMountainShadow>
+      <mntShadowExtent>0.9</mntShadowExtent>
+      <outputCtp>false</outputCtp>
+      <outputSchillerNNValue>false</outputSchillerNNValue>
+      <radianceBandsToCopy/>
+      <reflBandsToCopy/>
+      <useLakeAndSeaIceClimatology>false</useLakeAndSeaIceClimatology>
+      <useO2HarmonizedRadiancesForNN>true</useO2HarmonizedRadiancesForNN>
+      <useSrtmLandWaterMask>false</useSrtmLandWaterMask>
+    </parameters>
+  </node>
+  <node id="idepix">
+    <operator>TileCache</operator>
+    <sources>
+      <source refid="idepix_tobecached"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <cacheSize>300</cacheSize>
+    </parameters>
+  </node>
+  <node id="vicarious">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="Read"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>Oa01_radiance</name>
+          <expression>feq(Oa01_radiance, 913.9812317630276, 1.0e-4) ? NaN : Oa01_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa02_radiance</name>
+          <expression>feq(Oa02_radiance, 877.334085884504, 1.0e-4) ? NaN : Oa02_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa03_radiance</name>
+          <expression>feq(Oa03_radiance, 796.1270730709657, 1.0e-4) ? NaN : Oa03_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa04_radiance</name>
+          <expression>feq(Oa04_radiance, 754.9514318397269, 1.0e-4) ? NaN : Oa04_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa05_radiance</name>
+          <expression>feq(Oa05_radiance, 661.5928710484877, 1.0e-4) ? NaN : Oa05_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa06_radiance</name>
+          <expression>feq(Oa06_radiance, 809.60629854351287, 1.0e-4) ? NaN : Oa06_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa07_radiance</name>
+          <expression>feq(Oa07_radiance, 576.1581395426765, 1.0e-4) ? NaN : Oa07_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa08_radiance</name>
+          <expression>feq(Oa08_radiance, 574.4398430082947, 1.0e-4) ? NaN : Oa08_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa09_radiance</name>
+          <expression>feq(Oa09_radiance, 623.2575185084715, 1.0e-4) ? NaN : Oa09_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa10_radiance</name>
+          <expression>feq(Oa10_radiance, 506.83326963800937, 1.0e-4) ? NaN : Oa10_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa11_radiance</name>
+          <expression>feq(Oa11_radiance, 442.70399916451424, 1.0e-4) ? NaN : Oa11_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa12_radiance</name>
+          <expression>feq(Oa12_radiance, 471.8257776950486, 1.0e-4) ? NaN : Oa12_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa13_radiance</name>
+          <expression>feq(Oa13_radiance, 491.30539988866076, 1.0e-4) ? NaN : Oa13_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa14_radiance</name>
+          <expression>feq(Oa14_radiance, 566.9563756557181, 1.0e-4) ? NaN : Oa14_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa15_radiance</name>
+          <expression>feq(Oa15_radiance, 345.2246211259626, 1.0e-4) ? NaN : Oa15_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa16_radiance</name>
+          <expression>feq(Oa16_radiance, 347.5104749179445, 1.0e-4) ? NaN : Oa16_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa17_radiance</name>
+          <expression>feq(Oa17_radiance, 323.09016273356974, 1.0e-4) ? NaN : Oa17_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa18_radiance</name>
+          <expression>feq(Oa18_radiance, 360.4175960831344, 1.0e-4) ? NaN : Oa18_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa19_radiance</name>
+          <expression>feq(Oa19_radiance, 329.54077841481194, 1.0e-4) ? NaN : Oa19_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa20_radiance</name>
+          <expression>feq(Oa20_radiance, 213.89181678649038, 1.0e-4) ? NaN : Oa20_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>Oa21_radiance</name>
+          <expression>feq(Oa21_radiance, 212.410729767289, 1.0e-4) ? NaN : Oa21_radiance</expression>
+          <type>float32</type>
+          <description/>
+          <unit>mW.m-2.sr-1.nm-1</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="Merge">
+    <operator>Merge</operator>
+    <sources>
+      <masterProduct refid="Read"/>
+      <source.1 refid="vicarious"/>
+      <source.2 refid="Idepix"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <excludes>
+        <exclude>
+          <productId>Read</productId>
+          <namePattern>Oa.*radiance</namePattern>
+        </exclude>
+      </excludes>
+      <geographicError>1.0E-5f</geographicError>
+      <includes>
+        <include>
+          <productId>Idepix</productId>
+          <namePattern>pixel_classif_flags</namePattern>
+        </include>
+      </includes>
+    </parameters>
+  </node>
+  <node id="mphchl">
+    <operator>MphChl</operator>
+    <sources>
+      <sourceProduct refid="Merge"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <applyLowPassFilter>False</applyLowPassFilter>
+      <chlThreshForFloatFlag>500</chlThreshForFloatFlag>
+      <cyanoMaxValue>1000</cyanoMaxValue>
+      <exportMph>True</exportMph>
+      <validPixelExpression>!quality_flags.invalid AND (!quality_flags.land || quality_flags.fresh_inland_water) and not pixel_classif_flags.IDEPIX_CLOUD</validPixelExpression>
+    </parameters>
+  </node>
+  <node id="c2rcc_tobecached">
+    <operator>c2rcc.olci</operator>
+    <sources>
+      <sourceProduct refid="Merge"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <CHLexp>1.04</CHLexp>
+      <CHLfak>21.0</CHLfak>
+      <TSMfakBpart>1.06</TSMfakBpart>
+      <TSMfakBwit>0.942</TSMfakBwit>
+      <alternativeNNPath/>
+      <atmosphericAuxDataPath/>
+      <demName>GETASSE30</demName>
+      <deriveRwFromPathAndTransmittance>false</deriveRwFromPathAndTransmittance>
+      <outputAcReflectance>true</outputAcReflectance>
+      <outputAsRrs>false</outputAsRrs>
+      <outputKd>true</outputKd>
+      <outputOos>false</outputOos>
+      <outputRhown>False</outputRhown>
+      <outputRpath>false</outputRpath>
+      <outputRtoa>true</outputRtoa>
+      <outputRtosaGc>false</outputRtosaGc>
+      <outputRtosaGcAann>false</outputRtosaGcAann>
+      <outputTdown>false</outputTdown>
+      <outputTup>false</outputTup>
+      <outputUncertainties>False</outputUncertainties>
+      <ozone>330</ozone>
+      <press>1000</press>
+      <salinity>35.0</salinity>
+      <temperature>15.0</temperature>
+      <thresholdAcReflecOos>0.15</thresholdAcReflecOos>
+      <thresholdCloudTDown865>0.95</thresholdCloudTDown865>
+      <thresholdRtosaOOS>0.01</thresholdRtosaOOS>
+      <useEcmwfAuxData>true</useEcmwfAuxData>
+      <validPixelExpression>!quality_flags.invalid AND (!quality_flags.land || quality_flags.fresh_inland_water) and not pixel_classif_flags.IDEPIX_CLOUD</validPixelExpression>
+    </parameters>
+  </node>
+  <node id="c2rcc">
+    <operator>TileCache</operator>
+    <sources>
+      <source refid="c2rcc_tobecached"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <cacheSize>1200</cacheSize>
+    </parameters>
+  </node>
+  <node id="tsm">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="c2rcc"/>
+      <source.1 refid="mphchl"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>spm_nechad_665</name>
+          <expression>(!nan($source.rhow_8) AND $source.rhow_8 &gt;= 0.0)?(((349.36 * $source.rhow_8) / (1 - $source.rhow_8 / 0.19503))):NaN</expression>
+          <type>float32</type>
+          <description>spm_nechad_665 recalibration 2016</description>
+          <unit>g m^-3</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>spm_nechad_865</name>
+          <expression>(!nan($source.rhow_17) AND $source.rhow_17 &gt;= 0.0)?(((2920.05 * $source.rhow_17) / (1 - $source.rhow_17 / 0.21149))):NaN</expression>
+          <type>float32</type>
+          <description>spm_nechad_865 recalibration 2016</description>
+          <unit>g m^-3</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>tur_nechad_665</name>
+          <expression>(!nan($source.rhow_8) AND $source.rhow_8 &gt;= 0.0)?(((374.75 * $source.rhow_8) / (1 - $source.rhow_8 / 0.19503))):NaN</expression>
+          <type>float32</type>
+          <description>tur_nechad_665 recalibration 2016</description>
+          <unit>FNU</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>tur_nechad_865</name>
+          <expression>(!nan($source.rhow_17) AND $source.rhow_17 &gt;= 0.0)?(((3430.04 * $source.rhow_17) / (1 - $source.rhow_17 / 0.21149))):NaN</expression>
+          <type>float32</type>
+          <description>tur_nechad_865 recalibration 2016</description>
+          <unit>FNU</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>chl_oc4</name>
+          <expression>(((($source.c2rcc_flags.Valid_PE) AND !nan($source.rhow_3)) AND (($source.c2rcc_flags.Valid_PE) AND !nan($source.rhow_4)) AND (($source.c2rcc_flags.Valid_PE) AND !nan($source.rhow_5)) AND (($source.c2rcc_flags.Valid_PE) AND !nan($source.rhow_6))))?(exp10(0.3255 + ((-2.7677 * pow(log10(max(max($source.rhow_3,$source.rhow_4),$source.rhow_5)/ $source.rhow_6) , 1)) + (2.4409 * pow(log10(max(max($source.rhow_3,$source.rhow_4),$source.rhow_5)/ $source.rhow_6), 2)) + (-1.1288 * pow(log10(max(max($source.rhow_3,$source.rhow_4),$source.rhow_5)/ $source.rhow_6), 3)) + (-0.4990 * pow(log10(max(max($source.rhow_3,$source.rhow_4),$source.rhow_5)/ $source.rhow_6), 4)) ))):NaN</expression>
+          <type>float32</type>
+          <description>chlorophyll oc4 NASA algorithm</description>
+          <unit>mg m^-3</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>c2rcc_secchi_depth_1</name>
+          <expression>($source.rhow_8 &gt;= 0.0 AND $source.rhow_4 &gt;= 0.0)?(6.557 * exp(-0.87372 * $source.rhow_8 / $source.rhow_4)):NaN</expression>
+          <type>float32</type>
+          <description>secchi depth swedish algo 1</description>
+          <unit>m</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>c2rcc_secchi_depth_2</name>
+          <expression>($source.rhow_8 &gt;= 0.0 AND $source.rhow_4 &gt;= 0.0)?(6.557 * exp(-0.87372 * $source.rhow_8 / $source.rhow_4)):NaN</expression>
+          <type>float32</type>
+          <description>secchi depth swedish algo 2</description>
+          <unit>m</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>c2rcc_secchi_depth_3</name>
+          <expression>($source.rhow_4 &gt;= 0.0 AND $source.rhow_11 &gt;= 0.0)?(2.137 * pow(($source.rhow_4 / $source.rhow_11),0.697)):NaN</expression>
+          <type>float32</type>
+          <description>secchi depth swedish algo 3</description>
+          <unit>m</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>c2rcc_secchi_depth_4</name>
+          <expression>($source.rhow_6 &gt;= 0.0 AND !nan($source.kd489) AND !nan($source.iop_atot) AND !nan($source.iop_btot))?(log(((0.82-$source.rhow_6/PI) / $source.rhow_6/PI)/ 0.0066)/(-0.0001*pow(($source.kd489 + $source.iop_atot+$source.iop_btot),2)+ 0.7809*($source.kd489 + $source.iop_atot + $source.iop_btot) + 0.4026)):NaN</expression>
+          <type>float32</type>
+          <description>secchi depth swedish algo 4</description>
+          <unit>m</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>chl_calib_c2rcc</name>
+          <expression>0.8*$source.conc_chl</expression>
+          <type>float32</type>
+          <description>chl c2rcc calibrated for SWE WFD</description>
+          <unit>mg m^-3</unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="sd_nechad">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="tsm"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>SD_865</name>
+          <expression>2.25710396*pow(tur_nechad_865,-0.6433607)</expression>
+          <type>float32</type>
+          <description>SD Nechad 865</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>SD_665</name>
+          <expression>1.99620396*pow(tur_nechad_665,-1.293607)</expression>
+          <type>float32</type>
+          <description>SD Nechad 665</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="sd_gaussian">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="c2rcc"/>
+      <source.1 refid="sd_nechad"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>secchi_depth_gaussian</name>
+          <expression>$source.1.SD_665 * ((exp(-pow($source.1.SD_865 - 2, 2.) / (2 * pow(0.5, 2)))+exp(-pow($source.conc_chl - 15, 2.) / (2 * pow(3, 2))))/2) + $source.1.SD_865 * (1-((exp(-pow($source.1.SD_865 - 2, 2.) / (2 * pow(0.5, 2)))+exp(-pow($source.conc_chl - 15, 2.) / (2 * pow(3, 2))))/2))</expression>
+          <type>float32</type>
+          <description>SD gaussian</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="secchidepth">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="c2rcc"/>
+      <source.1 refid="sd_nechad"/>
+      <source.2 refid="sd_gaussian"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>secchi_depth_gaus</name>
+          <expression>if $source.conc_chl > 15 and $source.1.SD_865 > 2 then $source.1.SD_665 else if $source.conc_chl &lt; 15 and $source.conc_chl > 10  and $source.1.SD_865 &lt; 2 and $source.1.SD_865 > 1 then $source.2.secchi_depth_gaussian else $source.1.SD_865</expression>
+          <type>float32</type>
+          <description>SD based on merged SD_665 and SD_865</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="calibrated_secchidepth">
+    <operator>BandMaths</operator>
+    <sources>
+      <source refid="secchidepth"/>
+      <source.1 refid="tsm"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <targetBands>
+        <targetBand>
+          <name>secchi_depth_calib_gaus</name>
+          <expression>1.6*$source.secchi_depth_gaus</expression>
+          <type>float32</type>
+          <description>SD based on merged SD_665 and SD_865 calibrated for SWE WFD</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>secchi_depth_calib_1</name>
+          <expression>0.5+1.15*$source.1.c2rcc_secchi_depth_1</expression>
+          <type>float32</type>
+          <description>secchi depth swedish algo 1 calibrated for SWE WFD</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+        <targetBand>
+          <name>secchi_depth_calib_4</name>
+          <expression>1.3*$source.1.c2rcc_secchi_depth_4</expression>
+          <type>float32</type>
+          <description>secchi depth swedish algo 4 calibrated for SWE WFD</description>
+          <unit></unit>
+          <no_data_value>NaN</no_data_value>
+        </targetBand>
+      </targetBands>
+      <variables/>
+    </parameters>
+  </node>
+  <node id="final_merge">
+    <operator>Merge</operator>
+    <sources>
+      <masterProduct refid="c2rcc"/>
+      <source.1 refid="tsm"/>
+      <source.2 refid="mphchl"/>
+      <source.3 refid="secchidepth"/>
+      <source.4 refid="calibrated_secchidepth"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <excludes>
+        <exclude>
+          <productId>c2rcc</productId>
+          <namePattern>kdmin</namePattern>
+        </exclude>
+        <exclude>
+          <productId>c2rcc</productId>
+          <namePattern>rtoa_[123579]|rtoa_1[012345689]|rtoa_2[01]</namePattern>
+        </exclude>
+      </excludes>
+      <geographicError>1.0E-5f</geographicError>
+      <includes/>
+    </parameters>
+  </node>
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="final_merge"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <clearCacheAfterRowWrite>false</clearCacheAfterRowWrite>
+      <deleteOutputOnFailure>true</deleteOutputOnFailure>
+      <file>E:\olaf\bc\snap\snap_md\notebooks\new\results\snap_nb_olci_okosat_result.nc</file>
+      <formatName>NetCDF4-BEAM</formatName>
+      <writeEntireTileRows>false</writeEntireTileRows>
+    </parameters>
+  </node>
+</graph>
