@@ -21,12 +21,11 @@ This guide is meant for SNAP (in particular esa_snappy) developers. We assume we
 ## build tar.gz and whl in dist:
 ## in pyproject.toml, increase esa_snappy version under [project]
 ## for each Python 3.9, .., 3.13:
-### copy matching jpy wheels from lib/1.0.0 into empty 'lib' folder in
-    ..\senbox-org\esa-snappy\src\main\resources\esa_snappy\esa_snappy
+### copy matching jpy wheels from lib/1.0.0 into empty 'lib' folder in esa_snappy  
 ### delete wheels from previous build in 'lib' folder in esa_snappy 
 ### <python 3.x install dir>\python.exe -m build
 ### rename esa_snappy-<version>-py3-none-any.whl to esa_snappy-<version>-cp3x-none-any.whl, x = 9,..,13
-### after last run, copy again ALL jpy wheels from lib/1.0.0 into empty 'lib' folder in esa_snappy 
+### after last run, copy again ALL jpy wheels from lib/1.0.0 into empty 'lib' folder in esa_snappy\esa_snappy
 ### do a final build with all wheels included in the tar.gz
 ### delete esa_snappy-<version>-py3-none-any.whl
 ## --> in ..\senbox-org\esa-snappy\src\main\resources\esa_snappy\dist, we have now 5 wheels and 1 tar.gz
@@ -36,12 +35,9 @@ This guide is meant for SNAP (in particular esa_snappy) developers. We assume we
 # <Python install dir>\python.exe -m twine upload --repository testpypi dist/*
 ## real repo:
 # <Python install dir>\python.exe -m twine upload dist/*
-## NOTE: for this step you need to
-      - login on pypi.org with your credentials (e.g. in dolaf_pypi_login.txt)
-      - mark token in your file where it is saved (e.g. dolaf_pypi_token.txt)
-      - copy token via 'Bearbeiten - Einfügen) in Win Powershell Menu, does not work with simple ctrl-v!)
-## also NOTE: may not work with Miniconda Python 3.12 (InvalidDistribution: Invalid distribution metadata:
-unrecognized or malformed field 'license-file'), use Python <= 3.11 or 3.13 for this step
+## NOTE: copy token via 'Bearbeiten - Einfügen) in Win Powershell Menu, does not work with simple ctrl-v!)
+## also NOTE: does not work with Miniconda Python 3.12 (InvalidDistribution: Invalid distribution metadata:
+unrecognized or malformed field 'license-file'), use Python <= 3.11 for this step
 
 ## install package from test.pypi by a user
 ## (note that for installation from test.pypi, extra-index-url must be added here to get dependecies from 'real' pypi)
