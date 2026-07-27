@@ -36,8 +36,9 @@ def _find_file(dir_path, jpy_whl_pat):
                 if 'aarch64' in jpy_whl_filename:
                     return _get_file_in_dir(dir_path, jpy_whl_filename)
             # Macos
-            if 'macosx' in jpy_whl_pat and 'arm64' in jpy_whl_pat and 'macosx' in jpy_whl_filename:
-                if 'x86_64' in jpy_whl_filename or 'universal2' in jpy_whl_filename:
+            if 'macosx' in jpy_whl_pat and 'macosx' in jpy_whl_filename:
+                if ('arm64' in jpy_whl_pat or 'universal2' in jpy_whl_pat) \
+                        and ('x86_64' in jpy_whl_filename or 'universal2' in jpy_whl_filename):
                     return _get_file_in_dir(dir_path, jpy_whl_filename)
     return None
 
